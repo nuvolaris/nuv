@@ -15,21 +15,9 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-
-header:
-  license:
-    spdx-id: Apache-2.0
-    copyright-owner: Apache Software Foundation
-
-  paths-ignore:
-    - nuv
-    - go.mod
-    - go.sum
-    - task/
-    - openwhisk-cli/
-    - '*.off'
-
-dependency:
-  files:
-    - go.mod
-    - package.json 
+[submodule "task"]
+	path = task
+	url = https://github.com/nuvolaris/task
+[submodule "openwhisk-cli"]
+	path = openwhisk-cli
+	url = https://github.com/nuvolaris/openwhisk-cli

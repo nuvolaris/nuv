@@ -6,7 +6,7 @@
 // "License"); you may not use this file except in compliance
 // with the License.  You may obtain a copy of the License at
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing,
 // software distributed under the License is distributed on an
@@ -14,11 +14,32 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-//
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+
+	"github.com/nuvolaris/task/cmd/taskmain/v3"
+)
 
 func main() {
-	fmt.Printf("Hello, world.\n")
+	args := os.Args
+	if len(args) < 2 {
+		fmt.Printf("nuv, the next generation.\n")
+	} else if args[1][0] == '-' {
+		switch args[1] {
+		case "-task", "-t":
+			fmt.Println("task")
+			args := append([]string{"task"}, args[2:]...)
+			taskmain.Task(args)
+			return
+		case "-wsk", "-w":
+			fmt.Println("wsk")
+			//return Wsk(args[1:]...)
+		default:
+			fmt.Println("unknown")
+		}
+
+	}
 }
