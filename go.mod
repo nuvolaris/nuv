@@ -6,7 +6,7 @@ require (
 	github.com/apache/openwhisk-client-go v0.0.0-20221221220036-71124f15c938
 	github.com/nicksnyder/go-i18n v1.10.1
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
-	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227205216-527b048bb3bd
+	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20221227192651-1fbc36972000
 )
 
@@ -18,7 +18,7 @@ require (
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/go-task/task/v3 v3.19.0 // indirect
-	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
