@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/apache/openwhisk-client-go v0.0.0-20221221220036-71124f15c938
 	github.com/nicksnyder/go-i18n v1.10.1
-	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227205715-e988b160032c
+	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227205216-527b048bb3bd
 	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20221227192651-1fbc36972000
 )

@@ -38,7 +38,7 @@ func main() {
 		case "-wsk", "-w":
 			fmt.Println("wsk")
 			args := append([]string{"task"}, args[2:]...)
-			wskmain.Wsk(args)
+			Wsk(args)
 			return
 		default:
 			fmt.Println("unknown")
