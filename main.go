@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 
+	//wskmain "github.com/nuvolaris/openwhisk-cli"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
 )
 
@@ -36,7 +37,9 @@ func main() {
 			return
 		case "-wsk", "-w":
 			fmt.Println("wsk")
-			//return Wsk(args[1:]...)
+			args := append([]string{"task"}, args[2:]...)
+			wskmain.Wsk(args)
+			return
 		default:
 			fmt.Println("unknown")
 		}
