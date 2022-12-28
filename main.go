@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	//wskmain "github.com/nuvolaris/openwhisk-cli"
+	httpie "github.com/nojima/httpie-go"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
 )
 
@@ -40,6 +40,13 @@ func main() {
 			args := append([]string{"task"}, args[2:]...)
 			Wsk(args)
 			return
+		case "-ht", "-h":
+			fmt.Println("ht")
+			os.Args = append([]string{"task"}, args[2:]...)
+			if err := httpie.Main(); err != nil {
+				fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+				os.Exit(1)
+			}
 		default:
 			fmt.Println("unknown")
 		}
