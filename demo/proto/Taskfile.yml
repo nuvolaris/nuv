@@ -5,6 +5,14 @@ tasks:
     - task -l
     silent: true
 
+  hello:
+    silent: true
+    desc: hello
+    cmds:
+      - |
+        . hello.src
+        hello
+
   abc:
     silent: true
     desc: prints abc (use --help)

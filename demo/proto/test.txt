@@ -1,11 +1,26 @@
 ./nuv.sh
-./nuv.sh abc
+./nuv.sh --help
 ./nuv.sh abc --help
+./nuv.sh abc
+./nuv.sh abc -c
+./nuv.sh abc -c --data alpha
+./nuv.sh hello --help
+./nuv.sh hello
+./nuv.sh missing
 ./nuv.sh sub
 ./nuv.sh sub date
+./nuv.sh sub missing
 ./nuv.sh sub subsub
 ./nuv.sh sub subsub first
+./nuv.sh sub subsub first --help
 ./nuv.sh sub subsub second
+./nuv.sh sub subsub missing
+
+./nuv.sh --help
+./nuv.sh abc --help
+./nuv.sh sub --help
+./nuv.sh sub date --help
+./nuv.sh sub subsub --help
 
 
 
