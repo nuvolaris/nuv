@@ -28,8 +28,11 @@ header:
     - task/
     - openwhisk-cli/
     - '*.off'
+    - '_*'
+    - '**/*.help'
 
 dependency:
   files:
     - go.mod
     - package.json 
+
