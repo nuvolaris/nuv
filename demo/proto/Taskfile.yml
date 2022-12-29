@@ -1,0 +1,22 @@
+version: '3'
+tasks:
+  default: 
+    cmds:
+    - task -l
+    silent: true
+
+  abc:
+    silent: true
+    desc: prints abc (use --help)
+    cmds:
+      - |
+        for i in a b c
+        do echo -n $i
+        done
+        echo
+
+  sub:
+    silent: true
+    desc: sub (has subcommands)
+    cmds:
+      - task -d sub

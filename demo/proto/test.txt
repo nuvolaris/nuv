@@ -1,0 +1,11 @@
+./nuv.sh
+./nuv.sh abc
+./nuv.sh abc --help
+./nuv.sh sub
+./nuv.sh sub date
+./nuv.sh sub subsub
+./nuv.sh sub subsub first
+./nuv.sh sub subsub second
+
+
+

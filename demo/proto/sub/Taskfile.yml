@@ -1,0 +1,16 @@
+version: '3'
+
+tasks:
+  default:
+    silent: true
+    cmds:
+    - task -l
+
+  subsub:
+    silent: true
+    desc: subsub (has sub command)
+
+  date: 
+    desc: current date
+    cmds: 
+     - date

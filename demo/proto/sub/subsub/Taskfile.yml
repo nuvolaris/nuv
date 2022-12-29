@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  default:
+    silent: true
+    cmds:
+    - task -l
+
+  first:
+    desc: first (use --help)
+    cmds:
+      - echo first
+
+  second:
+    desc: second
+    cmds:
+    - echo second
