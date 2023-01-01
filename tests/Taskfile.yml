@@ -16,18 +16,29 @@
 # under the License.
 #
 version: '3'
-
 tasks:
-  default:
-    silent: true
+  default: 
     cmds:
     - task -l
-
-  subsub:
     silent: true
-    desc: subsub (has sub command)
 
-  date: 
-    desc: current date
-    cmds: 
-     - date
+  hello:
+    silent: true
+    desc: hello
+    cmds:
+      - |
+        . hello.sh
+        hello
+
+  echo:
+    silent: true
+    desc: print arg (use --help)
+    cmds:
+      - |
+        echo -- {{.CLI_ARGS}}
+
+  sub:
+    silent: true
+    desc: sub (has subcommands)
+    cmds:
+      - task -d sub

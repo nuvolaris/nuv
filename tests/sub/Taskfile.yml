@@ -16,32 +16,23 @@
 # under the License.
 #
 version: '3'
+
 tasks:
-  default: 
+  default:
+    silent: true
     cmds:
     - task -l
-    silent: true
 
-  hello:
+  subsub:
     silent: true
-    desc: hello
-    cmds:
-      - |
-        . hello.sh
-        hello
+    desc: subsub (has sub command)
 
-  abc:
-    silent: true
-    desc: prints abc (use --help)
-    cmds:
-      - |
-        for i in a b c
-        do echo -n $i
-        done
-        echo
+  date: 
+    desc: current date
+    cmds: 
+      - date
 
-  sub:
-    silent: true
-    desc: sub (has subcommands)
+  naval:
+    desc: naval (use --help for details) 
     cmds:
-      - task -d sub
+      - echo not really implemented

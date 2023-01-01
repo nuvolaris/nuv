@@ -8,7 +8,7 @@ require (
 	github.com/nojima/httpie-go v0.7.0
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
-	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20221227192651-1fbc36972000
+	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101152216-23ac3198e23d
 )
 
 require (

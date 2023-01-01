@@ -27,7 +27,10 @@ import (
 func main() {
 	args := os.Args
 	if len(args) < 2 {
-		fmt.Printf("nuv, the next generation.\n")
+		err := Nuv("tests", args)
+		if err != nil {
+			fmt.Println(err)
+		}
 	} else if args[1][0] == '-' {
 		switch args[1] {
 		case "-task", "-t":
@@ -48,8 +51,10 @@ func main() {
 				os.Exit(1)
 			}
 		default:
-			fmt.Println("unknown")
+			err := Nuv("tests", args)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
-
 	}
 }

@@ -15,8 +15,31 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-nuv
-.DS_Store
-.git-hooks/
-.vscode/
-.task/
+version: '3'
+tasks:
+  
+  default: task -l
+  
+  setup: 
+    silent: true
+
+  build:
+    desc: build nuv
+    cmds:
+      - go build
+    sources:
+      - '*.go'
+    generates:
+      - nuv
+
+  rebuild:
+    - rm -f nuv
+    - go clean -cache -modcache
+    - task: build
+
+  update-task: |
+    HASH=$(cd task ; git rev-parse HEAD)
+    echo $HASH
+    go get github.com/nuvolaris/task/cmd/taskmain/v3@$HASH
+
+  

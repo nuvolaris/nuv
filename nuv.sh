@@ -16,6 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+cd "$(dirname $0)"/tests
 
 ARGS=""
 function parse_args {
@@ -28,10 +29,23 @@ function parse_args {
          fi
          return 1 
    else  ARGS="$@"
-         if [[ -n "$ARGS" ]]
-         then echo "[args $ARGS]"
-         fi
          return 0
+   fi
+}
+
+execute() {
+   cmd="$1"
+   shift
+   help="$cmd.help"
+   #echo helps is $help
+   if test -e "$help"
+   then echo ---
+        echo "$cmd" "$@"
+        echo ---
+        docopts -h "$(cat $help)" : "$cmd" "$@"
+        echo ---
+        #echo "parse then execute" task "$cmd" -- "$@"
+   else echo "execute" task "$cmd" -- "$@"
    fi
 }
 
@@ -42,7 +56,7 @@ do
          break
    elif [[ "$1" = -* ]] 
    then  if parse_args default "$@"
-         then task default -- "$ARGS"
+         then execute default "$@"
          fi 
          break 
    elif [[ -d "$1" ]]
@@ -52,7 +66,7 @@ do
    else  A="$1"
          shift
          if parse_args "$A" "$@"
-         then task "$A" -- "$ARGS"
+         then  execute "$A" "$ARGS"
          fi
          break
    fi

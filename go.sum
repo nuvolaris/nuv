@@ -198,6 +198,14 @@ github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e h1
 github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e/go.mod h1:x57w2QArhPOdDEibanGlaQlYA/1PP4RNe5e21b+R9XA=
 github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20221227192651-1fbc36972000 h1:0PRXpX+AlGNCYv+doZ1bW2Cg2q9QUAsF7PwMRkU91UQ=
 github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20221227192651-1fbc36972000/go.mod h1:+iVSw2OwCkQggZ8GnrUJLkStFYdc3MPo673GqdZHACE=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101134015-347c20fe614a h1:mtX1+BESLw2/cj23kItNE1sri8rwQxgvFvBQT8UnxGo=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101134015-347c20fe614a/go.mod h1:+iVSw2OwCkQggZ8GnrUJLkStFYdc3MPo673GqdZHACE=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101141454-df35ceccab88 h1:be7hxvof+IZs2jDSNf+eGrAOtDR4oB5Kl1gfBg/+mlE=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101141454-df35ceccab88/go.mod h1:+iVSw2OwCkQggZ8GnrUJLkStFYdc3MPo673GqdZHACE=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101143010-81b3b92b2480 h1:Rp19VIjJoki0Kamx3hv0LBFvZX1to6qgnB9cdFGPVt8=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101143010-81b3b92b2480/go.mod h1:+iVSw2OwCkQggZ8GnrUJLkStFYdc3MPo673GqdZHACE=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101152216-23ac3198e23d h1:7qhGpi+u2Tgcy8jNe8LNeZZIhtr9hDgFV92ajiVUqmg=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101152216-23ac3198e23d/go.mod h1:+iVSw2OwCkQggZ8GnrUJLkStFYdc3MPo673GqdZHACE=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
