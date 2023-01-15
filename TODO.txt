@@ -1,0 +1,4 @@
+- setup olaris
+- try to embed some commands
+- a command to download and unzip with replacementstutt
+  dld -{{OS}}-{{ARCH}}
