@@ -30,6 +30,8 @@ header:
     - '*.off'
     - '_*'
     - '**/*.help'
+    - 'attic/**'
+    - 'bin/**'
 
 dependency:
   files:

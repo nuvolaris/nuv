@@ -16,25 +16,6 @@ tasks:
 
   clean: rm -v ../bin/*.ver
 
-  download-zip:
-    cmds:
-    - curl -sL {{.URL}} >{{.CMD}}.zip
-    - unzip -o {{.CMD}}.zip  {{.CMD}}
-    - chmod +x {{.CMD}}
-    - echo "{{.URL}}" >{{.CMD}}.ver
-    status:
-      - fgrep {{.URL}} {{.CMD}}.ver
-    dir: ../bin
-
-  download-tgz:
-    cmds:
-    - curl -sL {{.URL}} | tar xzvf - {{.CMD}}
-    - chmod +x {{.CMD}}
-    - echo "{{.URL}}" >{{.CMD}}.ver
-    status:
-      - fgrep {{.URL}} {{.CMD}}.ver
-    dir: ../bin
-
   download:
     cmds:
     - curl -sL {{.URL}} >{{.CMD}}
@@ -51,9 +32,9 @@ tasks:
         CMD: "task"
 
   wsk:
-    - task: download-zip
+    - task: download
       vars: 
-        URL: "https://github.com/apache/openwhisk-cli/releases/download/1.2.0/OpenWhisk_CLI-1.2.0-mac-amd64.zip"
+        URL: "https://github.com/nuvolaris/openwhisk-cli/releases/download/v0.3.0-morpheus.23011510/wsk-v0.3.0-morpheus.23011510-{{OS}}-{{ARCH}}"
         CMD: "wsk"
 
   kubectl:
@@ -67,3 +48,4 @@ tasks:
       vars:
         URL: https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{ARCH}}
         CMD: kind    
+      
