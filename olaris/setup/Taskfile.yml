@@ -1,0 +1,4 @@
+version: '3'
+tasks:
+  default: { silent: true, cmds: [{task: help}] }
+  help: { silent: true, cmds: ["cat help.txt"] }

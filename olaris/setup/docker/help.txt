@@ -1,0 +1,7 @@
+nuv setup docker
+
+Usage:
+   create
+   destroy
+   status
+

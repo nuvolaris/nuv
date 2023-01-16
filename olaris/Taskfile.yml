@@ -16,17 +16,20 @@
 # under the License.
 #
 version: '3'
-env:
-  GOPATH:
-    sh: pwd
-
-vars:
-  TARCMD: xzvf
 
 tasks:
 
-  default: 
-    - task: task
+  default:
+    silent: true
+    cmds: 
+    - task: help
+
+  help:
+    silent: true
+    cmds:
+    - cat help.txt
+
+  setup: 
     - task: wsk
     - task: kind
     - task: kubectl
@@ -42,11 +45,6 @@ tasks:
       - fgrep {{.URL}} {{.CMD}}.ver
     dir: ../bin
 
-  task:
-    - task: download-tgz
-      vars:
-        URL: "https://github.com/go-task/task/releases/download/v3.19.1/task_{{OS}}_{{ARCH}}.tar.gz"
-        CMD: "task"
 
   wsk:
     - task: download
@@ -65,4 +63,3 @@ tasks:
       vars:
         URL: https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{ARCH}}
         CMD: kind    
-      
