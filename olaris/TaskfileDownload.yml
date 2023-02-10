@@ -17,21 +17,38 @@
 #
 version: '3'
 
-includes:
-  download: TaskfileDownload.yml
-
 tasks:
 
-  default:
-    silent: true
-    cmds: 
-    - task: help
+  default: 
+    - task: wsk
+    - task: kind
+    - task: kubectl
 
-  help:
-    silent: true
+  clean: rm -v ../bin/*.ver
+
+  download:
     cmds:
-    - cat help.txt
+    - curl -sL {{.URL}} >{{.CMD}}
+    - chmod +x {{.CMD}}
+    - echo "{{.URL}}" >{{.CMD}}.ver
+    status:
+      - fgrep {{.URL}} {{.CMD}}.ver
+    dir: ../bin
 
-  action: wsk action -- {{.CLI_ARGS}}
-  a: wsk action -- {{.CLI_ARGS}}
-  
+  wsk:
+    - task: download
+      vars: 
+        URL: "https://github.com/nuvolaris/openwhisk-cli/releases/download/v0.3.0-morpheus.23011510/wsk-v0.3.0-morpheus.23011510-{{OS}}-{{ARCH}}"
+        CMD: "wsk"
+
+  kubectl:
+    - task: download
+      vars:
+        URL: https://dl.k8s.io/release/v1.26.0/bin/{{OS}}/{{ARCH}}/kubectl
+        CMD: kubectl
+
+  kind:
+    - task: download
+      vars:
+        URL: https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{ARCH}}
+        CMD: kind    
