@@ -25,14 +25,12 @@ header:
     - nuv
     - go.mod
     - go.sum
-    - task/
-    - openwhisk-cli/
-    - '*.off'
-    - '_*'
     - '**/*.help'
-    - sh/
     - 'attic/**'
     - 'bin/**'
+    - 'tools/*/**'
+    - '_*'
+    - '*.off'
 
 dependency:
   files:
