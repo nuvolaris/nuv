@@ -24,3 +24,18 @@
 [submodule "sh"]
 	path = tools/sh
 	url = https://github.com/nuvolaris/sh
+[submodule "tools/httpie-go"]
+	path = tools/httpie-go
+	url = https://github.com/nuvolaris/httpie-go
+[submodule "tools/go-replace"]
+	path = tools/go-replace
+	url = https://github.com/nuvolaris/go-replace
+[submodule "tools/someutils"]
+	path = tools/someutils
+	url = https://github.com/nuvolaris/someutils
+[submodule "tools/goawk"]
+	path = tools/goawk
+	url = https://github.com/nuvolaris/goawk
+[submodule "tools/go-find"]
+	path = tools/go-find
+	url = https://github.com/nuvolaris/go-find
