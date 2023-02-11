@@ -16,11 +16,11 @@
 # under the License.
 #
 [submodule "task"]
-	path = task
+	path = tools/task
 	url = https://github.com/nuvolaris/task
 [submodule "openwhisk-cli"]
-	path = openwhisk-cli
+	path = tools/openwhisk-cli
 	url = https://github.com/nuvolaris/openwhisk-cli
 [submodule "sh"]
-	path = sh
+	path = tools/sh
 	url = https://github.com/nuvolaris/sh
