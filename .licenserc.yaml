@@ -30,6 +30,7 @@ header:
     - '*.off'
     - '_*'
     - '**/*.help'
+    - sh/
     - 'attic/**'
     - 'bin/**'
 
