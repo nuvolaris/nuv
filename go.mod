@@ -26,6 +26,9 @@ require (
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/laher/someutils v0.0.0-20140419105303-b27df3fbdaec // indirect
+	github.com/laher/uggo v0.0.0-20140418102112-0ad25fe11c5b // indirect
+	github.com/laher/wget-go v0.5.0 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -33,6 +36,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
+	github.com/nuvolaris/someutils v0.0.0-20230211182652-9b97c44bfdad // indirect
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

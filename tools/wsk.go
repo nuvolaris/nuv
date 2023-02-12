@@ -16,7 +16,7 @@
 // under the License.
 //
 
-package main
+package tools
 
 import (
 	"fmt"
