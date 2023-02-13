@@ -4,11 +4,14 @@ go 1.19
 
 require (
 	github.com/apache/openwhisk-client-go v0.0.0-20221221220036-71124f15c938
+	github.com/go-task/task/v3 v3.19.0
 	github.com/nicksnyder/go-i18n v1.10.1
 	github.com/nojima/httpie-go v0.7.0
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101152216-23ac3198e23d
+	github.com/spf13/pflag v1.0.5
+	mvdan.cc/sh/v3 v3.6.0
 )
 
 require (
@@ -21,14 +24,11 @@ require (
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
-	github.com/go-task/task/v3 v3.19.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
-	github.com/laher/someutils v0.0.0-20140419105303-b27df3fbdaec // indirect
 	github.com/laher/uggo v0.0.0-20140418102112-0ad25fe11c5b // indirect
-	github.com/laher/wget-go v0.5.0 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -43,7 +43,6 @@ require (
 	github.com/radovskyb/watcher v1.0.7 // indirect
 	github.com/sajari/fuzzy v1.0.0 // indirect
 	github.com/spf13/cobra v1.6.1 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/vbauerster/mpb/v5 v5.0.2 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/exp v0.0.0-20220930202632-ec3f01382ef9 // indirect
@@ -52,5 +51,4 @@ require (
 	golang.org/x/term v0.3.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	mvdan.cc/sh/v3 v3.6.0 // indirect
 )

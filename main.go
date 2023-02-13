@@ -29,21 +29,25 @@ func main() {
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
-		util := args[1][1:]
-		if util == "" || util == "-" || util == "task" {
+		cmd := args[1][1:]
+		if cmd == "" || cmd == "-" || cmd == "task" {
 			taskmain.Task(append([]string{"task"}, args[2:]...))
 			os.Exit(0)
 		}
+		if cmd == "help" {
+			tools.Help()
+			os.Exit(0)
+		}
 		// check if it is an embedded to and invoke it
-		if tools.IsTool(util) {
-			code, err := tools.RunTool(util, args[2:])
+		if tools.IsTool(cmd) {
+			code, err := tools.RunTool(cmd, args[2:])
 			if err != nil {
 				log.Print(err.Error())
 			}
 			os.Exit(code)
 		}
 		// no embeded tool found
-		log.Printf("unknown tool -%s", util)
+		log.Printf("unknown tool -%s", cmd)
 		os.Exit(0)
 	}
 	// now process the subtask

@@ -29,12 +29,13 @@ tasks:
       - go build
     sources:
       - '*.go'
+      - 'tools/*.go'
     generates:
       - nuv
 
+    #- go clean -cache -modcache
   rebuild:
     - rm -f nuv
-    - go clean -cache -modcache
     - task: build
 
   update-task: |

@@ -6,7 +6,7 @@
 // "License"); you may not use this file except in compliance
 // with the License.  You may obtain a copy of the License at
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing,
 // software distributed under the License is distributed on an
@@ -14,7 +14,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-//
 package tools
 
 import (
@@ -22,11 +21,10 @@ import (
 	"os"
 
 	"github.com/nojima/httpie-go"
-	"github.com/nuvolaris/someutils/some"
 )
 
 func IsTool(name string) bool {
-	if some.IsBuiltin(name) {
+	if IsUtil(name) {
 		return true
 	}
 	switch name {
@@ -39,9 +37,10 @@ func IsTool(name string) bool {
 }
 
 func RunTool(name string, args []string) (int, error) {
-	if some.IsBuiltin(name) {
-		return some.Run(name, args)
+	if IsUtil(name) {
+		return RunUtil(name, args)
 	}
+
 	switch name {
 	case "wsk":
 		fmt.Println("=== wsk ===")
@@ -58,4 +57,12 @@ func RunTool(name string, args []string) (int, error) {
 		}
 	}
 	return 0, nil
+}
+
+func Help() {
+	fmt.Println("Available tools:")
+	tools := append(Utils, "wsk", "ht", "task")
+	for _, x := range tools {
+		fmt.Printf("-%s\n", x)
+	}
 }
