@@ -28,9 +28,7 @@ func IsTool(name string) bool {
 		return true
 	}
 	switch name {
-	case "wsk":
-		return true
-	case "ht":
+	case "wsk", "ht":
 		return true
 	}
 	return false
@@ -40,7 +38,6 @@ func RunTool(name string, args []string) (int, error) {
 	if IsUtil(name) {
 		return RunUtil(name, args)
 	}
-
 	switch name {
 	case "wsk":
 		fmt.Println("=== wsk ===")
