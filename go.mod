@@ -36,7 +36,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
-	github.com/nuvolaris/someutils v0.0.0-20230211182652-9b97c44bfdad // indirect
+	github.com/nuvolaris/someutils v0.0.0-20230214050759-8af4a08fe9b8 // indirect
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

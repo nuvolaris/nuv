@@ -33,7 +33,9 @@ tasks:
     generates:
       - nuv
 
-    #- go clean -cache -modcache
+  clean:
+    - go clean -cache -modcache
+
   rebuild:
     - rm -f nuv
     - task: build
