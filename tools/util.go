@@ -32,6 +32,7 @@ var Utils = []string{
 }
 
 func IsUtil(name string) bool {
+	some.Init()
 	for _, s := range Utils {
 		if s == name {
 			return true
