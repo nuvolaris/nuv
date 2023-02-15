@@ -34,7 +34,15 @@ func IsTool(name string) bool {
 	return false
 }
 
-func RunTool(name string, args []string) (int, error) {
+func RunTool(name string, args []string /*, stdin io.Reader, stdout io.Writer, stderr io.Writer*/) (int, error) {
+	/*savedStdin := os.Stdin
+	savedStdout := os.Stdout
+	savedStderr := os.Stderr
+	defer func() {
+		os.Stdin = savedStdin
+		os.Stdout = savedStdout
+		os.Stderr = savedStderr
+	}()*/
 	if IsUtil(name) {
 		return RunUtil(name, args)
 	}
