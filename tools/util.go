@@ -42,7 +42,6 @@ func IsUtil(name string) bool {
 }
 
 func RunUtil(name string, args []string) (int, error) {
-	some.Init()
 	if IsUtil(name) {
 		full := append([]string{name}, args...)
 		fmt.Println(name, full)
