@@ -9,6 +9,7 @@ require (
 	github.com/nojima/httpie-go v0.7.0
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
+	github.com/nuvolaris/someutils v0.0.0-20230215214008-863dfc0bf05f
 	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230101152216-23ac3198e23d
 	github.com/spf13/pflag v1.0.5
 	mvdan.cc/sh/v3 v3.6.0
@@ -36,7 +37,6 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
-	github.com/nuvolaris/someutils v0.0.0-20230214050759-8af4a08fe9b8 // indirect
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
