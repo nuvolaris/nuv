@@ -42,3 +42,9 @@ tasks:
     desc: sub (has subcommands)
     cmds:
       - task -d sub
+
+  boh:
+    desc: boh
+    cmds: 
+      - echo boh
+      - ht
