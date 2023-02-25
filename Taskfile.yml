@@ -18,7 +18,7 @@
 version: '3'
 tasks:
   
-  default: task -l
+  default: task build
   
   setup: 
     silent: true
@@ -32,6 +32,11 @@ tasks:
       - 'tools/*.go'
     generates:
       - nuv
+
+  test:
+    desc: test nuv
+    cmds:
+    - echo "Surprise! No tests yet."
 
   clean:
     - go clean -cache -modcache
