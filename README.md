@@ -48,19 +48,61 @@ Note that to avoid an egg and chicken problem, `nuv` itself is build with his an
 
 ## Where `nuv` looks for tasks
 
-When you run `nuv` it will first look in current directory for a `Nuvfile.yml`. If it is not there, it will assume it has to download its tasks from github and will execute or update the `~/.nuv/olaris` by cloning or updating `https://github.com/nuvolaris/olaris` and change to that directory to look for tasks, and restart looking.
+Nuv is an enhanced task runner. Tasks are described by [task](https://taskfile.dev) taskfiles.
+Nuv is able either to run existing tasks or download them from github.
 
-If it finds the `Nuvfile.yml`, it will also search for `Nuvtools.json`, a json file that lists the tools that must be downloaded (`kind`, `kubectl` etc). If there is not a `Nuvtools.json` it will go up one level and restart looking.
+When you run `nuv [<args>...]` it will first look for its `nuv` root.
 
-When finally it found a `Nuvfile.yml` with `Nuvtools.json`, it downloads all the tools and starts execution with that directory as the starting poing.
+Once the `nuv` root has been found, it will download related tools and finally will execute tasks.
 
-It will then look to the command line parameters parameters `nuv <arg1> <arg2> <arg3>` and will consider them directory names. The list can be empty. If there is a directory name  `<arg1>` it will change to that directory. If there is then a subdirectory `<arg2>` it will change to that and so on until it finds a argument that does not look a directory name. 
+### How `nuv` locate the `nuv` root
 
-If it is not a directory name, and there are no other arguments, will look for a "help.txt". If it is there, it will show this. It is is not there it will execute a `task -l` showing tasks with description. 
+The `nuv` root is a folder with two files in it: `Nuvfile` (an yaml taskfile) and `Nuvtools` (a json file describing the tools to download). 
 
-If it finds a task with no directory, if there is the `help.txt` it will feed the remaining arguments to `docopt` to parse the parameters and finally will invoke the task with all the parameters interpreted according the  docopt specifications. Otherwise will just execute the task and use the remaining arguments as task parameters.
+The first step is to locate the task. The algorithm is the following.
 
-Phew!
+First it will look in the current folder if there is a `Nuvfile`. If there is, it will also look for `Nuvtools`. If it is not there, it will go up of one level looking for a directory with `Nuvfile` and `Nuvtools`, and selects it as the `nuv` root.
+
+If there is not a `Nuvfile` it will look for a folder called `nuvtasks` with both a `Nuvfile` and `Nuvtools` in it and selects it as the `nuv` root.
+
+If the preceding tests fails, it will try to download it from GitHub, from a branch in a github repo.
+
+The repo defaults to  `https://github.com/nuvolaris/nuvfiles` but it can be changes setting the enviroment variable `NUV_TASKS`. The branch to use is wired in the build and it is changed at build time. 
+
+It will download or update `nuvtasks` and store the in `~/nuv/tasks`. Note it will update the `nuvtasks` if the repo is older that 24hours.
+
+### Download tools
+
+The `Nuvtools` is a json file in the format: 
+```
+{
+  "<tool>": {
+      "<platform>": "<url>".
+      ...
+      },
+  ...
+}
+```
+
+where the `<tool>` is the name of a multiplatform binary, `<platform>` is the name of a platform, and `<url>`is the url with some replacement strings. 
+
+TODO: provide more details on the `Nuvtools` format
+
+## How nuv execute tasks
+
+It will then look to the command line parameters parameters `nuv <arg1> <arg2> <arg3>` and will consider them directory names. The list can be empty. 
+
+If there is a directory name  `<arg1>` it will change to that directory. If there is then a subdirectory `<arg2>` it will change to that and so on until it finds a argument that is not a directory name. 
+
+If the last argument is a directory name, will look for a `help.txt`. If it is there, it will show this. It is is not there it will execute a `task -l` showing tasks with description. 
+
+If it finds an argument not corresponding to a directory, it will  consider it a task to execute.
+
+It will xecute the `help.txt` as a  [`docopt`](http://docopt.org/) to parse the remaining arguments as parametes. It will return a series of `<key>=<value>` that will be fed to `task`.
+
+So to make an example a command like `nuv setup kubernetes install --context=k3s` will look in the folder `setup/kubernetes` in the `nuv root` if it is there, select `install` as task to execute and parse the `--context=k3s`. It is equivalent to invoke `cd setup/kubernetes ; task install -- context=k3s`.
+
+Note that also this will also use the downloaded tools and the embedded commands of `nuv`.
 
 ## Embedded tools
 

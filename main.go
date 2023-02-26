@@ -52,6 +52,15 @@ func main() {
 		log.Printf("unknown tool -%s", cmd)
 		os.Exit(0)
 	}
+
 	// now process the subtask
 	log.Print("TODO")
+
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	root, err := taskFolder(dir, false)
+
 }
