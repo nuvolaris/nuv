@@ -88,7 +88,7 @@ where the `<tool>` is the name of a multiplatform binary, `<platform>` is the na
 
 TODO: provide more details on the `Nuvtools` format
 
-## How nuv execute tasks
+## How `nuv` execute tasks
 
 It will then look to the command line parameters parameters `nuv <arg1> <arg2> <arg3>` and will consider them directory names. The list can be empty. 
 

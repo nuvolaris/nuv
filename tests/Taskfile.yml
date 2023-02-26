@@ -1,0 +1,30 @@
+version: '3'
+
+vars:
+  NUV:
+   sh: $(dirname $PWD)/nuv
+
+
+tasks:
+
+  default:
+   - task: nuvfiles
+   - task: nuvfile
+   - task: github
+
+  nuvfiles:
+    dir: ..
+    cmds: 
+     - echo {{.NUV}} in $(pwd)
+
+  nuvfile:
+    dir: ../nuvfiles
+    cmds:
+     - echo {{.NUV}} in $(pwd)
+
+  github:
+    cmds:
+     - echo {{.NUV}} in $(pwd)
+    
+
+    
