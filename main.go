@@ -25,6 +25,12 @@ import (
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
 )
 
+// repo where download tasks
+var NuvOlarisRepo = "http://github.com/nuvolaris/olaris"
+
+// branch where download tasks
+var NuvOlarisBranch = "test"
+
 func main() {
 	tools.NuvCmd, _ = filepath.Abs(os.Args[0])
 	args := os.Args
@@ -53,14 +59,17 @@ func main() {
 		os.Exit(0)
 	}
 
-	// now process the subtask
-	log.Print("TODO")
-
+	// prepare
 	dir, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
+	root, err := prepareTaskFolderAndTools(dir, false)
+	if err != nil {
+		panic(err)
+	}
 
-	root, err := taskFolder(dir, false)
+	// execute nuv
+	Nuv(root, []string{})
 
 }

@@ -6,7 +6,7 @@
 // "License"); you may not use this file except in compliance
 // with the License.  You may obtain a copy of the License at
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing,
 // software distributed under the License is distributed on an
@@ -14,14 +14,16 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-//
 package main
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+
+	"github.com/mitchellh/go-homedir"
 )
 
 /// test utils
@@ -37,9 +39,21 @@ func as(s ...string) []string {
 }
 
 var homeDir = ""
+var workDir = ""
+
+// normalize path mahing relative to the home directory
+func npath(dir string) string {
+	return strings.Replace(dir, workDir, "/work", -1)
+}
+
+func nhpath(dir string) string {
+	//fmt.Println("dir", dir, "home", homeDir)
+	return strings.Replace(dir, homeDir, "/home", -1)
+}
 
 func TestMain(m *testing.M) {
 	wd, _ := os.Getwd()
-	homeDir, _ = filepath.Abs(wd)
+	workDir, _ = filepath.Abs(wd)
+	homeDir, _ = homedir.Dir()
 	os.Exit(m.Run())
 }

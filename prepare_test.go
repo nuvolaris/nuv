@@ -18,22 +18,29 @@ package main
 
 import "os"
 
-func ExampleNuvSubdirs() {
-	os.Chdir(homeDir)
-	pr(1, Nuv("notexistent", as()))
-	os.Chdir(homeDir)
-	pr(2, Nuv("tests", as()))
-	os.Chdir(homeDir)
-	pr(3, Nuv("tests", as("sub")))
-	os.Chdir(homeDir)
-	pr(4, Nuv("tests", as("sub", "subsub")))
+func Example_init() {
+	dir, err := prepareTaskFolderAndTools(".", false)
+	pr(1, err, npath(dir))
+	dir, err = prepareTaskFolderAndTools("olaris", false)
+	pr(2, err, npath(dir))
+	dir, err = prepareTaskFolderAndTools("olaris/sub", false)
+	pr(3, err, npath(dir))
+
 	// Output:
-	// -
+	// 1 <nil> /work/olaris
+	// 2 <nil> /work/olaris
+	// 3 <nil> /work/olaris
 }
 
-func ExampleNuvCmd() {
-	os.Chdir(homeDir)
-	pr(1, Nuv("tests", as("hello")))
+func Example_git() {
+	os.RemoveAll(join(homeDir, ".nuv"))
+	dir, err := prepareTaskFolderAndTools("tools", false)
+	pr(1, err, nhpath(dir))
+	dir, err = prepareTaskFolderAndTools("tools", false)
+	pr(2, err, nhpath(dir))
 	// Output:
-	// -
+	// Cloning tasks...
+	// 1 <nil> /home/.nuv/olaris
+	// Updating tasks...
+	// 2 <nil> /home/.nuv/olaris
 }

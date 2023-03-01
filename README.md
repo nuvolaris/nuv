@@ -76,15 +76,11 @@ It will download or update `nuvtasks` and store the in `~/nuv/tasks`. Note it wi
 The `Nuvtools` is a json file in the format: 
 ```
 {
-  "<tool>": {
-      "<platform>": "<url>".
-      ...
-      },
-  ...
+  "<tool>": "<url>"
 }
 ```
 
-where the `<tool>` is the name of a multiplatform binary, `<platform>` is the name of a platform, and `<url>`is the url with some replacement strings. 
+where the `<tool>` is the name of a multiplatform binary, and `<url>`is the url with some replacement strings. 
 
 TODO: provide more details on the `Nuvtools` format
 
