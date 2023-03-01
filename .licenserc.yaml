@@ -32,6 +32,8 @@ header:
     - '_*'
     - '*.off'
     - 'tryit/**'
+    - 'Nuvtools'
+    - 'LICENSE'
 
 dependency:
   files:
