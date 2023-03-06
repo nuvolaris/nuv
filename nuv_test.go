@@ -18,15 +18,12 @@ package main
 
 import "os"
 
-func ExampleNuvSubdirs() {
-	os.Chdir(homeDir)
-	pr(1, Nuv("notexistent", as()))
-	os.Chdir(homeDir)
-	pr(2, Nuv("tests", as()))
-	os.Chdir(homeDir)
-	pr(3, Nuv("tests", as("sub")))
-	os.Chdir(homeDir)
-	pr(4, Nuv("tests", as("sub", "subsub")))
+func ExampleNuv() {
+
+	//
+	Nuv("olaris", []string{})
+	//cat help.txt
+	Nuv("olaris", []string{"sub"})
 	// Output:
 	// -
 }

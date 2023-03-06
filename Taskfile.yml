@@ -20,8 +20,8 @@ tasks:
   
   default: task build
   
-  setup: 
-    silent: true
+  setup:
+    - cd olaris ; git checkout -B test ; cd ..
 
   build:
     desc: build nuv
