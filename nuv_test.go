@@ -17,7 +17,6 @@
 package main
 
 import (
-	"os"
 	"path/filepath"
 )
 
@@ -25,23 +24,27 @@ func ExampleNuv() {
 	// test
 	olaris, _ := filepath.Abs("olaris")
 	pr(1, Nuv(olaris, split("")))
-	pr(2, Nuv(olaris, split("sub")))
-	pr(3, Nuv(olaris, split("sub multi")))
-	pr(4, Nuv(olaris, split("sub multi ship")))
-
+	pr(2, Nuv(olaris, split("top")))
+	pr(3, Nuv(olaris, split("top arg")))
+	pr(4, Nuv(olaris, split("sub")))
+	pr(5, Nuv(olaris, split("sub multi")))
+	pr(6, Nuv(olaris, split("sub multi ship")))
 	// Output:
-	// -
-}
-
-func ExampleNuvCmd() {
-	os.Chdir(homeDir)
-	pr(1, Nuv("tests", as("hello")))
-	// Output:
-	// -
-}
-
-func ExampleTask() {
-	Task("task", "-l")
-	// Output:
-	// -
+	// (olaris) task [-t nuvfile.yml -l]
+	// 1 <nil>
+	// (olaris) task [-t nuvfile.yml top --]
+	// 2 <nil>
+	// (olaris) task [-t nuvfile.yml top -- arg]
+	// 3 <nil>
+	// (sub) task [-t nuvfile.yml -l]
+	// 4 <nil>
+	// Usage:
+	//   multi ship new <name>...
+	//   multi ship <name> move <x> <y>
+	//   multi ship shoot <x> <y>
+	//   multi mine (set|remove) <x> <y>
+	//
+	// 5 <nil>
+	// (multi) task [ship]
+	// 6 <nil>
 }

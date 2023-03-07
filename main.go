@@ -57,5 +57,4 @@ func main() {
 
 	// execute nuv
 	Nuv(getNuvRoot(), args[1:])
-
 }

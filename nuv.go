@@ -48,6 +48,7 @@ func Nuv(base string, args []string) error {
 		if exists(dir, NUVFILE) {
 			os.Chdir(dir)
 			rest = rest[1:]
+			//fmt.Println(dir, rest)
 		} else {
 			break
 		}
@@ -65,6 +66,7 @@ func Nuv(base string, args []string) error {
 		return nil
 	}
 	// unparsed args
-	Task(rest...)
+	targs := append([]string{"-t", NUVFILE, rest[0], "--"}, rest[1:]...)
+	Task(targs...)
 	return nil
 }
