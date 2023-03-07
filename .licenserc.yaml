@@ -32,7 +32,7 @@ header:
     - '_*'
     - '*.off'
     - 'tryit/**'
-    - 'Nuvtools'
+    - 'nuvtools.json'
     - 'LICENSE'
 
 dependency:
