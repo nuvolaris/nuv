@@ -18,12 +18,12 @@ package main
 
 import "os"
 
-func Example_init() {
-	dir, err := prepareTaskFolderAndTools(".", false)
+func Example_locate() {
+	dir, err := locateNuvRoot(".", false)
 	pr(1, err, npath(dir))
-	dir, err = prepareTaskFolderAndTools("olaris", false)
+	dir, err = locateNuvRoot("olaris", false)
 	pr(2, err, npath(dir))
-	dir, err = prepareTaskFolderAndTools("olaris/sub", false)
+	dir, err = locateNuvRoot(join("olaris", "sub"), false)
 	pr(3, err, npath(dir))
 
 	// Output:
@@ -32,11 +32,11 @@ func Example_init() {
 	// 3 <nil> /work/olaris
 }
 
-func Example_git() {
+func Example_locate_git() {
 	os.RemoveAll(join(homeDir, ".nuv"))
-	dir, err := prepareTaskFolderAndTools("tools", false)
+	dir, err := locateNuvRoot("tests", false)
 	pr(1, err, nhpath(dir))
-	dir, err = prepareTaskFolderAndTools("tools", false)
+	dir, err = locateNuvRoot("tests", false)
 	pr(2, err, nhpath(dir))
 	// Output:
 	// Cloning tasks...

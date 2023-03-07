@@ -18,12 +18,16 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 )
 
 func help() {
-	fmt.Println("help")
+	if exists(".", NUVOPTS) {
+		fmt.Println(readfile(NUVOPTS))
+	} else {
+		//fmt.Println("-t", "Nuvfile", "-l")
+		Task("-t", NUVFILE, "-l")
+	}
 }
 
 func parseArgs(args []string) []string {
@@ -33,13 +37,15 @@ func parseArgs(args []string) []string {
 // Nuv parse args moving
 // into the folder corresponding to args
 // then parse them with docopts and invokes task
-func Nuv(dir string, args []string) error {
-	log.Printf("Nuv: %s %v", dir, args)
-
-	// change to a folder without a
+func Nuv(base string, args []string) error {
+	// go down using args as subcommands
+	err := os.Chdir(base)
+	if err != nil {
+		return err
+	}
 	rest := args
 	for _, dir := range args {
-		if exists(dir, "Nuvfile") {
+		if exists(dir, NUVFILE) {
 			os.Chdir(dir)
 			rest = rest[1:]
 		} else {
@@ -52,22 +58,13 @@ func Nuv(dir string, args []string) error {
 		return nil
 	}
 
-	if exists(".", "help.txt") {
+	// parsed args
+	if exists(".", NUVOPTS) {
 		parsedArgs := parseArgs(rest)
-		fmt.Println(parsedArgs)
+		Task(parsedArgs...)
 		return nil
 	}
-
-	fmt.Println(rest)
-	return nil
-
-}
-
-// processCmd assumes cmd is a string and it is not a directory
-func processCmd(args []string) error {
-	log.Printf("ProcessCmd: %v", args)
-	taskDryRun = true
-	Task(args...)
-	taskDryRun = false
+	// unparsed args
+	Task(rest...)
 	return nil
 }

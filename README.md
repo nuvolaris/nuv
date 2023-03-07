@@ -39,12 +39,20 @@ It is basically the [task](https://taskfile.dev) tool enanced to support:
 - a way to create a hierarchy of taskfiles 
 - documentation for tasks powered by [docopt](http://docopt.org/)
 
-Note that to avoid an egg and chicken problem, `nuv` itself is build with his ancestor, `task`.
+Note that to avoid an egg and chicken problem, `nuv` itself is built with his ancestor, `task`.
 
 - Build it with just `task build`.
 - Run tests with `task test`.
 
 # Documentation
+
+## Environment variables
+
+The following environment variables allows to ovverride certain defaults.
+
+- `NUV_ROOT` is the  folder where `nuv` looks for its tasks. It is not defined, it follows the algorithm below to find it.
+- `NUV_REPO` is the github repo where `nuv` downloads its tasks. It it is not defined, it defaults to `https://github.com/nuvolaris/olaris`
+- `NUV_BRANCH` is the branch where `nuv` looks for its tasks. The branch to use is defined at build time and it is the base version (without the patch level). For example, if `nuv` is `0.3.0-morpheus` the branch to use will be `0.3-morpheus`
 
 ## Where `nuv` looks for tasks
 
@@ -57,23 +65,27 @@ Once the `nuv` root has been found, it will download related tools and finally w
 
 ### How `nuv` locate the `nuv` root
 
-The `nuv` root is a folder with two files in it: `Nuvfile` (an yaml taskfile) and `Nuvtools` (a json file describing the tools to download). 
+The `nuv` root is a folder with two files in it: `nuvfile.yml` (an yaml taskfile) and `nuvtools.json` (a json file describing the tools to download). 
 
-The first step is to locate the task. The algorithm is the following.
+The first step is to locate the root folder. The algorithm is the following.
 
-First it will look in the current folder if there is a `Nuvfile`. If there is, it will also look for `Nuvtools`. If it is not there, it will go up of one level looking for a directory with `Nuvfile` and `Nuvtools`, and selects it as the `nuv` root.
+If the environment variable `NUV_ROOT` is defined, it will look there first, and will check if there are the two files.
 
-If there is not a `Nuvfile` it will look for a folder called `nuvtasks` with both a `Nuvfile` and `Nuvtools` in it and selects it as the `nuv` root.
+Then it will look in the current folder if there is a `nuvfile.yml`. If there is, it will also look for `nuvtools.json`. If it is not there, it will go up of one level looking for a directory with `nuvfile.yml` and `nuvtools.json`, and selects it as the `nuv` root.
 
-If the preceding tests fails, it will try to download it from GitHub, from a branch in a github repo.
+If there is not a `nuvfile.yml` it will look for a folder called `olaris` with both a `nuvfile.yml` and `nuvtools.json` in it and will select it as the `nuv` root.
 
-The repo defaults to  `https://github.com/nuvolaris/nuvfiles` but it can be changes setting the enviroment variable `NUV_TASKS`. The branch to use is wired in the build and it is changed at build time. 
+If the preceding tests fails, it will try to download it from GitHub, from a branch in a github repo. 
 
-It will download or update `nuvtasks` and store the in `~/nuv/tasks`. Note it will update the `nuvtasks` if the repo is older that 24hours.
+The repo to use is defined by the environment variable `NUV_REPO`, and defaults if it is missing to `https://github.com/nuvolaris/olaris`
+
+The branch to use it defined at build time. It can be overriden with the enviroment variable `NUV_BRANCH`.
+
+If it is missing, it will clone the repo and store the in `~/.nuv/olaris`. If it is there and the `nuvtools.json` is older than 24 hours, it will update it. Otherwise it will stop the search there.
 
 ### Download tools
 
-The `Nuvtools` is a json file in the format: 
+The `nuvtools.json` is a json file in the format: 
 ```
 {
   "<tool>": "<url>"
@@ -90,13 +102,17 @@ It will then look to the command line parameters parameters `nuv <arg1> <arg2> <
 
 If there is a directory name  `<arg1>` it will change to that directory. If there is then a subdirectory `<arg2>` it will change to that and so on until it finds a argument that is not a directory name. 
 
-If the last argument is a directory name, will look for a `help.txt`. If it is there, it will show this. It is is not there it will execute a `task -l` showing tasks with description. 
+If the last argument is a directory name, will look for a `nuvopts.txt`. If it is there, it will show this. It is is not there it will execute a `task -t nuvfile.yml -l` showing tasks with description. 
 
-If it finds an argument not corresponding to a directory, it will  consider it a task to execute.
+If it finds an argument not corresponding to a directory, it will consider it a task to execute, 
 
-It will xecute the `help.txt` as a  [`docopt`](http://docopt.org/) to parse the remaining arguments as parametes. It will return a series of `<key>=<value>` that will be fed to `task`.
+If there is not a `nuvopts.txt`,  it will execute as a task, passing the other arguments (equivalent to `task -t nuvfile.yml <arg> -- <the-other-args>`). 
 
-So to make an example a command like `nuv setup kubernetes install --context=k3s` will look in the folder `setup/kubernetes` in the `nuv root` if it is there, select `install` as task to execute and parse the `--context=k3s`. It is equivalent to invoke `cd setup/kubernetes ; task install -- context=k3s`.
+If there is a `nuvopts.txt`, it will interpret it as a  [`docopt`](http://docopt.org/) to parse the remaining arguments as parameters. The result of parsing is a sequence of `<key>=<value>` that will be fed to `task`. So it is equivalent to invoking `task -t nuvfile.yml <arg> <key>=<value> <key>=<value>...`
+
+### Example
+
+A command like `nuv setup kubernetes install --context=k3s` will look in the folder `setup/kubernetes` in the `nuv root` if it is there, select `install` as task to execute and parse the `--context=k3s`. It is equivalent to invoke `cd setup/kubernetes ; task install -- context=k3s`.
 
 Note that also this will also use the downloaded tools and the embedded commands of `nuv`.
 

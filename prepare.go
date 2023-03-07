@@ -26,40 +26,24 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
-func join(dir string, file string) string {
-	return filepath.Join(dir, file)
-}
-
-func exists(dir string, file string) bool {
-	_, err := os.Stat(join(dir, file))
-	return !os.IsNotExist(err)
-}
-
-func parent(dir string) string {
-	return filepath.Dir(dir)
-}
-
-func loadTools() {
+func loadTools(rootdir string) {
 	//return make(map[string]string)
+	fmt.Printf("TODO!!!")
 }
 
 func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
-	repoURL := os.Getenv("NUV_OLARIS_REPO")
-	if repoURL == "" {
-		repoURL = NuvOlarisRepo
-	}
+	repoURL := getNuvRepo()
+	branch := getNuvBranch()
 	localDir, err := homedir.Expand("~/.nuv/olaris")
 	//fmt.Println(localDir)
 	if err != nil {
 		return "", err
 	}
 
-	branch := NuvOlarisBranch
-	if branch == "" {
-		branch = os.Getenv("NUV_OLARIS_BRANCH")
-	}
+	// Updating an exiting tools
+	// TODO: wait 24 hours...
 
-	if exists(localDir, "Nuvtools") {
+	if exists(localDir, NUVTOOLS) {
 		fmt.Println("Updating tasks...")
 		r, err := git.PlainOpen(localDir)
 		if err != nil {
@@ -82,7 +66,7 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 		return localDir, nil
 	}
 
-	//fmt.Println(repoURL, branch)
+	// Clone the repo if not existing
 	ref := plumbing.NewBranchReferenceName(branch)
 	//fmt.Println(ref)
 	cloneOpts := &git.CloneOptions{
@@ -100,17 +84,18 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	return localDir, nil
 }
 
-// prepareTaskFolderAndTools locate the folder where starts execution
+// locateNuvRoot locate the folder where starts execution
 // it can be a parent folder of the current folder or it can be downloaded
 // from github - it should contain a file Nuvfile and a file Nuvtools
-func prepareTaskFolderAndTools(cur string, inHomeDir bool) (string, error) {
+func locateNuvRoot(cur string, inHomeDir bool) (string, error) {
 	cur, err := filepath.Abs(cur)
 	if err != nil {
 		return "", err
 	}
-	if !exists(cur, "Nuvfile") {
+	// exits nuvtile.yml?
+	if !exists(cur, NUVFILE) {
 		if exists(cur, "olaris") {
-			return prepareTaskFolderAndTools(join(cur, "olaris"), inHomeDir)
+			return locateNuvRoot(join(cur, "olaris"), inHomeDir)
 		}
 		if inHomeDir {
 			return "", fmt.Errorf("cannot find nuv root dir and cannot download it from github")
@@ -119,14 +104,12 @@ func prepareTaskFolderAndTools(cur string, inHomeDir bool) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return prepareTaskFolderAndTools(dir, true)
+		return locateNuvRoot(dir, true)
 	}
 
-	// exists
-	if !exists(cur, "Nuvtools") {
-		return prepareTaskFolderAndTools(parent(cur), inHomeDir)
+	// found nuvtoools.json? if not, go up
+	if !exists(cur, NUVTOOLS) {
+		return locateNuvRoot(parent(cur), inHomeDir)
 	}
-
-	loadTools()
 	return cur, nil
 }

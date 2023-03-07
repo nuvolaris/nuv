@@ -55,5 +55,6 @@ func TestMain(m *testing.M) {
 	wd, _ := os.Getwd()
 	workDir, _ = filepath.Abs(wd)
 	homeDir, _ = homedir.Dir()
+	taskDryRun = true
 	os.Exit(m.Run())
 }

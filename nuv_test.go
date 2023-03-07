@@ -16,14 +16,19 @@
 // under the License.
 package main
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
 func ExampleNuv() {
+	// test
+	olaris, _ := filepath.Abs("olaris")
+	pr(1, Nuv(olaris, split("")))
+	pr(2, Nuv(olaris, split("sub")))
+	pr(3, Nuv(olaris, split("sub multi")))
+	pr(4, Nuv(olaris, split("sub multi ship")))
 
-	//
-	Nuv("olaris", []string{})
-	//cat help.txt
-	Nuv("olaris", []string{"sub"})
 	// Output:
 	// -
 }
@@ -31,6 +36,12 @@ func ExampleNuv() {
 func ExampleNuvCmd() {
 	os.Chdir(homeDir)
 	pr(1, Nuv("tests", as("hello")))
+	// Output:
+	// -
+}
+
+func ExampleTask() {
+	Task("task", "-l")
 	// Output:
 	// -
 }

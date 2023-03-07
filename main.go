@@ -25,21 +25,17 @@ import (
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
 )
 
-// repo where download tasks
-var NuvOlarisRepo = "http://github.com/nuvolaris/olaris"
-
-// branch where download tasks
-var NuvOlarisBranch = "test"
-
 func main() {
+	// initialize tools (used by the shell to find myself)
 	tools.NuvCmd, _ = filepath.Abs(os.Args[0])
-	args := os.Args
+
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
+	args := os.Args
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
-			taskmain.Task(append([]string{"task"}, args[2:]...))
+			taskmain.Task(args[2:])
 			os.Exit(0)
 		}
 		if cmd == "help" {
@@ -59,17 +55,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	// prepare
-	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	root, err := prepareTaskFolderAndTools(dir, false)
-	if err != nil {
-		panic(err)
-	}
-
 	// execute nuv
-	Nuv(root, []string{})
+	Nuv(getNuvRoot(), args[1:])
 
 }
