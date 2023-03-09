@@ -18,6 +18,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -92,4 +93,26 @@ func readfile(file string) string {
 		return ""
 	}
 	return string(dat)
+}
+
+//var logger log.Logger = log.New(os.Stderr, "", 0)
+
+func warn(args ...any) {
+	log.Println(args...)
+}
+
+var tracing = os.Getenv("TRACE") != ""
+
+func trace(args ...any) {
+	if tracing {
+		log.Println(append([]any{"TRACE: "}, args...))
+	}
+}
+
+var debugging = os.Getenv("DEBUG") != ""
+
+func debug(args ...any) {
+	if debugging {
+		log.Println(append([]any{"DEBUG: "}, args...))
+	}
 }

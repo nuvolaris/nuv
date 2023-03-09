@@ -50,6 +50,7 @@ func parseArgs(usage string, args []string) []string {
 	parser := docopt.Parser{}
 	opts, err := parser.ParseArgs(usage, args, NuvVersion)
 	if err != nil {
+		warn(err)
 		return res
 	}
 	for k, v := range opts {

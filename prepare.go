@@ -26,11 +26,6 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
-func loadTools(rootdir string) {
-	//return make(map[string]string)
-	fmt.Printf("TODO!!!")
-}
-
 func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	repoURL := getNuvRepo()
 	branch := getNuvBranch()
