@@ -34,6 +34,8 @@ header:
     - 'tryit/**'
     - 'nuvtools.json'
     - 'LICENSE'
+    - 'tests/bats/**'
+    - 'tests/test_helper/**'
 
 dependency:
   files:
