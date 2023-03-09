@@ -106,16 +106,16 @@ func Nuv(base string, args []string) error {
 
 	// parsed args
 	if exists(".", NUVOPTS) {
-		fmt.Println("PREPARSE:", rest)
+		//fmt.Println("PREPARSE:", rest)
 		parsedArgs := parseArgs(readfile(NUVOPTS), rest)
 		prefix := []string{"-t", NUVFILE}
 		if len(rest) > 0 && rest[0][0] != '-' {
 			prefix = append(prefix, rest[0])
 		}
 		parsedArgs = append(prefix, parsedArgs...)
-		fmt.Println("POSTPARSE:", parsedArgs)
-		pwd, _ := os.Getwd()
-		fmt.Println("PWD", pwd)
+		//fmt.Println("POSTPARSE:", parsedArgs)
+		//pwd, _ := os.Getwd()
+		//fmt.Println("PWD", pwd)
 		Task(parsedArgs...)
 		return nil
 	}
