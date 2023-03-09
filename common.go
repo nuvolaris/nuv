@@ -34,6 +34,7 @@ const NUVREPO = "http://github.com/nuvolaris/olaris"
 // branch where download tasks
 // defaults to test - will be changed in compilation
 var NuvBranch = "test"
+var NuvVersion = "0.3"
 
 // get defaults
 

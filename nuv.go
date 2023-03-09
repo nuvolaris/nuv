@@ -19,6 +19,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
+	"strings"
+
+	docopt "github.com/docopt/docopt-go"
 )
 
 func help() {
@@ -30,8 +34,49 @@ func help() {
 	}
 }
 
-func parseArgs(args []string) []string {
-	return args
+// parseArgs parse the arguments acording the docopt
+// it returns a sequence suitable to be feed as arguments for task.
+// note that it will change hyphens for flags ('-c', '--count') to '_' ('_c' '__count')
+// and '<' and '>' for parameters '_' (<hosts> => _hosts_)
+// boolean are "true" or "false" and arrays in the form ('first' 'second')
+// suitable to be used as arrays
+// Examples:
+// if "Usage: nettool ping [--count=<max>] <hosts>..."
+// with "ping --count=3 google apple" returns
+// ping=true _count=3 _hosts_=('google' 'apple')
+func parseArgs(usage string, args []string) []string {
+	res := []string{}
+	// parse args
+	parser := docopt.Parser{}
+	opts, err := parser.ParseArgs(usage, args, NuvVersion)
+	if err != nil {
+		return res
+	}
+	for k, v := range opts {
+		kk := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(k, "-", "_"), "<", "_"), ">", "_")
+		vv := ""
+		//fmt.Println(v, reflect.TypeOf(v))
+		switch o := v.(type) {
+		case bool:
+			vv = "false"
+			if o {
+				vv = "true"
+			}
+		case string:
+			vv = o
+		case []string:
+			a := []string{}
+			for _, i := range o {
+				a = append(a, fmt.Sprintf("'%v'", i))
+			}
+			vv = "(" + strings.Join(a, " ") + ")"
+		case nil:
+			vv = ""
+		}
+		res = append(res, fmt.Sprintf("%s=%s", kk, vv))
+	}
+	sort.Strings(res)
+	return res
 }
 
 // Nuv parse args moving
@@ -61,12 +106,21 @@ func Nuv(base string, args []string) error {
 
 	// parsed args
 	if exists(".", NUVOPTS) {
-		parsedArgs := parseArgs(rest)
+		fmt.Println("PREPARSE:", rest)
+		parsedArgs := parseArgs(readfile(NUVOPTS), rest)
+		prefix := []string{"-t", NUVFILE}
+		if len(rest) > 0 && rest[0][0] != '-' {
+			prefix = append(prefix, rest[0])
+		}
+		parsedArgs = append(prefix, parsedArgs...)
+		fmt.Println("POSTPARSE:", parsedArgs)
+		pwd, _ := os.Getwd()
+		fmt.Println("PWD", pwd)
 		Task(parsedArgs...)
 		return nil
 	}
 	// unparsed args
-	targs := append([]string{"-t", NUVFILE, rest[0], "--"}, rest[1:]...)
-	Task(targs...)
+	taskArgs := append([]string{"-t", NUVFILE, rest[0], "--"}, rest[1:]...)
+	Task(taskArgs...)
 	return nil
 }

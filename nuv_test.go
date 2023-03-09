@@ -27,8 +27,8 @@ func ExampleNuv() {
 	pr(2, Nuv(olaris, split("top")))
 	pr(3, Nuv(olaris, split("top arg")))
 	pr(4, Nuv(olaris, split("sub")))
-	pr(5, Nuv(olaris, split("sub multi")))
-	pr(6, Nuv(olaris, split("sub multi ship")))
+	pr(5, Nuv(olaris, split("sub opts")))
+	pr(6, Nuv(olaris, split("sub opts args 1")))
 	// Output:
 	// (olaris) task [-t nuvfile.yml -l]
 	// 1 <nil>
@@ -39,12 +39,27 @@ func ExampleNuv() {
 	// (sub) task [-t nuvfile.yml -l]
 	// 4 <nil>
 	// Usage:
-	//   multi ship new <name>...
-	//   multi ship <name> move <x> <y>
-	//   multi ship shoot <x> <y>
-	//   multi mine (set|remove) <x> <y>
+	//   opts args <name>... [-c]
+	//   opts arg1 <name> arg2 <x> <y> [--fl=<flag>]
+	//   opts arg3 (opt1|opt2) <x> <y> [--fa|--fb]
+	//   opts -h | --help | --version
 	//
 	// 5 <nil>
-	// (multi) task [ship]
+	// (opts) task [__fa=false __fb=false __fl= __help=false __version=false _c=false _h=false _name_=('1') _x_= _y_= arg1=false arg2=false arg3=false args=true opt1=false opt2=false]
 	// 6 <nil>
+}
+
+func ExampleParseArgs() {
+	usage := readfile("olaris/sub/opts/nuvopts.txt")
+
+	pr(1, parseArgs(usage, split("args mike miri max")))
+	pr(2, parseArgs(usage, split("args mike -c")))
+	pr(3, parseArgs(usage, split("arg1 max arg2 1 2 --fl=3")))
+	pr(4, parseArgs(usage, split("arg3 opt2 4 5 --fb")))
+
+	// Output:
+	// 1 [__fa=false __fb=false __fl= __help=false __version=false _c=false _h=false _name_=('mike' 'miri' 'max') _x_= _y_= arg1=false arg2=false arg3=false args=true opt1=false opt2=false]
+	// 2 [__fa=false __fb=false __fl= __help=false __version=false _c=true _h=false _name_=('mike') _x_= _y_= arg1=false arg2=false arg3=false args=true opt1=false opt2=false]
+	// 3 [__fa=false __fb=false __fl=3 __help=false __version=false _c=false _h=false _name_=('max') _x_=1 _y_=2 arg1=true arg2=true arg3=false args=false opt1=false opt2=false]
+	// 4 [__fa=false __fb=true __fl= __help=false __version=false _c=false _h=false _name_=() _x_=4 _y_=5 arg1=false arg2=false arg3=true args=false opt1=false opt2=true]
 }
