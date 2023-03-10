@@ -15,10 +15,6 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-.DS_Store
-.git-hooks/
-.vscode/
-.task/
-attic/
-_*
+version: '3'
 
+kubectl: kubectl version --output=json | jq .clientVersion.gitVersion -r

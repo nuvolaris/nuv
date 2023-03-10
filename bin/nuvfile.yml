@@ -15,10 +15,31 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-.DS_Store
-.git-hooks/
-.vscode/
-.task/
-attic/
-_*
 
+version: '3'
+
+vars:
+  ARCH: "{{ARCH}}"
+  KUBECTL: "https://dl.k8s.io/release/v1.26.0/bin/{{OS}}/{{.ARCH}}/kubectl"
+  KIND: "https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{.ARCH}}"
+
+tasks:
+  default:
+    desc: download tools
+
+  bin:
+    - echo $NUV_BIN
+
+  kubectl:
+    desc: kubectl
+    cmds:
+    - ht -d {{.KUBECTL}}
+    status:
+    - test -e kubectl
+
+  kind:
+    desc: kind
+    cmds:
+    - ht -o kind -d {{.KIND}} 
+    status:
+    - test -e kind
