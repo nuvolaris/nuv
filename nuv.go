@@ -120,8 +120,18 @@ func Nuv(base string, args []string) error {
 		Task(parsedArgs...)
 		return nil
 	}
-	// unparsed args
-	taskArgs := append([]string{"-t", NUVFILE, rest[0], "--"}, rest[1:]...)
+	// unparsed args - separate variable assignments from extra args
+	pre := []string{"-t", NUVFILE, rest[0]}
+	post := []string{"--"}
+	for _, s := range rest[1:] {
+		if strings.Contains(s, "=") {
+			pre = append(pre, s)
+		} else {
+			post = append(post, s)
+		}
+	}
+	taskArgs := append(pre, post...)
+	debug(taskArgs)
 	Task(taskArgs...)
 	return nil
 }

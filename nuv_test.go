@@ -21,15 +21,35 @@ import (
 	"path/filepath"
 )
 
-func ExampleNuv() {
+func ExampleNuvArg() {
 	// test
+	os.Chdir(workDir)
 	olaris, _ := filepath.Abs("olaris")
-	err := Nuv(olaris, split(""))
-	pr(1, err)
-	err = Nuv(olaris, split("top"))
+	err := Nuv(olaris, split("top"))
 	pr(2, err)
 	err = Nuv(olaris, split("top arg"))
 	pr(3, err)
+	err = Nuv(olaris, split("top arg VAR=1"))
+	pr(4, err)
+	err = Nuv(olaris, split("top VAR=1 arg"))
+	pr(5, err)
+	// Output:
+	// (olaris) task [-t nuvfile.yml top --]
+	// 2 <nil>
+	// (olaris) task [-t nuvfile.yml top -- arg]
+	// 3 <nil>
+	// (olaris) task [-t nuvfile.yml top VAR=1 -- arg]
+	// 4 <nil>
+	// (olaris) task [-t nuvfile.yml top VAR=1 -- arg]
+	//5 <nil>
+}
+
+func ExampleNuv() {
+	// test
+	os.Chdir(workDir)
+	olaris, _ := filepath.Abs("olaris")
+	err := Nuv(olaris, split(""))
+	pr(1, err)
 	err = Nuv(olaris, split("sub"))
 	pr(4, err)
 	err = Nuv(olaris, split("sub opts"))
@@ -39,10 +59,6 @@ func ExampleNuv() {
 	// Output:
 	// (olaris) task [-t nuvfile.yml -l]
 	// 1 <nil>
-	// (olaris) task [-t nuvfile.yml top --]
-	// 2 <nil>
-	// (olaris) task [-t nuvfile.yml top -- arg]
-	// 3 <nil>
 	// (sub) task [-t nuvfile.yml -l]
 	// 4 <nil>
 	// Usage:
