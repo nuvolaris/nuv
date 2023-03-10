@@ -26,12 +26,12 @@ tasks:
   build:
     desc: build nuv
     cmds:
-      - go build
+      - go build -o bin/nuv
     sources:
       - '*.go'
       - 'tools/*.go'
     generates:
-      - nuv
+      - bin/nuv
 
   test:
     desc: test nuv
@@ -39,10 +39,11 @@ tasks:
     - go test
 
   clean:
+    - rm -f bin/nuv
     - go clean -cache -modcache
 
   rebuild:
-    - rm -f nuv
+    - rm -f bin/nuv
     - task: build
 
   update-task: |

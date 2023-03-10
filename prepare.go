@@ -29,16 +29,20 @@ import (
 func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	repoURL := getNuvRepo()
 	branch := getNuvBranch()
-	localDir, err := homedir.Expand("~/.nuv/olaris")
-	//fmt.Println(localDir)
+	nuvDir, err := homedir.Expand("~/.nuv")
 	if err != nil {
 		return "", err
 	}
+	localDir, err := homedir.Expand("~/.nuv/olaris")
+	if err != nil {
+		return "", err
+	}
+	//fmt.Println(localDir)
 
 	// Updating an exiting tools
 	// TODO: wait 24 hours...
 
-	if exists(localDir, NUVTOOLS) {
+	if exists(nuvDir, "olaris") {
 		fmt.Println("Updating tasks...")
 		r, err := git.PlainOpen(localDir)
 		if err != nil {
@@ -81,30 +85,48 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 
 // locateNuvRoot locate the folder where starts execution
 // it can be a parent folder of the current folder or it can be downloaded
-// from github - it should contain a file Nuvfile and a file Nuvtools
-func locateNuvRoot(cur string, inHomeDir bool) (string, error) {
+// from github - it should contain a file nuvfile.yml and a file nuvtools.yml in the root
+func locateNuvRoot(cur string) (string, error) {
 	cur, err := filepath.Abs(cur)
 	if err != nil {
 		return "", err
 	}
-	// exits nuvtile.yml?
-	if !exists(cur, NUVFILE) {
-		if exists(cur, "olaris") {
-			return locateNuvRoot(join(cur, "olaris"), inHomeDir)
-		}
-		if inHomeDir {
-			return "", fmt.Errorf("cannot find nuv root dir and cannot download it from github")
-		}
-		dir, err := downloadTasksFromGitHub(true, true)
-		if err != nil {
-			return "", err
-		}
-		return locateNuvRoot(dir, true)
+	// is there  olaris folder? then go down in it
+	olaris := join(cur, "olaris")
+	if exists(cur, "olaris") && exists(olaris, NUVFILE) && exists(olaris, NUVTOOLS) {
+		return olaris, nil
 	}
 
-	// found nuvtoools.json? if not, go up
-	if !exists(cur, NUVTOOLS) {
-		return locateNuvRoot(parent(cur), inHomeDir)
+	// search the root
+	search := locateNuvRootSearch(cur)
+	if search != "" {
+		return search, nil
 	}
-	return cur, nil
+
+	// ok no up, nor down, let's download it
+	dir, err := downloadTasksFromGitHub(true, true)
+	if err != nil {
+		return "", err
+	}
+	if exists(dir, NUVFILE) && exists(dir, NUVTOOLS) {
+		return dir, nil
+	}
+	return "", fmt.Errorf("downloaded tasks but they do not contain the expected nuvtools.yml and nuvtools.yml")
+}
+
+func locateNuvRootSearch(cur string) string {
+	debug("locateNuvRootSearch:", cur)
+	// exits nuvtile.yml? if not, go up until you find it
+	if !exists(cur, NUVFILE) {
+		return ""
+	}
+	if exists(cur, NUVTOOLS) {
+		return cur
+	}
+	parent := parent(cur)
+	debug("parent:", parent)
+	if parent == "" {
+		return ""
+	}
+	return locateNuvRootSearch(parent)
 }

@@ -41,11 +41,12 @@ func as(s ...string) []string {
 var homeDir = ""
 var workDir = ""
 
-// normalize path mahing relative to the home directory
+// normalize path replacing the variable path with /work
 func npath(dir string) string {
 	return strings.Replace(dir, workDir, "/work", -1)
 }
 
+// normalize path replaching the variable home part with /home
 func nhpath(dir string) string {
 	//fmt.Println("dir", dir, "home", homeDir)
 	return strings.Replace(dir, homeDir, "/home", -1)
@@ -56,5 +57,7 @@ func TestMain(m *testing.M) {
 	workDir, _ = filepath.Abs(wd)
 	homeDir, _ = homedir.Dir()
 	taskDryRun = true
+	//debugging = true
+	//tracing = true
 	os.Exit(m.Run())
 }

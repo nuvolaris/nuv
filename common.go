@@ -26,7 +26,7 @@ import (
 
 // default files
 const NUVFILE = "nuvfile.yml"
-const NUVTOOLS = "nuvtools.json"
+const NUVTOOLS = "nuvtools.yml"
 const NUVOPTS = "nuvopts.txt"
 
 // repo where download tasks
@@ -39,18 +39,18 @@ var NuvVersion = "0.3"
 
 // get defaults
 
-func getNuvRoot() string {
+func getNuvRoot() (string, error) {
 	root := os.Getenv("NUV_ROOT")
 	if root == "" {
 		dir, err := os.Getwd()
 		if err == nil {
-			root, err = locateNuvRoot(dir, false)
+			root, err = locateNuvRoot(dir)
 		}
 		if err != nil {
-			panic(err)
+			return "", err
 		}
 	}
-	return root
+	return root, nil
 }
 
 func getNuvRepo() string {
@@ -114,5 +114,10 @@ var debugging = os.Getenv("DEBUG") != ""
 func debug(args ...any) {
 	if debugging {
 		log.Println(append([]any{"DEBUG: "}, args...))
+	}
+}
+func debugf(format string, args ...any) {
+	if debugging {
+		log.Printf("DEBUG: "+format+"\n", args...)
 	}
 }

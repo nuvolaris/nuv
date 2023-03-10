@@ -19,13 +19,12 @@ package main
 import "os"
 
 func Example_locate() {
-	dir, err := locateNuvRoot(".", false)
+	dir, err := locateNuvRoot(".")
 	pr(1, err, npath(dir))
-	dir, err = locateNuvRoot("olaris", false)
+	dir, err = locateNuvRoot("olaris")
 	pr(2, err, npath(dir))
-	dir, err = locateNuvRoot(join("olaris", "sub"), false)
+	dir, err = locateNuvRoot(join("olaris", "sub"))
 	pr(3, err, npath(dir))
-
 	// Output:
 	// 1 <nil> /work/olaris
 	// 2 <nil> /work/olaris
@@ -33,14 +32,26 @@ func Example_locate() {
 }
 
 func Example_locate_git() {
+	NuvBranch = "test"
 	os.RemoveAll(join(homeDir, ".nuv"))
-	dir, err := locateNuvRoot("tests", false)
+	dir, err := locateNuvRoot("tests")
 	pr(1, err, nhpath(dir))
-	dir, err = locateNuvRoot("tests", false)
+	dir, err = locateNuvRoot("tests")
 	pr(2, err, nhpath(dir))
+	os.RemoveAll(join(homeDir, ".nuv"))
+	NuvBranch = "test-wrong"
+	dir, err = locateNuvRoot("tests")
+	pr(3, err)
+	dir, err = locateNuvRoot("tests")
+	pr(4, err)
+	os.RemoveAll(join(homeDir, ".nuv"))
 	// Output:
 	// Cloning tasks...
 	// 1 <nil> /home/.nuv/olaris
 	// Updating tasks...
 	// 2 <nil> /home/.nuv/olaris
+	// Cloning tasks...
+	// 3 downloaded tasks but they do not contain the expected nuvtools.yml and nuvtools.yml
+	// Updating tasks...
+	// 4 downloaded tasks but they do not contain the expected nuvtools.yml and nuvtools.yml
 }

@@ -17,6 +17,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -26,8 +27,18 @@ import (
 )
 
 func main() {
+
 	// initialize tools (used by the shell to find myself)
 	tools.NuvCmd, _ = filepath.Abs(os.Args[0])
+
+	// set
+	if os.Getenv("NUV_BIN") == "" {
+		os.Setenv("NUV_BIN", filepath.Dir(tools.NuvCmd))
+	}
+
+	os.Setenv("PATH", fmt.Sprintf("\"%s\"%c%s", os.Getenv("NUV_BIN"), os.PathListSeparator, os.Getenv("PATH")))
+	debugf("NUV_BIN=%s", os.Getenv("NUV_BIN"))
+	debugf("PATH=%s", os.Getenv("PATH"))
 
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
@@ -56,5 +67,10 @@ func main() {
 	}
 
 	// execute nuv
-	Nuv(getNuvRoot(), args[1:])
+	dir, err := getNuvRoot()
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	Nuv(dir, args[1:])
 }

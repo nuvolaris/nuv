@@ -51,6 +51,7 @@ Note that to avoid an egg and chicken problem, `nuv` itself is built with his an
 The following environment variables allows to ovverride certain defaults.
 
 - `NUV_ROOT` is the  folder where `nuv` looks for its tasks. It is not defined, it follows the algorithm below to find it.
+- `NUV_BIN` is the  folder where `nuv` looks binaries (external command line tools). It is not defined, it defaults to the same directory where  `nuv` is located.
 - `NUV_REPO` is the github repo where `nuv` downloads its tasks. It it is not defined, it defaults to `https://github.com/nuvolaris/olaris`
 - `NUV_BRANCH` is the branch where `nuv` looks for its tasks. The branch to use is defined at build time and it is the base version (without the patch level). For example, if `nuv` is `0.3.0-morpheus` the branch to use will be `0.3-morpheus`
 
@@ -81,20 +82,21 @@ The repo to use is defined by the environment variable `NUV_REPO`, and defaults 
 
 The branch to use it defined at build time. It can be overriden with the enviroment variable `NUV_BRANCH`.
 
-If it is missing, it will clone the repo and store the in `~/.nuv/olaris`. If it is there and the `nuvtools.json` is older than 24 hours, it will update it. Otherwise it will stop the search there.
+If it is missing, it will clone the repo and store the in `~/.nuv/olaris`. If it is there and the `nuvtools.yml` is older than 24 hours, it will update it. Otherwise it will stop the search there.
 
-### Download tools
+## Command Line Tools
 
-The `nuvtools.json` is a json file in the format: 
-```
-{
-  "<tool>": "<url>"
-}
-```
+Nuv requires some binary command line tools to work with ("bins").
 
-where the `<tool>` is the name of a multiplatform binary, and `<url>`is the url with some replacement strings. 
+They are expected to be in the folder pointed by the environment variable `NUV_BIN`. 
 
-TODO: provide more details on the `Nuvtools` format
+If this environment variable is not defined, it defaults to the same folder where `nuv` itself is located. The `NUV_BIN` folder is then added to the beginning of the `PATH` before executing anything else.
+
+When nuv update it will check the tools are there and of the right version running `nuv -t nuvtools.yml check`, and issue a warning if there is a version mismatch.
+
+Updating tools can be executed manually with `nuv -t nuvtools.yaml update`, but generally you need to be  root or administrator.
+
+Nuv is however normally distributed with an installer that includes all the tools for the various operating systems (linux, windows, osx).
 
 ## How `nuv` execute tasks
 
@@ -148,3 +150,10 @@ Basic unix like tools (`nuv -<tool> -help for details`):
 - wc
 - which
 - zip
+
+
+
+
+
+
+
