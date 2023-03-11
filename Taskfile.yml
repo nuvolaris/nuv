@@ -18,7 +18,8 @@
 version: '3'
 tasks:
   
-  default: task build
+  default:
+  - task: build
   
   setup:
     - cd olaris ; git checkout -B test ; cd ..
@@ -46,9 +47,19 @@ tasks:
     - rm -f bin/nuv
     - task: build
 
-  update-task: |
-    HASH=$(cd task ; git rev-parse HEAD)
-    echo $HASH
-    go get github.com/nuvolaris/task/cmd/taskmain/v3@$HASH
+  link:
+    - task: build
+    - sudo rm -f /usr/local/bin/nuv
+    - sudo ln -sf $PWD/bin/nuv /usr/local/bin/nuv
+    - which nuv
+
+  utest: 
+    cmds:
+    - |-
+        if test -z '{{.N}}'
+        then  go test -v | tee _difftest
+              python3 difftest.py
+        else  python3 difftest.py {{.N}}
+        fi
 
   
