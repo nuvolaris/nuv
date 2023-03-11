@@ -20,26 +20,52 @@ version: '3'
 
 vars:
   ARCH: "{{ARCH}}"
+  OS: "{{OS}}"
+  BIN: "{{.OS}}-{{.ARCH}}"
   KUBECTL: "https://dl.k8s.io/release/v1.26.0/bin/{{OS}}/{{.ARCH}}/kubectl"
   KIND: "https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{.ARCH}}"
 
 tasks:
-  default:
-    desc: download tools
+
+  download:
+  - task: bin
+  - task: kind
+  - task: kubectl
+
+  clean:
+   - rm -r {{.BIN}}
 
   bin:
-    - echo $NUV_BIN
+    - mkdir -p {{.BIN}}
+
+  dir: mkdir -p {{OS}}
 
   kubectl:
     desc: kubectl
+    dir: "{{.BIN}}"
     cmds:
-    - ht -d {{.KUBECTL}}
+    - ht -o kubectl -d {{.KUBECTL}}
     status:
     - test -e kubectl
 
   kind:
     desc: kind
+    dir: "{{.BIN}}"
     cmds:
     - ht -o kind -d {{.KIND}} 
     status:
     - test -e kind
+
+  download-all:
+  - ./nuv download OS=windows ARCH=amd64
+  - ./nuv download OS=linux ARCH=amd64
+  - ./nuv download OS=linux ARCH=arm64
+  - ./nuv download OS=darwin ARCH=amd64
+  - ./nuv download OS=darwin ARCH=arm64
+
+  clean-all:
+  - ./nuv clean OS=windows ARCH=amd64
+  - ./nuv clean OS=linux ARCH=amd64
+  - ./nuv clean OS=linux ARCH=arm64
+  - ./nuv clean OS=darwin ARCH=amd64
+  - ./nuv clean OS=darwin ARCH=arm64

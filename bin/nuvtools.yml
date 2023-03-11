@@ -17,4 +17,10 @@
 #
 version: '3'
 
-kubectl: kubectl version --output=json | jq .clientVersion.gitVersion -r
+includes:
+  tools:
+    taskfile: nuvtools.yml
+
+tasks:    
+  kubectl: 
+    - kubectl version --output=json | jq .clientVersion.gitVersion -r
