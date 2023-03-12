@@ -1,0 +1,24 @@
+version: '3'
+
+vars:
+  ARCH: '{{ARCH}}'
+
+tasks:
+  build:
+    desc: build installer
+    cmds:
+    - >
+      pkgbuild --root $(pwd)
+      --identifier "io.nuvolaris.nuv" 
+      --scripts $(pwd)/scripts
+      --install-location /usr/local/nuvolaris  
+      --version 0.3.0 
+      nuv.pkg
+
+  uninstall:
+    desc: uninstall pkg
+    cmds:
+    - sudo rm -Rvf /usr/local/nuvolaris
+    - sudo rm /usr/local/bin/nuv
+    - sudo pkgutil --forget io.nuvolaris.nuv
+  

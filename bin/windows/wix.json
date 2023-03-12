@@ -6,9 +6,9 @@
   "files": {
     "guid": "f35fb499-2912-4af7-b7f9-fd8f49a5d552",
     "items": [
-       "../windows-amd64/nuv.exe",
-       "../windows-amd64/kubectl.exe",
-       "../windows-amd64/kind.exe"
+       "../windows/amd64/nuv.exe",
+       "../windows/amd64/kubectl.exe",
+       "../windows/amd64/kind.exe"
     ]
   },
   "directories": [

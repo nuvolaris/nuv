@@ -17,13 +17,7 @@
 #
 version: '3'
 tasks:
-  
-  default:
-    - task: build
-    - sudo rm -f /usr/local/bin/nuv
-    - sudo ln -sf $PWD/bin/nuv /usr/local/bin/nuv
-    - which nuv
- 
+   
   setup:
     - cd olaris ; git checkout -B test ; cd ..
 
@@ -44,7 +38,7 @@ tasks:
     cmds:
     - ./nuv all
     - sudo rm -f /usr/local/bin/nuv
-    - sudo ln -sf $PWD/{{OS}}-{{ARCH}}/nuv /usr/local/bin/nuv
+    - sudo ln -sf $PWD/{{OS}}/{{ARCH}}/nuv /usr/local/bin/nuv
 
   test:
     desc: test nuv

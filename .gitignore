@@ -30,3 +30,4 @@ bin/darwin/arm64/*
 bin/linux/amd64/*
 bin/linux/arm64/*
 bin/windows/nuv.msi
+bin/darwin/nuv.pkg

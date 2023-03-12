@@ -18,15 +18,11 @@
 
 version: '3'
 
-include:
- w: 
-  taskfiles: windows.yml
-
 vars:
   VERSION: 0.3.0
   ARCH: "{{ARCH}}"
   OS: "{{OS}}"
-  BIN: "{{.OS}}-{{.ARCH}}"
+  BIN: "{{.OS}}/{{.ARCH}}"
   EXE: '{{if eq .OS "windows"}}.exe{{end}}'
   ARCH1: '{{if eq .ARCH "amd64"}}x86_64{{else}}{{.ARCH}}{{end}}'
 
@@ -64,9 +60,9 @@ tasks:
     - GOOS={{.OS}} GOARCH={{.ARCH}} go build -o bin/{{.BIN}}/nuv{{.EXE}}
   
   clean:
-    desc: cleanup {{.OS}}-{{.ARCH}}
+    desc: cleanup {{.OS}}/{{.ARCH}}
     cmds:
-    - rm -r {{.BIN}}
+    - rm -v {{.BIN}}/*
 
   all:
     desc: download all tools for {{.OS}}-{{.ARCH}}
@@ -92,3 +88,13 @@ tasks:
     - ./nuv clean OS=linux ARCH=arm64
     - ./nuv clean OS=darwin ARCH=amd64
     - ./nuv clean OS=darwin ARCH=arm64
+
+
+  windows:
+    desc:  build msi installer for windows
+
+  darwin:
+    desc: build pkg installer for osx
+
+  linux:
+    desc: build deb and rpm for linux
