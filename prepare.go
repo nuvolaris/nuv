@@ -33,6 +33,7 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	os.MkdirAll(nuvDir, 0755)
 	localDir, err := homedir.Expand("~/.nuv/olaris")
 	if err != nil {
 		return "", err
@@ -92,7 +93,7 @@ func locateNuvRoot(cur string) (string, error) {
 		return "", err
 	}
 	// is there  olaris folder? then go down in it
-	olaris := join(cur, "olaris")
+	olaris := joinpath(cur, "olaris")
 	if exists(cur, "olaris") && exists(olaris, NUVFILE) && exists(olaris, NUVTOOLS) {
 		return olaris, nil
 	}

@@ -40,7 +40,7 @@ func GetNuvCmd() string {
 	if NuvCmd != "" {
 		return NuvCmd
 	}
-	nuv := os.Getenv("NUVCMD")
+	nuv := os.Getenv("NUV_CMD")
 	if nuv != "" {
 		return nuv
 	}

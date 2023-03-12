@@ -91,7 +91,8 @@ func Nuv(base string, args []string) error {
 	}
 	rest := args
 	for _, dir := range args {
-		if exists(dir, NUVFILE) {
+		trace("dir", dir)
+		if isDir(dir) && exists(dir, NUVFILE) {
 			os.Chdir(dir)
 			rest = rest[1:]
 			//fmt.Println(dir, rest)

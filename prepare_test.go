@@ -16,14 +16,19 @@
 // under the License.
 package main
 
-import "os"
+import (
+	"fmt"
+	"os"
+
+	"github.com/mitchellh/go-homedir"
+)
 
 func Example_locate() {
 	dir, err := locateNuvRoot(".")
 	pr(1, err, npath(dir))
 	dir, err = locateNuvRoot("olaris")
 	pr(2, err, npath(dir))
-	dir, err = locateNuvRoot(join("olaris", "sub"))
+	dir, err = locateNuvRoot(joinpath("olaris", "sub"))
 	pr(3, err, npath(dir))
 	// Output:
 	// 1 <nil> /work/olaris
@@ -33,18 +38,20 @@ func Example_locate() {
 
 func Example_locate_git() {
 	NuvBranch = "test"
-	os.RemoveAll(join(homeDir, ".nuv"))
+	nuvdir, _ := homedir.Expand("~/.nuv")
+	fmt.Println(nuvdir)
+	os.RemoveAll(nuvdir)
 	dir, err := locateNuvRoot("tests")
 	pr(1, err, nhpath(dir))
 	dir, err = locateNuvRoot("tests")
 	pr(2, err, nhpath(dir))
-	os.RemoveAll(join(homeDir, ".nuv"))
+	os.RemoveAll(joinpath(homeDir, ".nuv"))
 	NuvBranch = "test-wrong"
 	dir, err = locateNuvRoot("tests")
 	pr(3, err)
 	dir, err = locateNuvRoot("tests")
 	pr(4, err)
-	os.RemoveAll(join(homeDir, ".nuv"))
+	//os.RemoveAll(joinpath(homeDir, ".nuv"))
 	// Output:
 	// Cloning tasks...
 	// 1 <nil> /home/.nuv/olaris

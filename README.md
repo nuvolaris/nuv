@@ -54,6 +54,7 @@ The following environment variables allows to ovverride certain defaults.
 - `NUV_BIN` is the  folder where `nuv` looks binaries (external command line tools). It is not defined, it defaults to the same directory where  `nuv` is located.
 - `NUV_REPO` is the github repo where `nuv` downloads its tasks. It it is not defined, it defaults to `https://github.com/nuvolaris/olaris`
 - `NUV_BRANCH` is the branch where `nuv` looks for its tasks. The branch to use is defined at build time and it is the base version (without the patch level). For example, if `nuv` is `0.3.0-morpheus` the branch to use will be `0.3-morpheus`
+- `NUV_CMD` is the actualy command executed - defaults to the absolute path of the target of the symbolic link but it can be overriden
 
 ## Where `nuv` looks for tasks
 

@@ -20,25 +20,81 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/nuvolaris/nuv/tools"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
 )
 
-func main() {
+func setupCmd(me string) (string, error) {
+	if os.Getenv("NUV_CMD") != "" {
+		return os.Getenv("NUV_CMD"), nil
+	}
+	// look in path
+	me, err := exec.LookPath(me)
+	if err != nil {
+		return "", err
+	}
+	trace("found", me)
 
-	// initialize tools (used by the shell to find myself)
-	tools.NuvCmd, _ = filepath.Abs(os.Args[0])
-
-	// set
-	if os.Getenv("NUV_BIN") == "" {
-		os.Setenv("NUV_BIN", filepath.Dir(tools.NuvCmd))
+	// resolve links
+	fileInfo, err := os.Lstat(me)
+	if err != nil {
+		return "", err
+	}
+	if fileInfo.Mode()&os.ModeSymlink != 0 {
+		me, err = os.Readlink(me)
+		if err != nil {
+			return "", err
+		}
+		trace("resolving link to", me)
 	}
 
-	os.Setenv("PATH", fmt.Sprintf("\"%s\"%c%s", os.Getenv("NUV_BIN"), os.PathListSeparator, os.Getenv("PATH")))
-	debugf("NUV_BIN=%s", os.Getenv("NUV_BIN"))
+	// get the absolute path
+	me, err = filepath.Abs(me)
+	if err != nil {
+		return "", err
+	}
+	trace("ME:", me)
+	os.Setenv("NUV_CMD", me)
+	return me, nil
+}
+
+func setupBinPath(cmd string) {
+	// initialize tools (used by the shell to find myself)
+	if os.Getenv("NUV_BIN") == "" {
+		os.Setenv("NUV_BIN", filepath.Dir(cmd))
+	}
+	os.Setenv("PATH", fmt.Sprintf("%s%c%s", os.Getenv("NUV_BIN"), os.PathListSeparator, os.Getenv("PATH")))
 	debugf("PATH=%s", os.Getenv("PATH"))
+
+	//subpath := fmt.Sprintf("\"%s\"%c\"%s\"", os.Getenv("NUV_BIN"), os.PathListSeparator, joinpath(os.Getenv("NUV_BIN"), runtime.GOOS+"-"+runtime.GOARCH))
+	//os.Setenv("PATH", fmt.Sprintf("%s%c%s", subpath, os.PathListSeparator, os.Getenv("PATH")))
+}
+
+func info() {
+	fmt.Println("VERSION:", NuvVersion)
+	fmt.Println("BRANCH:", NuvBranch)
+	fmt.Println("CMD:", tools.GetNuvCmd())
+	fmt.Println("REPO:", getNuvRepo())
+	root, _ := getNuvRoot()
+	fmt.Println("ROOT:", root)
+	fmt.Println("PATH:", os.Getenv("PATH"))
+}
+
+func main() {
+
+	var err error
+	me := os.Args[0]
+	if filepath.Base(me) == "nuv" {
+		tools.NuvCmd, err = setupCmd(me)
+		if err != nil {
+			warn("cannot setup cmd", err)
+			os.Exit(1)
+		}
+		setupBinPath(tools.NuvCmd)
+	}
 
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
@@ -47,6 +103,10 @@ func main() {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
 			taskmain.Task(args[2:])
+			os.Exit(0)
+		}
+		if cmd == "info" {
+			info()
 			os.Exit(0)
 		}
 		if cmd == "help" {
@@ -62,7 +122,7 @@ func main() {
 			os.Exit(code)
 		}
 		// no embeded tool found
-		log.Printf("unknown tool -%s", cmd)
+		warn("unknown tool", "-"+cmd)
 		os.Exit(0)
 	}
 

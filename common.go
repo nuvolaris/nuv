@@ -34,8 +34,8 @@ const NUVREPO = "http://github.com/nuvolaris/olaris"
 
 // branch where download tasks
 // defaults to test - will be changed in compilation
-var NuvBranch = "test"
-var NuvVersion = "0.3"
+var NuvBranch = "0.3.0"
+var NuvVersion = "0.3.0"
 
 // get defaults
 
@@ -50,6 +50,7 @@ func getNuvRoot() (string, error) {
 			return "", err
 		}
 	}
+	os.Setenv("NUV_ROOT", root)
 	return root, nil
 }
 
@@ -58,6 +59,7 @@ func getNuvRepo() string {
 	if repo == "" {
 		repo = NUVREPO
 	}
+	os.Setenv("NUV_REPO", repo)
 	return repo
 }
 
@@ -66,11 +68,12 @@ func getNuvBranch() string {
 	if branch == "" {
 		branch = NuvBranch
 	}
+	os.Setenv("NUV_BRANCH", branch)
 	return branch
 }
 
 // utils
-func join(dir string, file string) string {
+func joinpath(dir string, file string) string {
 	return filepath.Join(dir, file)
 }
 
@@ -79,8 +82,22 @@ func split(s string) []string {
 }
 
 func exists(dir string, file string) bool {
-	_, err := os.Stat(join(dir, file))
+	_, err := os.Stat(joinpath(dir, file))
 	return !os.IsNotExist(err)
+}
+
+func isDir(fileOrDir string) bool {
+	fileInfo, err := os.Stat(fileOrDir)
+	if err != nil {
+		debug(err)
+		return false
+	}
+
+	// Check if the file is a directory
+	if fileInfo.IsDir() {
+		return true
+	}
+	return false
 }
 
 func parent(dir string) string {

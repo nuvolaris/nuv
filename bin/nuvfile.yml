@@ -22,50 +22,70 @@ vars:
   ARCH: "{{ARCH}}"
   OS: "{{OS}}"
   BIN: "{{.OS}}-{{.ARCH}}"
-  KUBECTL: "https://dl.k8s.io/release/v1.26.0/bin/{{OS}}/{{.ARCH}}/kubectl"
-  KIND: "https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{.ARCH}}"
+  EXE: '{{if eq .OS "windows"}}.exe{{end}}'
+
 
 tasks:
 
-  download:
-  - task: bin
-  - task: kind
-  - task: kubectl
-
-  clean:
-   - rm -r {{.BIN}}
-
   bin:
-    - mkdir -p {{.BIN}}
+  - mkdir -p {{.BIN}}
 
-  dir: mkdir -p {{OS}}
+  download:
+    dir: "{{.BIN}}"
+    cmds:
+    - ht -o {{.TGT}} -d {{.SRC}}
+    - file {{.TGT}}
+    - '{{if eq .OS "windows"}}mv {{.TGT}} {{.TGT}}.exe{{else}}chmod +x {{.TGT}}{{end}}'
+    status:
+    - test -e {{.TGT}}{{.EXE}}
 
   kubectl:
-    desc: kubectl
-    dir: "{{.BIN}}"
     cmds:
-    - ht -o kubectl -d {{.KUBECTL}}
-    status:
-    - test -e kubectl
+    - task: download
+      vars:
+        SRC: "https://dl.k8s.io/release/v1.26.0/bin/{{OS}}/{{.ARCH}}/kubectl"
+        TGT: kubectl
 
   kind:
-    desc: kind
-    dir: "{{.BIN}}"
     cmds:
-    - ht -o kind -d {{.KIND}} 
-    status:
-    - test -e kind
+    - task: download
+      vars:
+        SRC: "https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{.ARCH}}"
+        TGT: kind
 
-  download-all:
-  - ./nuv download OS=windows ARCH=amd64
-  - ./nuv download OS=linux ARCH=amd64
-  - ./nuv download OS=linux ARCH=arm64
-  - ./nuv download OS=darwin ARCH=amd64
-  - ./nuv download OS=darwin ARCH=arm64
+  nuv:
+    dir: ".."
+    cmds:
+    - GOOS={{.OS}} GOARCH={{.ARCH}} go build -o bin/{{.BIN}}/nuv{{.EXE}}
+  
+  clean:
+    desc: cleanup {{.OS}}-{{.ARCH}}
+    cmds:
+    - rm -r {{.BIN}}
 
-  clean-all:
-  - ./nuv clean OS=windows ARCH=amd64
-  - ./nuv clean OS=linux ARCH=amd64
-  - ./nuv clean OS=linux ARCH=arm64
-  - ./nuv clean OS=darwin ARCH=amd64
-  - ./nuv clean OS=darwin ARCH=arm64
+  all:
+    desc: download all tools for {{.OS}}-{{.ARCH}}
+    cmds:
+    - task: nuv
+    - task: kind
+    - task: kubectl
+
+  all-platforms:
+    desc: download for all platforms
+    cmds:
+    - ./nuv all OS=windows ARCH=amd64
+    - ./nuv all OS=linux ARCH=amd64
+    - ./nuv all OS=linux ARCH=arm64
+    - ./nuv all OS=darwin ARCH=amd64
+    - ./nuv all OS=darwin ARCH=arm64
+
+  clean-platforms:
+    desc: clean for all platforms
+    cmds:
+    - ./nuv clean OS=windows ARCH=amd64
+    - ./nuv clean OS=linux ARCH=amd64
+    - ./nuv clean OS=linux ARCH=arm64
+    - ./nuv clean OS=darwin ARCH=amd64
+    - ./nuv clean OS=darwin ARCH=arm64
+
+
