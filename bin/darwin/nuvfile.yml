@@ -11,6 +11,9 @@ tasks:
       pkgbuild --root $(pwd)
       --identifier "io.nuvolaris.nuv" 
       --scripts $(pwd)/scripts
+      --filter 'scripts/.*'
+      --filter 'nuvfile.yml'
+      --filter 'nuv.pkg'
       --install-location /usr/local/nuvolaris  
       --version 0.3.0 
       nuv.pkg
