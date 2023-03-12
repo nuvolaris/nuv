@@ -1,12 +1,18 @@
 version: '3'
 
 tasks:
+ 
+  build:
+    desc: build installer
+    cmds:
+    - task: wix
+    - task: go-msi
+    - task: setup
 
   wix:
-    desc: download wix
     cmds:
     - >
-     mkdir wix ;
+     mkdir -p wix ;
      cd wix ;
      ht -d https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip ;
      unzip wix311-binaries.zip
