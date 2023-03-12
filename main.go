@@ -87,7 +87,7 @@ func main() {
 
 	var err error
 	me := os.Args[0]
-	if filepath.Base(me) == "nuv" {
+	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
 		tools.NuvCmd, err = setupCmd(me)
 		if err != nil {
 			warn("cannot setup cmd", err)

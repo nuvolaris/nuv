@@ -1,0 +1,18 @@
+version: '3'
+
+tasks:
+
+  wix:
+    desc: download wix
+    cmds:
+    - >
+     mkdir wix ;
+     cd wix ;
+     ht -d https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip ;
+     unzip wix311-binaries.zip
+
+  go-msi:
+    - go install github.com/mh-cbon/go-msi@latest
+
+  setup:
+   - cmd /c setup.cmd
