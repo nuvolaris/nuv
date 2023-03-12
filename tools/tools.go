@@ -53,14 +53,14 @@ func RunTool(name string, args []string) (int, error) {
 	}
 	switch name {
 	case "wsk":
-		fmt.Println("=== wsk ===")
+		//fmt.Println("=== wsk ===")
 		cmd := append([]string{"wsk"}, args...)
 		if err := Wsk(cmd); err != nil {
 			return 1, err
 		}
 		return 0, nil
 	case "ht":
-		fmt.Println("=== ht ===")
+		//fmt.Println("=== ht ===")
 		os.Args = append([]string{"ht"}, args...)
 		if err := httpie.Main(); err != nil {
 			return 1, err
