@@ -37,6 +37,15 @@ tasks:
     generates:
       - bin/nuv
 
+  install:
+    deps:
+    - build
+    dir: bin
+    cmds:
+    - ./nuv all
+    - sudo rm -f /usr/local/bin/nuv
+    - sudo ln -sf $PWD/{{OS}}-{{ARCH}}/nuv /usr/local/bin/nuv
+
   test:
     desc: test nuv
     cmds:
