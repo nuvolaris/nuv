@@ -48,7 +48,7 @@ tasks:
     - build
     dir: bin
     cmds:
-    - ./nuv all
+    - ./nuv all BRANCH=main
     - sudo rm -f /usr/local/bin/nuv
     - sudo ln -sf $PWD/{{OS}}/{{ARCH}}/nuv /usr/local/bin/nuv
 
