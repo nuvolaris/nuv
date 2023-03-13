@@ -16,15 +16,27 @@
 # under the License.
 #
 version: '3'
+vars:
+  BASEVER: v0.3.0-morpheus
+  VERSION:
+    sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
+
 tasks:
-   
+
+  default: task --list-all
+
+  cli-ver:
+    - git tag -d $(git tag) 
+    - git tag -f {{.BASEVER}}.$(date +%y%m%d%H)
+    - git tag
+
   setup:
     - cd olaris ; git checkout -B test ; cd ..
 
   build:
     desc: build nuv
     cmds:
-      - go build -o bin/nuv
+      - go build -ldflags "-X main.NuvVersion={{.VERSION}}"  -o bin/nuv
     sources:
       - '*.go'
       - 'tools/*.go'

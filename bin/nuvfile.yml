@@ -19,12 +19,13 @@
 version: '3'
 
 vars:
-  VERSION: 0.3.0
+  VERSION:
+    sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
+  BRANCH: 0.3.0
   ARCH: "{{ARCH}}"
   OS: "{{OS}}"
   BIN: "{{.OS}}/{{.ARCH}}"
   EXE: '{{if eq .OS "windows"}}.exe{{end}}'
-  ARCH1: '{{if eq .ARCH "amd64"}}x86_64{{else}}{{.ARCH}}{{end}}'
 
 tasks:
 
@@ -57,7 +58,11 @@ tasks:
   nuv:
     dir: ".."
     cmds:
-    - GOOS={{.OS}} GOARCH={{.ARCH}} go build -o bin/{{.BIN}}/nuv{{.EXE}}
+    - >
+      GOOS={{.OS}} GOARCH={{.ARCH}} 
+      go build 
+      -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"
+      -o bin/{{.BIN}}/nuv{{.EXE}}
   
   clean:
     desc: cleanup {{.OS}}/{{.ARCH}}

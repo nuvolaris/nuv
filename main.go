@@ -77,10 +77,10 @@ func info() {
 	fmt.Println("VERSION:", NuvVersion)
 	fmt.Println("BRANCH:", NuvBranch)
 	fmt.Println("CMD:", tools.GetNuvCmd())
+	fmt.Println("BIN:", os.Getenv("NUV_BIN"))
 	fmt.Println("REPO:", getNuvRepo())
 	root, _ := getNuvRoot()
 	fmt.Println("ROOT:", root)
-	fmt.Println("PATH:", os.Getenv("PATH"))
 }
 
 func main() {
