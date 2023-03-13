@@ -17,7 +17,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
@@ -39,26 +38,25 @@ func Example_locate() {
 func Example_locate_git() {
 	NuvBranch = "test"
 	nuvdir, _ := homedir.Expand("~/.nuv")
-	fmt.Println(nuvdir)
 	os.RemoveAll(nuvdir)
+	os.Setenv("NUV_BIN", "")
+	//_, err :=
+	_, err := locateNuvRoot("tests")
+	pr(1, err)
+	os.Setenv("NUV_BIN", workDir)
 	dir, err := locateNuvRoot("tests")
-	pr(1, err, nhpath(dir))
+	pr(2, err, npath(dir))
+	downloadTasksFromGitHub(true, true)
 	dir, err = locateNuvRoot("tests")
-	pr(2, err, nhpath(dir))
-	os.RemoveAll(joinpath(homeDir, ".nuv"))
-	NuvBranch = "test-wrong"
+	pr(3, err, nhpath(dir))
+	downloadTasksFromGitHub(true, true)
 	dir, err = locateNuvRoot("tests")
-	pr(3, err)
-	dir, err = locateNuvRoot("tests")
-	pr(4, err)
-	//os.RemoveAll(joinpath(homeDir, ".nuv"))
+	pr(4, err, nhpath(dir))
 	// Output:
+	// 1 we cannot find nuvfiles, download them with nuv -update
+	// 2 <nil> /work/olaris
 	// Cloning tasks...
-	// 1 <nil> /home/.nuv/olaris
+	// 3 <nil> /home/.nuv/olaris
 	// Updating tasks...
-	// 2 <nil> /home/.nuv/olaris
-	// Cloning tasks...
-	// 3 downloaded tasks but they do not contain the expected nuvtools.yml and nuvtools.yml
-	// Updating tasks...
-	// 4 downloaded tasks but they do not contain the expected nuvtools.yml and nuvtools.yml
+	// 4 <nil> /home/.nuv/olaris
 }

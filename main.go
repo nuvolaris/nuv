@@ -113,6 +113,16 @@ func main() {
 			tools.Help()
 			os.Exit(0)
 		}
+		if cmd == "update" {
+			// ok no up, nor down, let's download it
+			_, err := downloadTasksFromGitHub(true, true)
+			if err != nil {
+				log.Println(err)
+				os.Exit(1)
+			}
+			fmt.Println("nuvfiles updated successfully")
+			os.Exit(0)
+		}
 		// check if it is an embedded to and invoke it
 		if tools.IsTool(cmd) {
 			code, err := tools.RunTool(cmd, args[2:])

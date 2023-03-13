@@ -56,36 +56,7 @@ The following environment variables allows to ovverride certain defaults.
 - `NUV_BRANCH` is the branch where `nuv` looks for its tasks. The branch to use is defined at build time and it is the base version (without the patch level). For example, if `nuv` is `0.3.0-morpheus` the branch to use will be `0.3-morpheus`
 - `NUV_CMD` is the actualy command executed - defaults to the absolute path of the target of the symbolic link but it can be overriden
 
-## Where `nuv` looks for tasks
-
-Nuv is an enhanced task runner. Tasks are described by [task](https://taskfile.dev) taskfiles.
-Nuv is able either to run existing tasks or download them from github.
-
-When you run `nuv [<args>...]` it will first look for its `nuv` root.
-
-Once the `nuv` root has been found, it will download related tools and finally will execute tasks.
-
-### How `nuv` locate the `nuv` root
-
-The `nuv` root is a folder with two files in it: `nuvfile.yml` (an yaml taskfile) and `nuvtools.json` (a json file describing the tools to download). 
-
-The first step is to locate the root folder. The algorithm is the following.
-
-If the environment variable `NUV_ROOT` is defined, it will look there first, and will check if there are the two files.
-
-Then it will look in the current folder if there is a `nuvfile.yml`. If there is, it will also look for `nuvtools.json`. If it is not there, it will go up of one level looking for a directory with `nuvfile.yml` and `nuvtools.json`, and selects it as the `nuv` root.
-
-If there is not a `nuvfile.yml` it will look for a folder called `olaris` with both a `nuvfile.yml` and `nuvtools.json` in it and will select it as the `nuv` root.
-
-If the preceding tests fails, it will try to download it from GitHub, from a branch in a github repo. 
-
-The repo to use is defined by the environment variable `NUV_REPO`, and defaults if it is missing to `https://github.com/nuvolaris/olaris`
-
-The branch to use it defined at build time. It can be overriden with the enviroment variable `NUV_BRANCH`.
-
-If it is missing, it will clone the repo and store the in `~/.nuv/olaris`. If it is there and the `nuvtools.yml` is older than 24 hours, it will update it. Otherwise it will stop the search there.
-
-## Command Line Tools
+## Where `nuv` looks for binaries 
 
 Nuv requires some binary command line tools to work with ("bins").
 
@@ -93,11 +64,43 @@ They are expected to be in the folder pointed by the environment variable `NUV_B
 
 If this environment variable is not defined, it defaults to the same folder where `nuv` itself is located. The `NUV_BIN` folder is then added to the beginning of the `PATH` before executing anything else.
 
-When nuv update it will check the tools are there and of the right version running `nuv -t nuvtools.yml check`, and issue a warning if there is a version mismatch.
+Nuv is  normally distributed with an installer that includes all the tools for the various operating systems (linux, windows, osx).
 
-Updating tools can be executed manually with `nuv -t nuvtools.yaml update`, but generally you need to be  root or administrator.
+**NOTE**: You can download the relevant tools when you run from source code executing `task install`. This task will download the command line tools and setup a link in `/usr/local/bin` to invoke `nuv`.
 
-Nuv is however normally distributed with an installer that includes all the tools for the various operating systems (linux, windows, osx).
+## Where `nuv` looks for tasks
+
+Nuv is an enhanced task runner. Tasks are described by [task](https://taskfile.dev) taskfiles.
+
+Nuv is able either to run existing tasks or download them from github.
+
+When you run `nuv [<args>...]` it will first look for its `nuv` root.
+
+The `nuv` root is a folder with two files in it: `nuvfile.yml` (an yaml taskfile) and `nuvroot.json` (a json file with release informations).
+
+The first step is to locate the root folder. The algorithm to find the tools is the following.
+
+If the environment variable `NUV_ROOT` is defined, it will look there first, and will check if there are the two files.
+
+Then it will look in the current folder if there is a `nuvfile.yml`. If there is, it will also look for `nuvroot.json`. If it is not there, it will go up of one level looking for a directory with `nuvfile.yml` and `nuvtools.json`, and selects it as the `nuv` root.
+
+If there is not a `nuvfile.yml` it will look for a folder called `olaris` with both a `nuvfile.yml` and `nuvtools.json` in it and will select it as the `nuv` root.
+
+Then it will look in `~/nuv` if there is an `olaris` folder with `nuvfile.yml` and `nuvroot.json`.
+
+Finally it will look in the `NUV_BIN` folder if there is an `olaris` folder with  `nuvfile.yml` and `nuvroot.json`
+
+If everything fails, it will ask you to download some tasks with the command `nuv -update`. In this case it will download the latest version.
+
+## Where `nuv` download tasks from GitHub
+
+Download tasks from GitHub is triggered by the `nuv -update` command.
+
+The repo to use is defined by the environment variable `NUV_REPO`, and defaults if it is missing to `https://github.com/nuvolaris/olaris`
+
+The branch to use it defined at build time. It can be overriden with the enviroment variable `NUV_BRANCH`.
+
+When you run `nuv -update`, if there is not a `~/.nuv/olaris` it will clone the current branch, otherwise it will update it.
 
 ## How `nuv` execute tasks
 
@@ -109,7 +112,7 @@ If the last argument is a directory name, will look for a `nuvopts.txt`. If it i
 
 If it finds an argument not corresponding to a directory, it will consider it a task to execute, 
 
-If there is not a `nuvopts.txt`,  it will execute as a task, passing the other arguments (equivalent to `task -t nuvfile.yml <arg> -- <the-other-args>`). 
+If there is not a `nuvopts.txt`,  it will execute as a task, passing the other arguments (equivalent to `task -t nuvfile.yml <arg> -- <the-other-args>`).
 
 If there is a `nuvopts.txt`, it will interpret it as a  [`docopt`](http://docopt.org/) to parse the remaining arguments as parameters. The result of parsing is a sequence of `<key>=<value>` that will be fed to `task`. So it is equivalent to invoking `task -t nuvfile.yml <arg> <key>=<value> <key>=<value>...`
 

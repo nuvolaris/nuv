@@ -92,40 +92,49 @@ func locateNuvRoot(cur string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// is there  olaris folder? then go down in it
-	olaris := joinpath(cur, "olaris")
-	if exists(cur, "olaris") && exists(olaris, NUVFILE) && exists(olaris, NUVTOOLS) {
-		return olaris, nil
-	}
 
-	// search the root
+	// search the root from here
 	search := locateNuvRootSearch(cur)
 	if search != "" {
 		return search, nil
 	}
 
-	// ok no up, nor down, let's download it
-	dir, err := downloadTasksFromGitHub(true, true)
-	if err != nil {
-		return "", err
+	// is there  olaris folder?
+	olaris := joinpath(cur, "olaris")
+	if exists(cur, "olaris") && exists(olaris, NUVFILE) && exists(olaris, NUVROOT) {
+		return olaris, nil
 	}
-	if exists(dir, NUVFILE) && exists(dir, NUVTOOLS) {
-		return dir, nil
+
+	// is there an olaris folder in ~/.nuv ?
+	olaris, err = homedir.Expand("~/.nuv/olaris")
+	if err == nil && exists(olaris, NUVFILE) && exists(olaris, NUVROOT) {
+		return olaris, nil
 	}
-	return "", fmt.Errorf("downloaded tasks but they do not contain the expected nuvtools.yml and nuvtools.yml")
+
+	// is there an olaris folder in NUV_BIN?
+	nuvBin := os.Getenv("NUV_BIN")
+	if nuvBin != "" {
+		olaris = joinpath(nuvBin, "olaris")
+		if exists(olaris, NUVFILE) && exists(olaris, NUVROOT) {
+			return olaris, nil
+		}
+	}
+
+	return "", fmt.Errorf("we cannot find nuvfiles, download them with nuv -update")
 }
 
+// locateNuvRootSearch search for `nuvfiles.yml`
+// and goes up looking for a folder with also `nuvroot.json`
 func locateNuvRootSearch(cur string) string {
 	debug("locateNuvRootSearch:", cur)
-	// exits nuvtile.yml? if not, go up until you find it
+	// exits nuvfile.yml? if not, go up until you find it
 	if !exists(cur, NUVFILE) {
 		return ""
 	}
-	if exists(cur, NUVTOOLS) {
+	if exists(cur, NUVROOT) {
 		return cur
 	}
 	parent := parent(cur)
-	debug("parent:", parent)
 	if parent == "" {
 		return ""
 	}

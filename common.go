@@ -26,7 +26,7 @@ import (
 
 // default files
 const NUVFILE = "nuvfile.yml"
-const NUVTOOLS = "nuvtools.yml"
+const NUVROOT = "nuvroot.json"
 const NUVOPTS = "nuvopts.txt"
 
 // repo where download tasks

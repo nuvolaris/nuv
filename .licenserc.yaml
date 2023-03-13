@@ -32,7 +32,7 @@ header:
     - '_*'
     - '*.off'
     - 'tryit/**'
-    - 'nuvtools.json'
+    - 'nuvroot.json'
     - 'LICENSE'
     - 'tests/bats/**'
     - 'tests/test_helper/**'
