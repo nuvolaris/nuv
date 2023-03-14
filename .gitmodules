@@ -56,3 +56,9 @@
 [submodule "tests/test_helper/bats-assert"]
 	path = tests/test_helper/bats-assert
 	url = https://github.com/bats-core/bats-assert.git
+[submodule "tools/gojq"]
+	path = tools/gojq
+	url = https://github.com/nuvolaris/gojq
+[submodule "tools/goja"]
+	path = tools/goja
+	url = https://github.com/nuvolaris/goja
