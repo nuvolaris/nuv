@@ -21,15 +21,21 @@ import (
 	"os"
 
 	"github.com/nojima/httpie-go"
+	"github.com/nuvolaris/goawk"
 )
+
+var tools = []string{
+	"awk", "wsk", "ht",
+}
 
 func IsTool(name string) bool {
 	if IsUtil(name) {
 		return true
 	}
-	switch name {
-	case "wsk", "ht":
-		return true
+	for _, s := range tools {
+		if s == name {
+			return true
+		}
 	}
 	return false
 }
@@ -51,6 +57,7 @@ func RunTool(name string, args []string) (int, error) {
 	if IsUtil(name) {
 		return RunUtil(name, args)
 	}
+
 	switch name {
 	case "wsk":
 		//fmt.Println("=== wsk ===")
@@ -65,13 +72,20 @@ func RunTool(name string, args []string) (int, error) {
 		if err := httpie.Main(); err != nil {
 			return 1, err
 		}
+	case "awk":
+		// fmt.Println("=== awk ===")
+		os.Args = append([]string{"goawk"}, args...)
+		if err := goawk.AwkMain(); err != nil {
+			return 1, err
+		}
 	}
 	return 0, nil
 }
 
 func Help() {
 	fmt.Println("Available tools:")
-	tools := append(Utils, "wsk", "ht", "task")
+	tools := append(Utils, tools...)
+	tools = append(tools, "task")
 	for _, x := range tools {
 		fmt.Printf("-%s\n", x)
 	}
