@@ -20,12 +20,13 @@ import (
 	"fmt"
 	"os"
 
+	gojq "github.com/itchyny/gojq/cli"
 	"github.com/nojima/httpie-go"
 	"github.com/nuvolaris/goawk"
 )
 
 var tools = []string{
-	"awk", "wsk", "ht",
+	"awk", "jq", "wsk", "ht",
 }
 
 func IsTool(name string) bool {
@@ -57,7 +58,6 @@ func RunTool(name string, args []string) (int, error) {
 	if IsUtil(name) {
 		return RunUtil(name, args)
 	}
-
 	switch name {
 	case "wsk":
 		//fmt.Println("=== wsk ===")
@@ -78,6 +78,9 @@ func RunTool(name string, args []string) (int, error) {
 		if err := goawk.AwkMain(); err != nil {
 			return 1, err
 		}
+	case "jq":
+		os.Args = append([]string{"gojq"}, args...)
+		return gojq.Run(), nil
 	}
 	return 0, nil
 }
