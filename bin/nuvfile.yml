@@ -94,12 +94,43 @@ tasks:
     - ./nuv clean OS=darwin ARCH=amd64
     - ./nuv clean OS=darwin ARCH=arm64
 
+  versions:
+  - echo {{.VERSION}} >linux/version.txt
+  - echo {{.VERSION}} >windows/version.txt
+  - echo {{.VERSION}} >darwin/version.txt
 
   windows:
-    desc:  build msi installer for windows
-
-  darwin:
-    desc: build pkg installer for osx
+    desc:  windows subcommands
 
   linux:
+    desc:  windows subcommands
+
+  darwin:
+    desc:  windows subcommands
+
+  msi:
+    desc: build a windows msi installer
+    cmds:
+    - test "{{OS}}" = "windows"
+    - task: versions
+    - ./nuv all OS=windows ARCH=amd64
+    - ./nuv windows build
+
+  pkg:
+    desc: build pkg installer for osx
+    cmds:
+    - test "{{OS}}" = "darwin"
+    - task: versions
+    - ./nuv all OS=darwin ARCH=amd64
+    - ./nuv all OS=darwin ARCH=arm64
+    - ./nuv darwin build
+  
+  deb:
     desc: build deb and rpm for linux
+    cmds:
+    - test "{{OS}}" = "linux"
+    - task: versions
+    - ./nuv all OS=linux ARCH=amd64
+    - ./nuv all OS=linux ARCH=arm64
+    - ./nuv linux deb build ARCH=amd64
+    - ./nuv linux deb build ARCH=arm64

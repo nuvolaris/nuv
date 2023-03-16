@@ -1,10 +1,11 @@
 version: '3'
 
 tasks:
- 
+
   build:
     desc: build installer
     cmds:
+    - test "{{OS}}" = "windows"
     - task: wix
     - task: go-msi
     - task: setup
@@ -12,13 +13,13 @@ tasks:
   wix:
     cmds:
     - >
-     mkdir -p wix ;
-     cd wix ;
-     ht -d https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip ;
-     unzip wix311-binaries.zip
+      mkdir -p wix ;
+      cd wix ;
+      ht -d https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip ;
+      unzip wix311-binaries.zip
 
   go-msi:
     - go install github.com/mh-cbon/go-msi@latest
 
   setup:
-   - cmd /c setup.cmd
+    - cmd /c setup.cmd

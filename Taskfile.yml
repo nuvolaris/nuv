@@ -17,7 +17,7 @@
 #
 version: '3'
 vars:
-  BASEVER: v0.3.0-morpheus
+  BASEVER: 0.3.0-morpheus
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
 
@@ -74,4 +74,5 @@ tasks:
         else  python3 difftest.py {{.N}}
         fi
 
-  
+  centos:
+  - docker run --mount type=bind,source=$PWD,target=/mnt -ti rockylinux:8

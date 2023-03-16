@@ -7,6 +7,7 @@ tasks:
   build:
     desc: build installer
     cmds:
+    - test "{{OS}}" = "darwin"
     - >
       pkgbuild --root $(pwd)
       --identifier "io.nuvolaris.nuv" 

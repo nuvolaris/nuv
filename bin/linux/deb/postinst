@@ -1,0 +1,2 @@
+#!/bin/sh
+ln -sf /usr/nuvolaris/bin/nuv /usr/bin/nuv

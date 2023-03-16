@@ -1,0 +1,26 @@
+{
+    "name": "nuv",
+    "maintainer": "Michele Sciabarra <michele@nuvolaris.io>",
+    "description": "Nuvolaris CLI Tools",
+    "arch": "!arch!",
+    "release": "1",
+    "homepage": "http://github.com/nuvolaris/nuv",
+    "postinst": "postinst",
+    "prerm": "prerm",
+    "files": [
+        {
+            "from": "!arch!/*",
+            "to": "%{_bindir}/usr/nuvolaris/",
+            "base": "!arch!/",
+            "fperm": "0755"
+        }
+    ],
+    "copyrights": [
+        {
+            "files": "*",
+            "copyright": "2022 Michele Sciabarra <michele@nuvolaris.io>",
+            "license": "Apache 2.0",
+            "file": "LICENSE"
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+version: '3'
+
+tasks:
+
+  deb:
+    desc: build for debian subcommand
+  
+  rpm:
+    desc: build for redhat subcommand
