@@ -62,3 +62,6 @@
 [submodule "tools/goja"]
 	path = tools/goja
 	url = https://github.com/nuvolaris/goja
+[submodule "tools/envsubst"]
+	path = tools/envsubst
+	url = https://github.com/nuvolaris/envsubst/
