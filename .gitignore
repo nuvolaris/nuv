@@ -24,8 +24,8 @@ _*
 bin/nuv
 bin/nuv.exe
 bin/windows/wix
-*/amd64/*
-*/arm64/*
+bin/*/amd64/*
+bin/*/arm64/*
 *-build-*
 *.deb
 *.rpm
