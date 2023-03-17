@@ -28,7 +28,7 @@ tasks:
 
   cli-ver:
     - git tag -d $(git tag) 
-    - git tag -f {{.BASEVER}}-$(date +%y%m%d%H){{.S}}
+    - git tag -f {{.BASEVER}}.$(date +%y%m%d%H){{.S}}
     - git tag
 
   setup:
