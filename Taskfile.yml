@@ -20,6 +20,7 @@ vars:
   BASEVER: 0.3.0-morpheus
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
+  S: ""
 
 tasks:
 
@@ -27,7 +28,7 @@ tasks:
 
   cli-ver:
     - git tag -d $(git tag) 
-    - git tag -f {{.BASEVER}}.$(date +%y%m%d%H)
+    - git tag -f {{.BASEVER}}.$(date +%y%m%d%H){{.S}}
     - git tag
 
   setup:
