@@ -20,12 +20,29 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
     branches-ignore:
       - '*'
 
 jobs:
-  gradle:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout recursive
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: License check
+        uses: apache/skywalking-eyes/header@501a28d2fb4a9b962661987e50cf0219631b32ff
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.19.0'
+      - name: Run test
+        run: go test -v
+
+  release:
+    needs: check
     strategy:
       fail-fast: false
       matrix:
@@ -35,14 +52,11 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-
     - name: Setup Go
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go }} 
-
     - name: Build
       run: go build -o bin/nuv
-
     - name: Package
       run: cd nuv/bin ; ./nuv {{matrix.os}}-all ; find . -name nuv_*
