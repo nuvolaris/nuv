@@ -97,7 +97,7 @@ tasks:
     desc: build pkg installer for osx
     cmds:
     - test "{{OS}}" = "darwin"
-    - echo {{.VERSION}} >windows/version.txt
+    - echo {{.VERSION}} >darwin/version.txt
     - ./nuv getall OS=darwin ARCH=amd64
     - ./nuv getall OS=darwin ARCH=arm64
     - ./nuv darwin build ARCH=amd64
