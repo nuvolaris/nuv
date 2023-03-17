@@ -1,5 +1,9 @@
 version: '3'
 
+vars:
+  VERSION:
+    sh: cat version.txt
+
 tasks:
 
   build:
@@ -23,3 +27,4 @@ tasks:
 
   setup:
     - cmd /c setup.cmd
+    - mv nuv.msi nuv_{{.VERSION}}_{{.ARCH}}.msi

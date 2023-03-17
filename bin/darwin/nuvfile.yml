@@ -2,6 +2,8 @@ version: '3'
 
 vars:
   ARCH: '{{ARCH}}'
+  VERSION:
+    sh: cat version.txt
 
 tasks:
   build:
@@ -9,15 +11,15 @@ tasks:
     cmds:
     - test "{{OS}}" = "darwin"
     - >
-      pkgbuild --root $(pwd)
+      pkgbuild --root $(pwd)/{{.ARCH}}
       --identifier "io.nuvolaris.nuv" 
       --scripts $(pwd)/scripts
       --filter 'scripts/.*'
       --filter 'nuvfile.yml'
-      --filter 'nuv.pkg'
+      --filter 'nuv*.pkg'
       --install-location /usr/local/nuvolaris  
       --version 0.3.0 
-      nuv.pkg
+      nuv_{{.VERSION}}_{{.ARCH}}.pkg
 
   uninstall:
     desc: uninstall pkg

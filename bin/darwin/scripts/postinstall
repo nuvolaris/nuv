@@ -1,6 +1,3 @@
 #!/bin/sh
 rm /usr/local/bin/nuv
-if arch | grep arm64
-then ln -sf /usr/local/nuvolaris/arm64/nuv /usr/local/bin/nuv
-else ln -sf /usr/local/nuvolaris/amd64/nuv /usr/local/bin/nuv
-fi
+ln -sf /usr/local/nuvolaris/nuv /usr/local/bin/nuv

@@ -15,7 +15,6 @@ tasks:
     - task: assemble
 
   download:     
-      yum -y install wget sudo
       curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh | GH=mh-cbon/go-bin-rpm sh -xe
 
   assemble: |-

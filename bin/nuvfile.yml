@@ -69,68 +69,46 @@ tasks:
     cmds:
     - rm -v {{.BIN}}/*
 
-  all:
+  getall:
     desc: download all tools for {{.OS}}-{{.ARCH}}
     cmds:
     - task: nuv
     - task: kind
     - task: kubectl
 
-  all-platforms:
-    desc: download for all platforms
-    cmds:
-    - ./nuv all OS=windows ARCH=amd64
-    - ./nuv all OS=linux ARCH=amd64
-    - ./nuv all OS=linux ARCH=arm64
-    - ./nuv all OS=darwin ARCH=amd64
-    - ./nuv all OS=darwin ARCH=arm64
-
-  clean-platforms:
-    desc: clean for all platforms
-    cmds:
-    - ./nuv clean OS=windows ARCH=amd64
-    - ./nuv clean OS=linux ARCH=amd64
-    - ./nuv clean OS=linux ARCH=arm64
-    - ./nuv clean OS=darwin ARCH=amd64
-    - ./nuv clean OS=darwin ARCH=arm64
-
-  versions:
-  - echo {{.VERSION}} >linux/version.txt
-  - echo {{.VERSION}} >windows/version.txt
-  - echo {{.VERSION}} >darwin/version.txt
-
   windows:
     desc:  windows subcommands
 
   linux:
-    desc:  windows subcommands
+    desc:  linux subcommands
 
   darwin:
-    desc:  windows subcommands
+    desc:  darwin (osx) subcommands
 
   msi:
     desc: build a windows msi installer
     cmds:
     - test "{{OS}}" = "windows"
-    - task: versions
-    - ./nuv all OS=windows ARCH=amd64
+    - echo {{.VERSION}} >windows/version.txt
+    - ./nuv getall OS=windows ARCH=amd64
     - ./nuv windows build
 
   pkg:
     desc: build pkg installer for osx
     cmds:
     - test "{{OS}}" = "darwin"
-    - task: versions
-    - ./nuv all OS=darwin ARCH=amd64
-    - ./nuv all OS=darwin ARCH=arm64
-    - ./nuv darwin build
-  
+    - echo {{.VERSION}} >windows/version.txt
+    - ./nuv getall OS=darwin ARCH=amd64
+    - ./nuv getall OS=darwin ARCH=arm64
+    - ./nuv darwin build ARCH=amd64
+    - ./nuv darwin build ARCH=arm64
+
   deb:
     desc: build deb and rpm for linux
     cmds:
     - test "{{OS}}" = "linux"
-    - task: versions
-    - ./nuv all OS=linux ARCH=amd64
-    - ./nuv all OS=linux ARCH=arm64
+    - echo {{.VERSION}} >linux/deb/version.txt
+    - ./nuv getall OS=linux ARCH=amd64
+    - ./nuv getall OS=linux ARCH=arm64
     - ./nuv linux deb build ARCH=amd64
     - ./nuv linux deb build ARCH=arm64
