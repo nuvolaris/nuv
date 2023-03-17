@@ -76,25 +76,16 @@ tasks:
     - task: kind
     - task: kubectl
 
-  windows:
-    desc:  windows subcommands
-
-  linux:
-    desc:  linux subcommands
-
-  darwin:
-    desc:  darwin (osx) subcommands
-
-  windows-all:
-    desc: build a windows msi installer
+  windows-latest:
+    desc: build a msi installer for windows
     cmds:
     - test "{{OS}}" = "windows"
     - echo {{.VERSION}} >windows/version.txt
     - ./nuv getall OS=windows ARCH=amd64
     - ./nuv windows build
 
-  darwin-all:
-    desc: build pkg installer for osx
+  macos-latest:
+    desc: build a pkg installer for macos
     cmds:
     - test "{{OS}}" = "darwin"
     - echo {{.VERSION}} >darwin/version.txt
@@ -103,11 +94,10 @@ tasks:
     - ./nuv darwin build ARCH=amd64
     - ./nuv darwin build ARCH=arm64
 
-  linux-all:
-    desc: build a deb and rpm installer for linux
+  ubuntu-latest:
+    desc: build a deb installer for linux
     cmds:
     - task: linux-deb-all
-    - task: linux-rpm-all
 
   linux-deb-all:
     cmds:
@@ -129,4 +119,3 @@ tasks:
     - ./nuv getall OS=linux ARCH=arm64
     - ./nuv linux rpm build ARCH=amd64
     - ./nuv linux rpm build ARCH=arm64
-

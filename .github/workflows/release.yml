@@ -56,7 +56,9 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go }} 
-    - name: Build
-      run: go build -o bin/nuv
-    - name: Package
-      run: cd bin ; ./nuv ${{matrix.os}}-all ; find . -name nuv_*
+    - name: Build Package
+      run: >
+            go build -o bin/nuv ;
+            cd bin ; 
+            ./nuv ${{matrix.os}} ; 
+            find . -name nuv_*
