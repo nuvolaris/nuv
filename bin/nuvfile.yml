@@ -104,7 +104,12 @@ tasks:
     - ./nuv darwin build ARCH=arm64
 
   linux-all:
-    desc: build a deb installer for linux
+    desc: build a deb and rpm installer for linux
+    cmds:
+    - task: linux-deb-all
+    - task: linux-rpm-all
+
+  linux-deb-all:
     cmds:
     - test "{{OS}}" = "linux"
     - echo {{.VERSION}} >linux/deb/version.txt
@@ -112,3 +117,14 @@ tasks:
     - ./nuv getall OS=linux ARCH=arm64
     - ./nuv linux deb build ARCH=amd64
     - ./nuv linux deb build ARCH=arm64
+
+  linux-rpm-all:
+    desc: build a rpm installer for linux
+    cmds:
+    - test "{{OS}}" = "linux"
+    - echo {{.VERSION}} >linux/rpm/version.txt
+    - ./nuv getall OS=linux ARCH=amd64
+    - ./nuv getall OS=linux ARCH=arm64
+    - ./nuv linux rpm build ARCH=amd64
+    - ./nuv linux rpm build ARCH=arm64
+
