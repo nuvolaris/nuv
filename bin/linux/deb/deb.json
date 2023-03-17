@@ -12,7 +12,7 @@
         {
             "from": "../!arch!/*",
             "to": "/usr/nuvolaris/",
-            "base": "!arch!/",
+            "base": "../!arch!/",
             "fperm": "0755"
         }
     ],
