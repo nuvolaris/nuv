@@ -24,6 +24,7 @@ require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20221026131551-cf6655e29de4 // indirect
 	github.com/VividCortex/ewma v1.1.1 // indirect
+	github.com/a8m/envsubst v1.4.2 // indirect
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
 	github.com/apache/openwhisk-wskdeploy v0.0.0-20221221215944-0e9b45ff5ff3 // indirect
@@ -59,6 +60,7 @@ require (
 	github.com/mattn/go-zglob v0.0.4 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
+	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675 // indirect
 	github.com/nuvolaris/goja/gojamain v0.0.0-20230315181922-61fd5fa112c9 // indirect
 	github.com/nuvolaris/sh/v3 v3.0.0-20230312215406-ee139db1ecdb // indirect
 	github.com/nuvolaris/task/v3 v3.9.3-0.20230216111806-00c2fce2c9af // indirect

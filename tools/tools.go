@@ -22,12 +22,13 @@ import (
 
 	gojq "github.com/itchyny/gojq/cli"
 	"github.com/nojima/httpie-go"
+	envsubst "github.com/nuvolaris/envsubst/cmd/envsubstmain"
 	"github.com/nuvolaris/goawk"
 	goja "github.com/nuvolaris/goja/gojamain"
 )
 
 var tools = []string{
-	"awk", "jq", "js", "wsk", "ht",
+	"awk", "jq", "js", "envsubst", "wsk", "ht",
 }
 
 func IsTool(name string) bool {
@@ -85,6 +86,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "js":
 		os.Args = append([]string{"goja"}, args...)
 		if err := goja.GojaMain(); err != nil {
+			return 1, err
+		}
+	case "envsubst":
+		os.Args = append([]string{"envsubst"}, args...)
+		if err := envsubst.EnvsubstMain(); err != nil {
 			return 1, err
 		}
 	}
