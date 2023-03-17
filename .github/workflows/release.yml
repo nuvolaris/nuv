@@ -57,13 +57,13 @@ jobs:
       with:
         go-version: ${{ matrix.go }} 
     - name: Build Package
-      run: go build -o bin/nuv ; cd bin ; ./nuv ${{matrix.os}} 
+      run: go build -o bin/nuv.exe ; cd bin ; ./nuv.exe ${{matrix.os}}
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-          artifacts: "nuv_*"
+          artifacts: "nuv_${{ gitub.ref_name }}*"
           allowUpdates: true
           omitBody: true
