@@ -113,6 +113,7 @@ tasks:
     cmds:
     - test "{{OS}}" = "linux"
     - echo {{.VERSION}} >linux/deb/version.txt
+    - cp LICENSE linux/rpm/LICENSE
     - ./nuv getall OS=linux ARCH=amd64
     - ./nuv getall OS=linux ARCH=arm64
     - ./nuv linux deb build ARCH=amd64
@@ -123,6 +124,7 @@ tasks:
     cmds:
     - test "{{OS}}" = "linux"
     - echo {{.VERSION}} >linux/rpm/version.txt
+    - cp LICENSE linux/rpm/LICENSE
     - ./nuv getall OS=linux ARCH=amd64
     - ./nuv getall OS=linux ARCH=arm64
     - ./nuv linux rpm build ARCH=amd64
