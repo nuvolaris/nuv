@@ -59,4 +59,4 @@ jobs:
     - name: Build
       run: go build -o bin/nuv
     - name: Package
-      run: cd nuv/bin ; ./nuv {{matrix.os}}-all ; find . -name nuv_*
+      run: cd nuv ; ./nuv ${{matrix.os}}-all ; find . -name nuv_*
