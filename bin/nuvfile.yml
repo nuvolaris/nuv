@@ -83,7 +83,7 @@ tasks:
     - echo {{.VERSION}} >windows/version.txt
     - ./nuv getall OS=windows ARCH=amd64
     - ./nuv windows build
-    - cp -v windows/*.msi ..
+    - cp windows/*.msi ..
 
   macos-latest:
     desc: build a pkg installer for macos
@@ -94,7 +94,7 @@ tasks:
     - ./nuv getall OS=darwin ARCH=arm64
     - ./nuv darwin build ARCH=amd64
     - ./nuv darwin build ARCH=arm64
-    - cp -v darwin/*.pkg ..
+    - cp darwin/*.pkg ..
 
   ubuntu-latest:
     desc: build a deb installer for linux
@@ -110,7 +110,7 @@ tasks:
     - ./nuv getall OS=linux ARCH=arm64
     - ./nuv linux deb build ARCH=amd64
     - ./nuv linux deb build ARCH=arm64
-    - cp -v linux/deb/*.deb ..
+    - cp linux/deb/*.deb ..
 
   linux-rpm-all:
     desc: build a rpm installer for linux
