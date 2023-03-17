@@ -85,7 +85,7 @@ tasks:
   darwin:
     desc:  darwin (osx) subcommands
 
-  msi:
+  windows-all:
     desc: build a windows msi installer
     cmds:
     - test "{{OS}}" = "windows"
@@ -93,7 +93,7 @@ tasks:
     - ./nuv getall OS=windows ARCH=amd64
     - ./nuv windows build
 
-  pkg:
+  darwin-all:
     desc: build pkg installer for osx
     cmds:
     - test "{{OS}}" = "darwin"
@@ -103,8 +103,8 @@ tasks:
     - ./nuv darwin build ARCH=amd64
     - ./nuv darwin build ARCH=arm64
 
-  deb:
-    desc: build deb and rpm for linux
+  linux-all:
+    desc: build a deb installer for linux
     cmds:
     - test "{{OS}}" = "linux"
     - echo {{.VERSION}} >linux/deb/version.txt
