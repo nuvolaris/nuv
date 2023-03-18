@@ -36,7 +36,6 @@ tasks:
     dir: "{{.BIN}}"
     cmds:
     - ht -o {{.TGT}} -d {{.SRC}}
-    - file {{.TGT}}
     - '{{if eq .OS "windows"}}mv {{.TGT}} {{.TGT}}.exe{{else}}chmod +x {{.TGT}}{{end}}'
     status:
     - test -e {{.TGT}}{{.EXE}}
