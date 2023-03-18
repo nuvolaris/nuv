@@ -26,6 +26,7 @@ vars:
   OS: "{{OS}}"
   BIN: "{{.OS}}/{{.ARCH}}"
   EXE: '{{if eq .OS "windows"}}.exe{{end}}'
+  ARC: '{{if eq .OS "windows"}}.zip{{else}}.tgz{{end}}'
 
 tasks:
 
@@ -37,6 +38,26 @@ tasks:
     cmds:
     - ht -o {{.TGT}} -d {{.SRC}}
     - '{{if eq .OS "windows"}}mv {{.TGT}} {{.TGT}}.exe{{else}}chmod +x {{.TGT}}{{end}}'
+    status:
+    - test -e {{.TGT}}{{.EXE}}
+
+  unzip.exe:
+  cmds:
+  - |-
+    if [[ "{{.OS}}" == "windows" ]]
+    then test -e unzip.exe || ht -o unzip.exe -d http://stahlworks.com/dev/unzip.exe
+    else test -e unzip.exe || cp /usr/bin/unzip unzip.exe
+    fi
+  status:
+  - test -e unzip.exe
+
+  download-archive:
+    dir: "{{.BIN}}"
+    cmds:
+    - task: unzip.exe
+    - ht -o {{.TGT}}{{.ARC}} -d {{.SRC}}
+    - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC}} {{.TGT}}{{end}}'
+    - rm {{.TGT}}{{.ARC}}
     status:
     - test -e {{.TGT}}{{.EXE}}
 
@@ -54,6 +75,28 @@ tasks:
         SRC: "https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{.ARCH}}"
         TGT: kind
 
+  ytt:
+    cmds:
+    - task: download
+      vars:
+        SRC: "https://github.com/carvel-dev/ytt/releases/download/v0.40.4/ytt-{{.OS}}-{{.ARCH}}"
+        TGT: ytt
+
+  eksctl:
+    vars:
+      BASE: "https://github.com/weaveworks/eksctl/releases/download/v0.134.0/"
+    cmds:
+    - task: download-archive
+      vars:
+        SRC:
+          sh: > 
+              case {{.OS}} in
+              (linux)  echo {{.BASE}}eksctl_Linux_{{.ARCH}}.tar.gz ;;
+              (darwin) echo {{.BASE}}eksctl_Darwin_{{.ARCH}}.tar.gz ;;
+              (windows)echo {{.BASE}}eksctl_Windows_{{.ARCH}}.zip ;;
+              esac
+        TGT: eksctl
+  
   nuv:
     dir: ".."
     cmds:
@@ -65,21 +108,43 @@ tasks:
 
   clean:
     desc: cleanup {{.OS}}/{{.ARCH}}
+    ignore_error: true
     cmds:
-    - rm {{.BIN}}/*
+    - rm unzip.exe {{.BIN}}/*
+    - rm -r windows/wix
+    - rmdir {{.OS}}/{{.ARCH}}
 
+  fullclean:
+  - ./nuv clean OS=linux ARCH=amd64
+  - ./nuv clean OS=linux ARCH=arm64
+  - ./nuv clean OS=darwin ARCH=amd64
+  - ./nuv clean OS=darwin ARCH=arm64
+  - ./nuv clean OS=windows ARCH=amd64
+
+  fullgetall:
+  - ./nuv getall OS=linux ARCH=amd64
+  - ./nuv getall OS=linux ARCH=arm64
+  - ./nuv getall OS=darwin ARCH=amd64
+  - ./nuv getall OS=darwin ARCH=arm64
+  - ./nuv getall OS=windows ARCH=amd64
+
+  # remember to update windows/wix.json with the list of files
   getall:
     desc: download all tools for {{.OS}}-{{.ARCH}}
     cmds:
     - task: nuv
     - task: kind
     - task: kubectl
-
+    - task: ytt
+    - task: eksctl
+    
   windows-latest:
     desc: build a msi installer for windows
     cmds:
     - test "{{OS}}" = "windows"
     - echo {{.VERSION}} >windows/version.txt
+    - cp LICENSE windows/LICENSE
+    - task: unzip.exe
     - ./nuv getall OS=windows ARCH=amd64
     - ./nuv windows build
     - cp windows/*.msi ..
@@ -89,6 +154,7 @@ tasks:
     cmds:
     - test "{{OS}}" = "darwin"
     - echo {{.VERSION}} >darwin/version.txt
+    - cp LICENSE darwin/LICENSE
     - ./nuv getall OS=darwin ARCH=amd64
     - ./nuv getall OS=darwin ARCH=arm64
     - ./nuv darwin build ARCH=amd64

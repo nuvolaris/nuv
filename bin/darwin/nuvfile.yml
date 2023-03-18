@@ -3,7 +3,7 @@ version: '3'
 vars:
   ARCH: '{{ARCH}}'
   VERSION:
-    sh: cat version.txt
+    sh: cat version.txt || echo "unknown"
 
 tasks:
   build:
