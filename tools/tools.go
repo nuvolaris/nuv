@@ -28,7 +28,7 @@ import (
 )
 
 var tools = []string{
-	"awk", "jq", "js", "envsubst", "wsk", "ht",
+	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir",
 }
 
 func IsTool(name string) bool {
@@ -91,6 +91,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "envsubst":
 		os.Args = append([]string{"envsubst"}, args...)
 		if err := envsubst.EnvsubstMain(); err != nil {
+			return 1, err
+		}
+	case "mkdir":
+		os.Args = append([]string{"mkdir"}, args...)
+		if err := Mkdirs(); err != nil {
 			return 1, err
 		}
 	}
