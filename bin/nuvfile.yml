@@ -82,6 +82,13 @@ tasks:
         SRC: "https://github.com/carvel-dev/ytt/releases/download/v0.40.4/ytt-{{.OS}}-{{.ARCH}}"
         TGT: ytt
 
+  kops:
+    cmds:
+    - task: download
+      vars:
+        SRC: "https://github.com/kubernetes/kops/releases/download/v1.26.2/kops-{{.OS}}-{{.ARCH}}"
+        TGT: kops
+
   eksctl:
     vars:
       BASE: "https://github.com/weaveworks/eksctl/releases/download/v0.134.0/"
@@ -156,13 +163,14 @@ tasks:
     - task: ytt
     - task: eksctl
     - task: k3sup
+    - task: kops
     
   windows-latest:
     desc: build a msi installer for windows
     cmds:
     - test "{{OS}}" = "windows"
     - echo {{.VERSION}} >windows/version.txt
-    - cp LICENSE windows/LICENSE
+    - cp ../LICENSE windows/LICENSE
     - task: unzip.exe
     - ./nuv getall OS=windows ARCH=amd64
     - ./nuv windows build
@@ -173,7 +181,7 @@ tasks:
     cmds:
     - test "{{OS}}" = "darwin"
     - echo {{.VERSION}} >darwin/version.txt
-    - cp LICENSE darwin/LICENSE
+    - cp ../LICENSE darwin/LICENSE
     - ./nuv getall OS=darwin ARCH=amd64
     - ./nuv getall OS=darwin ARCH=arm64
     - ./nuv darwin build ARCH=amd64
@@ -185,7 +193,7 @@ tasks:
     cmds:
     - test "{{OS}}" = "linux"
     - echo {{.VERSION}} >linux/version.txt
-    - cp LICENSE linux/LICENSE
+    - cp ../LICENSE linux/LICENSE
     - ./nuv getall OS=linux ARCH=amd64
     - ./nuv getall OS=linux ARCH=arm64
     - ./nuv linux build ARCH=amd64
