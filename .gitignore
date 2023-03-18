@@ -33,3 +33,5 @@ bin/*/arm64/*
 *.pkg
 version.txt
 bin/unzip.exe
+bin/*/LICENSE
+

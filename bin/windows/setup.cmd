@@ -18,6 +18,7 @@ rem under the License.
 mkdir wix
 cd wix
 curl https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -o wix.zip
+curl https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip 
 ..\..\unzip.exe wix.zip
 cd ..
 set PATH=%CD%\wix;%PATH%
