@@ -67,7 +67,7 @@ tasks:
   clean:
     desc: cleanup {{.OS}}/{{.ARCH}}
     cmds:
-    - rm -v {{.BIN}}/*
+    - rm {{.BIN}}/*
 
   getall:
     desc: download all tools for {{.OS}}-{{.ARCH}}
