@@ -5,14 +5,13 @@
     "description": "Command Line Tools for Nuvolaris",
     "license": "LICENSE",
     "arch": "!arch!",
-    "release": "1",
     "homepage": "http://github.com/nuvolaris/nuv",
-    "postinst": "postinst",
-    "prerm": "prerm",
+    "postinst-file": "postinst",
+    "prerm-file": "prerm",
     "files": [
         {
             "from": "!arch!/*",
-            "to": "%{_bindir}/usr/nuvolaris/",
+            "to": "/usr/nuvolaris/",
             "base": "!arch!/",
             "fperm": "0755"
         }

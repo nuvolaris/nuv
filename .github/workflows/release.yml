@@ -57,7 +57,7 @@ jobs:
       with:
         go-version: ${{ matrix.go }} 
     - name: Build Package
-      run: go build -o bin/nuv.exe ; cd bin ; ./nuv.exe ${{matrix.os}}
+      run: go build -o bin/nuv ; cd bin ; cp nuv nuv.exe ; ./nuv ${{matrix.os}}
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1

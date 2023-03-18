@@ -97,28 +97,12 @@ tasks:
     - cp darwin/*.pkg ..
 
   ubuntu-latest:
-    desc: build a deb installer for linux
-    cmds:
-    - task: linux-deb-all
-
-  linux-deb-all:
     cmds:
     - test "{{OS}}" = "linux"
-    - echo {{.VERSION}} >linux/deb/version.txt
-    - cp ../LICENSE linux/deb/LICENSE
+    - echo {{.VERSION}} >linux/version.txt
+    - cp LICENSE linux/LICENSE
     - ./nuv getall OS=linux ARCH=amd64
     - ./nuv getall OS=linux ARCH=arm64
-    - ./nuv linux deb build ARCH=amd64
-    - ./nuv linux deb build ARCH=arm64
-    - cp linux/deb/*.deb ..
-
-  linux-rpm-all:
-    desc: build a rpm installer for linux
-    cmds:
-    - test "{{OS}}" = "linux"
-    - echo {{.VERSION}} >linux/rpm/version.txt
-    - cp ../LICENSE linux/rpm/LICENSE
-    - ./nuv getall OS=linux ARCH=amd64
-    - ./nuv getall OS=linux ARCH=arm64
-    - ./nuv linux rpm build ARCH=amd64
-    - ./nuv linux rpm build ARCH=arm64
+    - ./nuv linux build ARCH=amd64
+    - ./nuv linux build ARCH=arm64
+    - cp linux/*.deb linux/*.rpm ..

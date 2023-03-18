@@ -1,9 +1,32 @@
 version: '3'
 
+vars:
+  ARCH: "{{ARCH}}"
+  VERSION:
+    sh: cat version.txt
+
 tasks:
 
-  deb:
-    desc: build for debian subcommand
+  build:
+    desc: build installer
+    cmds:
+    - test "{{OS}}" = "linux"
+    - task: download
+    - task: assemble
+
+  download: 
+    - curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh | GH=mh-cbon/go-bin-deb sh -xe
+    - sudo apt-get -y install alien
+
+  assemble:
+    - rm -r deb-build-{{.ARCH}}
+    - go-bin-deb generate -a {{.ARCH}} --version {{.VERSION}} --wd deb-build-{{.ARCH}}
+    - sudo alien --to-rpm nuv_{{.VERSION}}_{{.ARCH}}.deb --scripts
+    - mv nuv-*.rpm nuv_{{.VERSION}}_{{.ARCH}}.rpm
+
+  clean: rm -r *.deb *.rpm deb-build-{{.ARCH}}
+
+  info:
+  - echo "ARCH:" "{{.ARCH}}"
+  - echo "VERSION:" "{{.VERSION}}"
   
-  rpm:
-    desc: build for redhat subcommand
