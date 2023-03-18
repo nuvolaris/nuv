@@ -32,3 +32,4 @@ bin/*/arm64/*
 *.msi
 *.pkg
 version.txt
+bin/unzip.exe
