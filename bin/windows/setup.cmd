@@ -15,5 +15,10 @@ rem KIND, either express or implied.  See the License for the
 rem specific language governing permissions and limitations
 rem under the License.
 
-set PATH=%CD%\wix\tools;%PATH%
+mkdir wix
+cd wix
+curl https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -o wix.zip
+..\..\unzip.exe wix.zip
+cd ..
+set PATH=%CD%\wix;%PATH%
 go-msi make -p wix.json -a amd64 -m nuv.msi -l LICENSE --version 0.3.0 --src templates

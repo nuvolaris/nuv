@@ -27,18 +27,16 @@ tasks:
     desc: build installer
     cmds:
     - test "{{OS}}" = "windows"
-    - task: wix-unzip
     - task: go-msi
     - task: setup
 
-  wix-unzip:
-    cmds:
-    - >
+  wix-unzip: >
       mkdir -p wix/tools ; cd wix/tools ;
       curl https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip  -o wix311-binaries.zip ;
       unzip.exe wix311-binaries.zip
 
-  wix-clone: test -d wix || git clone https://github.com/nuvolaris/wix
+  wix-clone: >
+    test -d wix || git clone https://github.com/nuvolaris/wix
 
   go-msi:
     - go install github.com/mh-cbon/go-msi@latest
