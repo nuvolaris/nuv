@@ -14,13 +14,16 @@ tasks:
     - task: go-msi
     - task: setup
 
-  wix:
+  # not working for some reasons in github actions - invalid file 
+  wix-zip:
     cmds:
     - >
-      mkdir -p wix ;
-      cd wix ;
+      mkdir -p wix/tools ;
+      cd wix/tools ;
       ht -d https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip ;
       unzip wix311-binaries.zip
+
+  wix: test -d wix || git clone https://github.com/nuvolaris/wix
 
   go-msi:
     - go install github.com/mh-cbon/go-msi@latest
