@@ -63,7 +63,7 @@ tasks:
       go build 
       -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"
       -o bin/{{.BIN}}/nuv{{.EXE}}
-  
+
   clean:
     desc: cleanup {{.OS}}/{{.ARCH}}
     cmds:
@@ -97,6 +97,7 @@ tasks:
     - cp darwin/*.pkg ..
 
   ubuntu-latest:
+    desc: build a deb and rpm installer for linux
     cmds:
     - test "{{OS}}" = "linux"
     - echo {{.VERSION}} >linux/version.txt
