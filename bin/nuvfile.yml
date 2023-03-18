@@ -161,10 +161,9 @@ tasks:
     - task: kind
     - task: kubectl
     - task: ytt
-    - task: eksctl
     - task: k3sup
     - task: kops
-    
+
   windows-latest:
     desc: build a msi installer for windows
     cmds:
