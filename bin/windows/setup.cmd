@@ -17,9 +17,8 @@ rem under the License.
 
 mkdir wix
 cd wix
-curl https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -o wix.zip
-curl https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip 
-..\..\unzip.exe wix.zip
+..\..\nuv -ht -d https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip 
+..\..\unzip.exe wix311-binaries.zip
 cd ..
 set PATH=%CD%\wix;%PATH%
 go-msi make -p wix.json -a amd64 -m nuv.msi -l LICENSE --version 0.3.0 --src templates
