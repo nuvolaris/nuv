@@ -10,11 +10,10 @@ tasks:
     desc: build installer
     cmds:
     - test "{{OS}}" = "windows"
-    - task: wix
+    - task: wix-unzip
     - task: go-msi
     - task: setup
 
-  # not working for some reasons in github actions - invalid file 
   wix-unzip:
     cmds:
     - >

@@ -42,14 +42,14 @@ tasks:
     - test -e {{.TGT}}{{.EXE}}
 
   unzip.exe:
-  cmds:
-  - |-
-    if [[ "{{.OS}}" == "windows" ]]
-    then test -e unzip.exe || ht -o unzip.exe -d http://stahlworks.com/dev/unzip.exe
-    else test -e unzip.exe || cp /usr/bin/unzip unzip.exe
-    fi
-  status:
-  - test -e unzip.exe
+    cmds:
+    - |-
+      if [[ "{{.OS}}" == "windows" ]]
+      then ht -o unzip.exe -d http://stahlworks.com/dev/unzip.exe
+      else cp /usr/bin/unzip unzip.exe
+      fi
+    status:
+    - test -e unzip.exe
 
   download-archive:
     dir: "{{.BIN}}"
@@ -97,6 +97,24 @@ tasks:
               esac
         TGT: eksctl
   
+  k3sup:
+    vars:
+      BASE: "https://github.com/alexellis/k3sup/releases/download/0.12.13/"
+    cmds:
+    - task: download
+      vars:
+        SRC:
+          sh: > 
+              case {{.OS}}-{{.ARCH}} in
+              (linux-amd64)   echo {{.BASE}}k3sup ;;
+              (linux-arm64)   echo {{.BASE}}k3sup-arm64 ;;
+              (darwin-amd64)  echo {{.BASE}}k3sup-darwin ;;
+              (darwin-arm64)  echo {{.BASE}}k3sup-darwin-arm64 ;;
+              (windows-amd64) echo {{.BASE}}k3sup.exe ;;
+              esac
+        TGT: k3sup
+
+
   nuv:
     dir: ".."
     cmds:
@@ -137,6 +155,7 @@ tasks:
     - task: kubectl
     - task: ytt
     - task: eksctl
+    - task: k3sup
     
   windows-latest:
     desc: build a msi installer for windows
