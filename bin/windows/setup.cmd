@@ -15,7 +15,7 @@ rem KIND, either express or implied.  See the License for the
 rem specific language governing permissions and limitations
 rem under the License.
 
-choco list --local-only
-choco install -y wixtoolset
+rem choco list --local-only
+rem choco install -y wixtoolset
 set PATH="C:\Program Files (x86)\WiX Toolset v3.11\bin";%PATH%
 go-msi make -p wix.json -a amd64 -m nuv.msi -l LICENSE --version 0.3.0 --src templates --out %CD%\go-msi-out
