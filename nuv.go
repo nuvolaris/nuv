@@ -18,12 +18,12 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"sort"
 	"strings"
 
 	docopt "github.com/docopt/docopt-go"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 )
 
@@ -104,6 +104,8 @@ func Nuv(base string, args []string) error {
 		// if valid, check if it's a folder and move to it
 		if isDir(taskName) && exists(taskName, NUVFILE) {
 			os.Chdir(taskName)
+			//remove it from the args
+			// rest = append(rest[:i], rest[i+1:]...)
 			rest = rest[1:]
 		} else {
 			// stop when non folder reached
@@ -130,13 +132,16 @@ func Nuv(base string, args []string) error {
 		return nil
 	}
 
-	// rest[0] is the main task name <-- perform validating logic here
-	mainTask, err := validateTaskName(rest[0])
-	if err != nil {
-		return err
+	// get first string without '=' from rest, it's the task name
+	idx := 0
+	for i, s := range rest {
+		if !strings.Contains(s, "=") {
+			idx = i
+			break
+		}
 	}
-	log.Println("main task", mainTask)
-	// rest[1:] not containing '=' are sub tasks <-- if success, perform validating logic here
+
+	mainTask := rest[idx]
 
 	// unparsed args - separate variable assignments from extra args
 	pre := []string{"-t", NUVFILE, mainTask}
@@ -164,6 +169,9 @@ func validateTaskName(name string) (string, error) {
 
 	candidates := []string{}
 	tasks := getTaskNamesList(pwd)
+	if !slices.Contains(tasks, "help") {
+		tasks = append(tasks, "help")
+	}
 	for _, t := range tasks {
 		if t == name {
 			return name, nil

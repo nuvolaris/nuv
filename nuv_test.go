@@ -20,28 +20,30 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"golang.org/x/exp/slices"
 )
 
 func ExampleNuvArg() {
 	// test
 	os.Chdir(workDir)
-	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
-	err := Nuv(olaris, split("top"))
+	olaris, _ := filepath.Abs("olaris")
+	err := Nuv(olaris, split("testcmd"))
 	pr(2, err)
-	err = Nuv(olaris, split("top arg"))
+	err = Nuv(olaris, split("testcmd arg"))
 	pr(3, err)
-	err = Nuv(olaris, split("top arg VAR=1"))
+	err = Nuv(olaris, split("testcmd arg VAR=1"))
 	pr(4, err)
-	err = Nuv(olaris, split("top VAR=1 arg"))
+	err = Nuv(olaris, split("testcmd VAR=1 arg"))
 	pr(5, err)
 	// Output:
-	// (olaris) task [-t nuvfile.yml top --]
+	// (olaris) task [-t nuvfile.yml testcmd --]
 	// 2 <nil>
-	// (olaris) task [-t nuvfile.yml top -- arg]
+	// (olaris) task [-t nuvfile.yml testcmd -- arg]
 	// 3 <nil>
-	// (olaris) task [-t nuvfile.yml top VAR=1 -- arg]
+	// (olaris) task [-t nuvfile.yml testcmd VAR=1 -- arg]
 	// 4 <nil>
-	// (olaris) task [-t nuvfile.yml top VAR=1 -- arg]
+	// (olaris) task [-t nuvfile.yml testcmd VAR=1 -- arg]
 	//5 <nil>
 }
 
@@ -112,8 +114,8 @@ func Test_getTaskNamesList(t *testing.T) {
 			t.Fatalf("expected 2 tasks, got %d", len(tasks))
 		}
 
-		if tasks[0] != "task1" || tasks[1] != "task2" {
-			t.Fatalf("expected task1 and task2, got %s and %s", tasks[0], tasks[1])
+		if !slices.Contains(tasks, "task1") || !slices.Contains(tasks, "task2") {
+			t.Fatalf("expected task1 and task2, got %v", tasks)
 		}
 	})
 
