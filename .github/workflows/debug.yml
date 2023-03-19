@@ -44,8 +44,11 @@ jobs:
   debug:
     runs-on: windows-latest
     steps:
-    - name: Test background
-      uses: NyaMisty/reverse-rdp-windows-github-actions-ng@master
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup Go
+      uses: actions/setup-go@v4
       with:
-        ngrok-token: $NGROK_TOKEN
-        password: $NGROK_PASSWORD
+        go-version: 1.19 
+    - name: Build Package
+      run: go build -o bin/nuv ; cd bin ; cp nuv nuv.exe ; ./nuv windows-latest
