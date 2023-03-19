@@ -95,6 +95,37 @@ func ExampleParseArgs() {
 	// 4 [__fa=false __fb=true __fl= __help=false __version=false _c=false _h=false _name_=() _x_=4 _y_=5 arg1=false arg2=false arg3=true args=false hello=false opt1=false opt2=true]
 }
 
+func Test_validateTaskName(t *testing.T) {
+	testNuvfile := "tasks:\n  task1: a\n  task2: b\n  test: c\n"
+
+	type validateTaskTest struct {
+		argTask  string
+		expected string
+	}
+
+	var validateTaskTests = []validateTaskTest{
+		{"help", "help"},
+		{"task1", "task1"},
+		{"te", "test"},
+		{"t", "ambiguous task: t. Possible tasks: [task1 task2 test]"},
+		{"no-task", "no task named no-task found"},
+	}
+
+	tmpDir := createTmpNuvfile(t, testNuvfile)
+	defer os.RemoveAll(tmpDir)
+	os.Chdir(tmpDir)
+	for _, tt := range validateTaskTests {
+		task, err := validateTaskName(tt.argTask)
+		if err != nil && err.Error() != tt.expected {
+			t.Fatalf("want error: %s, got: %v", tt.expected, err)
+		}
+		if err == nil && task != tt.expected {
+			t.Fatalf("want task: %s, got: %s", tt.argTask, task)
+		}
+
+	}
+}
+
 func Test_getTaskNamesList(t *testing.T) {
 	t.Run("empty nuvfile should return empty array", func(t *testing.T) {
 		tmpDir := createTmpNuvfile(t, "")

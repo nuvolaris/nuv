@@ -189,7 +189,7 @@ func validateTaskName(name string) (string, error) {
 		return candidates[0], nil
 	}
 
-	return "", fmt.Errorf("ambiguous task: %s. possible tasks: %v", name, candidates)
+	return "", fmt.Errorf("ambiguous task: %s. Possible tasks: %v", name, candidates)
 }
 
 // obtains the task names from the nuvfile.yaml inside the given directory
@@ -203,7 +203,7 @@ func getTaskNamesList(dir string) []string {
 
 		err = yaml.Unmarshal(dat, &m)
 		if err != nil {
-			warn("error checking task list")
+			warn("error reading nuvfile.yml")
 			return make([]string, 0)
 		}
 		tasksMap, ok := m["tasks"].(map[string]interface{})
