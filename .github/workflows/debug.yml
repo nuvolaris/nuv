@@ -44,12 +44,6 @@ jobs:
   debug:
     runs-on: windows-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Setup Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.19
     - name: Test background
       uses: NyaMisty/reverse-rdp-windows-github-actions-ng@master
       with:
