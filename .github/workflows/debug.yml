@@ -36,10 +36,6 @@ name: Debug Windows VM
 on:
   workflow_dispatch:
 
-env:
-  NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
-  NGROK_PASSWORD: ${{ secrets.NGROK_PASSWORD }}
-
 jobs:
   debug:
     runs-on: windows-latest
@@ -52,3 +48,5 @@ jobs:
         go-version: 1.19 
     - name: Build Package
       run: go build -o bin/nuv ; cd bin ; cp nuv nuv.exe ; ./nuv windows-latest
+    - run: pwd ; ls
+
