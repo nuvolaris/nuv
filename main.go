@@ -102,6 +102,10 @@ func main() {
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
+			if len(args) < 3 {
+				taskmain.Task(args[1:])
+				os.Exit(0)
+			}
 			taskmain.Task(args[2:])
 			os.Exit(0)
 		}
@@ -146,5 +150,9 @@ func main() {
 	// check if olaris was recently updated
 	// we pass parent(dir) because we use the olaris parent folder
 	checkUpdated(parent(dir), 24*time.Hour)
-	Nuv(dir, args[1:])
+
+	if err := Nuv(dir, args[1:]); err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
 }

@@ -19,6 +19,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"testing"
 )
 
 func ExampleNuvArg() {
@@ -90,4 +91,47 @@ func ExampleParseArgs() {
 	// 2 [__fa=false __fb=false __fl= __help=false __version=false _c=true _h=false _name_=('mike') _x_= _y_= arg1=false arg2=false arg3=false args=true hello=false opt1=false opt2=false]
 	// 3 [__fa=false __fb=false __fl=3 __help=false __version=false _c=false _h=false _name_=('max') _x_=1 _y_=2 arg1=true arg2=true arg3=false args=false hello=false opt1=false opt2=false]
 	// 4 [__fa=false __fb=true __fl= __help=false __version=false _c=false _h=false _name_=() _x_=4 _y_=5 arg1=false arg2=false arg3=true args=false hello=false opt1=false opt2=true]
+}
+
+func Test_getTaskNamesList(t *testing.T) {
+	t.Run("empty nuvfile should return empty array", func(t *testing.T) {
+		tmpDir := createTmpNuvfile(t, "")
+
+		tasks := getTaskNamesList(tmpDir)
+		if len(tasks) != 0 {
+			t.Fatalf("expected 0 tasks, got %d", len(tasks))
+		}
+	})
+
+	t.Run("should return array of task names if tasks in nuvfile", func(t *testing.T) {
+		tmpDir := createTmpNuvfile(t, "tasks:\n  task1: a\n  task2: b\n")
+		defer os.RemoveAll(tmpDir)
+
+		tasks := getTaskNamesList(tmpDir)
+		if len(tasks) != 2 {
+			t.Fatalf("expected 2 tasks, got %d", len(tasks))
+		}
+
+		if tasks[0] != "task1" || tasks[1] != "task2" {
+			t.Fatalf("expected task1 and task2, got %s and %s", tasks[0], tasks[1])
+		}
+	})
+
+}
+
+func createTmpNuvfile(t *testing.T, content string) string {
+	t.Helper()
+	// create temp folder with nuvfile.yml
+	tmpDir, err := os.MkdirTemp("", "nuv-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// create nuvfile.yml
+	nuvfile := filepath.Join(tmpDir, "nuvfile.yml")
+	err = os.WriteFile(nuvfile, []byte(content), 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return tmpDir
 }
