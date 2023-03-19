@@ -105,7 +105,6 @@ func Nuv(base string, args []string) error {
 		if isDir(taskName) && exists(taskName, NUVFILE) {
 			os.Chdir(taskName)
 			//remove it from the args
-			// rest = append(rest[:i], rest[i+1:]...)
 			rest = rest[1:]
 		} else {
 			// stop when non folder reached
@@ -132,16 +131,7 @@ func Nuv(base string, args []string) error {
 		return nil
 	}
 
-	// get first string without '=' from rest, it's the task name
-	idx := 0
-	for i, s := range rest {
-		if !strings.Contains(s, "=") {
-			idx = i
-			break
-		}
-	}
-
-	mainTask := rest[idx]
+	mainTask := rest[0]
 
 	// unparsed args - separate variable assignments from extra args
 	pre := []string{"-t", NUVFILE, mainTask}
@@ -208,7 +198,7 @@ func getTaskNamesList(dir string) []string {
 		}
 		tasksMap, ok := m["tasks"].(map[string]interface{})
 		if !ok {
-			warn("error checking task list, perhaps no tasks defined?")
+			// warn("error checking task list, perhaps no tasks defined?")
 			return make([]string, 0)
 		}
 
