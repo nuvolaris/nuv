@@ -24,7 +24,7 @@ import (
 func ExampleNuvArg() {
 	// test
 	os.Chdir(workDir)
-	olaris, _ := filepath.Abs("olaris")
+	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
 	err := Nuv(olaris, split("top"))
 	pr(2, err)
 	err = Nuv(olaris, split("top arg"))
@@ -47,7 +47,7 @@ func ExampleNuvArg() {
 func ExampleNuv() {
 	// test
 	os.Chdir(workDir)
-	olaris, _ := filepath.Abs("olaris")
+	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
 	err := Nuv(olaris, split(""))
 	pr(1, err)
 	err = Nuv(olaris, split("sub"))
@@ -75,7 +75,7 @@ func ExampleNuv() {
 
 func ExampleParseArgs() {
 	os.Chdir(workDir)
-	usage := readfile("olaris/sub/opts/nuvopts.txt")
+	usage := readfile("tests/olaris/sub/opts/nuvopts.txt")
 	args := parseArgs(usage, split("args mike miri max"))
 	pr(1, args)
 	args = parseArgs(usage, split("args mike -c"))

@@ -41,7 +41,7 @@ tasks:
 
   github:
     cmds:
-     - echo {{.NUV}} in $(pwd)
+    - echo {{.NUV}} in $(pwd)
     
 
     

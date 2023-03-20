@@ -24,7 +24,7 @@ vars:
 
 tasks:
 
-  default: task --list-all
+  default: task -l
 
   cli-ver:
     - git tag -d $(git tag) 
@@ -32,7 +32,7 @@ tasks:
     - git tag
 
   setup:
-    - cd olaris ; git checkout -B test ; cd ..
+    - cd tests/olaris ; git checkout -B test ; cd ..
 
   build:
     desc: build nuv
@@ -45,11 +45,12 @@ tasks:
       - bin/nuv
 
   install:
+    desc: install nuv using a local folder for binaries
     deps:
     - build
     dir: bin
     cmds:
-    - ./nuv all BRANCH=main
+    - ./nuv getall
     - sudo rm -f /usr/local/bin/nuv
     - sudo ln -sf $PWD/{{OS}}/{{ARCH}}/nuv /usr/local/bin/nuv
 
@@ -66,7 +67,9 @@ tasks:
     - rm -f bin/nuv
     - task: build
 
-  utest: 
+  utest: go test
+
+  utestdiff: 
     cmds:
     - |-
         if test -z '{{.N}}'
