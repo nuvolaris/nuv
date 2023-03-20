@@ -55,9 +55,23 @@ tasks:
     - sudo ln -sf $PWD/{{OS}}/{{ARCH}}/nuv /usr/local/bin/nuv
 
   test:
-    desc: test nuv
+    desc: tests all
+    cmds:
+    - task: install
+    - task: utest
+    - task: itest
+
+  utest:
+    desc: unit test nuv
     cmds:
     - go test
+
+  itest:
+    desc: integration tests nuv
+    dir: tests
+    cmds:
+    - bats/bin/bats .
+
 
   clean:
     - rm -f bin/nuv
@@ -66,8 +80,6 @@ tasks:
   rebuild:
     - rm -f bin/nuv
     - task: build
-
-  utest: go test
 
   utestdiff: 
     cmds:
