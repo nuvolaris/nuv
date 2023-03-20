@@ -21,46 +21,66 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/h2non/filetype"
 )
 
-func Mkdirs() error {
+func Filetype() error {
 	// Define command line flags
 	helpFlag := flag.Bool("h", false, "Print help message")
-	parentFlag := flag.Bool("p", false, "Create parent directories")
+	extensionFlag := flag.Bool("e", false, "Show file standard extension")
+	mimeFlag := flag.Bool("m", false, "Show file mime type")
 
 	// Parse command line flags
 	flag.Parse()
 
 	// Print help message if -h flag is provided
 	if *helpFlag {
-		printMkdirsHelp()
+		printFiletypeHelp()
 		return nil
 	}
 
 	// Get the list of directories to create from the remaining command line arguments
-	dirs := flag.Args()
-	if len(dirs) == 0 {
-		printMkdirsHelp()
+	files := flag.Args()
+	if len(files) != 1 {
+		printFiletypeHelp()
+		return nil
 	}
 
-	// Create each directory, with or without parent directories
-	for _, dir := range dirs {
-		if *parentFlag {
-			err := os.MkdirAll(dir, 0755)
-			if err != nil {
-				return err
-			}
-		} else {
-			err := os.Mkdir(dir, 0755)
-			if err != nil {
-				return err
-			}
-		}
+	file := files[0]
+	fileContent, err := os.ReadFile(file)
+	if err != nil {
+		return err
 	}
+
+	kind, err := filetype.Match(fileContent)
+	if err != nil {
+		return err
+	}
+
+	if kind == filetype.Unknown {
+		fmt.Println("bin applications/octet-stream")
+		return nil
+	}
+	// if both flags missing or both present, print ext and mime
+	if (!*extensionFlag && !*mimeFlag) || (*extensionFlag && *mimeFlag) {
+		fmt.Println(kind.Extension, kind.MIME.Value)
+		return nil
+	}
+
+	if *extensionFlag {
+		fmt.Println(kind.Extension)
+	} else {
+		fmt.Println(kind.MIME.Value)
+	}
+
 	return nil
 }
 
-func printMkdirsHelp() {
-	fmt.Println("Usage: mkdir [-h] [-p] DIRECTORY...")
-	fmt.Println("Create one or more directories.")
+func printFiletypeHelp() {
+	fmt.Println("Usage: filetype [-h] [-e] [-m] FILE")
+	fmt.Println("Show extensione and MIME type of a file.")
+	fmt.Println(" -h  shows this help")
+	fmt.Println(" -e  show file standard extension")
+	fmt.Println(" -m  show file mime type")
 }

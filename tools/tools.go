@@ -28,7 +28,7 @@ import (
 )
 
 var tools = []string{
-	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir",
+	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype",
 }
 
 func availableCmds() []string {
@@ -102,6 +102,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "mkdir":
 		os.Args = append([]string{"mkdir"}, args...)
 		if err := Mkdirs(); err != nil {
+			return 1, err
+		}
+	case "filetype":
+		os.Args = append([]string{"mkdir"}, args...)
+		if err := Filetype(); err != nil {
 			return 1, err
 		}
 	}
