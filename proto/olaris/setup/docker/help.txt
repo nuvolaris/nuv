@@ -1,6 +1,0 @@
-Subcommand: nuv setup docker
-
-Usage:
-   docker create
-   docker destroy
-   docker status
