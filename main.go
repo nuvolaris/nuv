@@ -85,6 +85,10 @@ func info() {
 }
 
 func main() {
+	if os.Getenv("NUV_NO_LOG_PREFIX") != "" {
+		log.SetFlags(0)
+	}
+
 	var err error
 	me := os.Args[0]
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
@@ -131,7 +135,7 @@ func main() {
 		if tools.IsTool(cmd) {
 			code, err := tools.RunTool(cmd, args[2:])
 			if err != nil {
-				fmt.Println(err.Error())
+				log.Print(err.Error())
 			}
 			os.Exit(code)
 		}
