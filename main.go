@@ -135,7 +135,7 @@ func main() {
 		if tools.IsTool(cmd) {
 			code, err := tools.RunTool(cmd, args[2:])
 			if err != nil {
-				log.Print(err.Error())
+				fmt.Println(err.Error())
 			}
 			os.Exit(code)
 		}
