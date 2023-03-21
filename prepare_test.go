@@ -52,6 +52,7 @@ func Example_locate_git() {
 	downloadTasksFromGitHub(true, true)
 	dir, err = locateNuvRoot(".")
 	pr(4, err, nhpath(dir))
+	os.RemoveAll(nuvdir)
 	// Output:
 	// 1 we cannot find nuvfiles, download them with nuv -update
 	// 2 <nil> /work/tests/olaris
