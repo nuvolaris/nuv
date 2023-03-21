@@ -43,10 +43,6 @@
 [submodule "tools/go-find"]
 	path = tools/go-find
 	url = https://github.com/nuvolaris/go-find
-[submodule "olaris"]
-	path = tests/olaris
-	url = https://github.com/nuvolaris/olaris
-	branch = test
 [submodule "tests/test/bats"]
 	path = tests/bats
 	url = https://github.com/bats-core/bats-core.git
