@@ -24,7 +24,6 @@ import (
 	"github.com/nojima/httpie-go"
 	envsubst "github.com/nuvolaris/envsubst/cmd/envsubstmain"
 	"github.com/nuvolaris/goawk"
-	goja "github.com/nuvolaris/goja/gojamain"
 )
 
 var tools = []string{
@@ -91,7 +90,7 @@ func RunTool(name string, args []string) (int, error) {
 		return gojq.Run(), nil
 	case "js":
 		os.Args = append([]string{"goja"}, args...)
-		if err := goja.GojaMain(); err != nil {
+		if err := jsToolMain(); err != nil {
 			return 1, err
 		}
 	case "envsubst":
