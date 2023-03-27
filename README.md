@@ -56,6 +56,7 @@ The following environment variables allows to ovverride certain defaults.
 - `NUV_BRANCH` is the branch where `nuv` looks for its tasks. The branch to use is defined at build time and it is the base version (without the patch level). For example, if `nuv` is `0.3.0-morpheus` the branch to use will be `0.3-morpheus`
 - `NUV_CMD` is the actualy command executed - defaults to the absolute path of the target of the symbolic link but it can be overriden
 - `NUV_NO_LOG_PREFIX` can be defined to disable the prefix of the log messages. By default the prefix is enabled.
+- `NUV_VERSION` can be defined to set nuv's version value. It is useful to override version validations when updating tasks (and you know what you are doing). 
 
 ## Where `nuv` looks for binaries 
 

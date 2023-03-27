@@ -17,10 +17,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/Masterminds/semver"
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/mitchellh/go-homedir"
@@ -82,6 +84,45 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	}
 	// clone
 	return localDir, nil
+}
+
+func pullTasks(force, silent bool) error {
+	// download from github
+	localDir, err := downloadTasksFromGitHub(force, silent)
+	debug("localDir", localDir)
+	if err != nil {
+		return err
+	}
+
+	// validate NuvVersion semver against nuvroot.json
+	data := NuvRootJSON{}
+	json_buf, err := os.ReadFile(joinpath(localDir, NUVROOT))
+	if err != nil {
+		return err
+	}
+	json.Unmarshal(json_buf, &data)
+
+	// check if the version is up to date
+	nuvVersion, err := semver.NewVersion(NuvVersion)
+	if err != nil {
+		// in development mode, we don't have a valid semver version
+		warn("Unable to validate nuv version", NuvVersion, ":", err)
+		return nil
+	}
+
+	nuvRootVersion, err := semver.NewVersion(data.Version)
+	if err != nil {
+		warn("Unable to validate nuvroot.json version", data.Version, ":", err)
+		return nil
+	}
+
+	// check if the version is up to date, if not warn the user but continue
+	if nuvVersion.LessThan(nuvRootVersion) {
+		warn("Your nuv version", nuvVersion, "is older than the required version in nuvroot.json.")
+		warn("Please update nuv to the latest version.")
+	}
+
+	return nil
 }
 
 // locateNuvRoot locate the folder where starts execution

@@ -37,6 +37,11 @@ const NUVREPO = "http://github.com/nuvolaris/olaris"
 var NuvVersion = "main"
 var NuvBranch = "main"
 
+// Represents nuvroot.json. It is used to parse the file.
+type NuvRootJSON struct {
+	Version string `json:"version"`
+}
+
 // get defaults
 
 func getNuvRoot() (string, error) {

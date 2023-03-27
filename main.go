@@ -88,6 +88,9 @@ func main() {
 	if os.Getenv("NUV_NO_LOG_PREFIX") != "" {
 		log.SetFlags(0)
 	}
+	if os.Getenv("NUV_VERSION") != "" {
+		NuvVersion = os.Getenv("NUV_VERSION")
+	}
 
 	var err error
 	me := os.Args[0]
@@ -123,7 +126,7 @@ func main() {
 		}
 		if cmd == "update" {
 			// ok no up, nor down, let's download it
-			_, err := downloadTasksFromGitHub(true, true)
+			err := pullTasks(true, true)
 			if err != nil {
 				log.Println(err)
 				os.Exit(1)
