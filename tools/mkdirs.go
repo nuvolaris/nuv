@@ -33,14 +33,14 @@ func Mkdirs() error {
 
 	// Print help message if -h flag is provided
 	if *helpFlag {
-		printHelp()
+		printMkdirsHelp()
 		return nil
 	}
 
 	// Get the list of directories to create from the remaining command line arguments
 	dirs := flag.Args()
 	if len(dirs) == 0 {
-		printHelp()
+		printMkdirsHelp()
 	}
 
 	// Create each directory, with or without parent directories
@@ -60,7 +60,7 @@ func Mkdirs() error {
 	return nil
 }
 
-func printHelp() {
+func printMkdirsHelp() {
 	fmt.Println("Usage: mkdir [-h] [-p] DIRECTORY...")
 	fmt.Println("Create one or more directories.")
 }
