@@ -22,6 +22,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"github.com/nuvolaris/nuv/tools"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
@@ -84,7 +85,6 @@ func info() {
 }
 
 func main() {
-
 	var err error
 	me := os.Args[0]
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
@@ -142,5 +142,9 @@ func main() {
 		log.Println(err)
 		os.Exit(1)
 	}
+
+	// check if olaris was recently updated
+	// we pass parent(dir) because we use the olaris parent folder
+	checkUpdated(parent(dir), 24*time.Hour)
 	Nuv(dir, args[1:])
 }

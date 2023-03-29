@@ -10,7 +10,9 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/nicksnyder/go-i18n v1.10.1
 	github.com/nojima/httpie-go v0.7.0
+	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675
 	github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c
+	github.com/nuvolaris/goja/gojamain v0.0.0-20230315181922-61fd5fa112c9
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230215214008-863dfc0bf05f
@@ -60,8 +62,6 @@ require (
 	github.com/mattn/go-zglob v0.0.4 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
-	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675 // indirect
-	github.com/nuvolaris/goja/gojamain v0.0.0-20230315181922-61fd5fa112c9 // indirect
 	github.com/nuvolaris/sh/v3 v3.0.0-20230312215406-ee139db1ecdb // indirect
 	github.com/nuvolaris/task/v3 v3.9.3-0.20230216111806-00c2fce2c9af // indirect
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
