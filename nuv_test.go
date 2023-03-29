@@ -27,7 +27,7 @@ import (
 func ExampleNuvArg() {
 	// test
 	os.Chdir(workDir)
-	olaris, _ := filepath.Abs("olaris")
+	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
 	err := Nuv(olaris, split("testcmd"))
 	pr(2, err)
 	err = Nuv(olaris, split("testcmd arg"))
@@ -109,6 +109,7 @@ func Test_validateTaskName(t *testing.T) {
 		{"te", "test"},
 		{"t", "ambiguous task: t. Possible tasks: [task1 task2 test]"},
 		{"no-task", "no task named no-task found"},
+		{"", "task name is empty"},
 	}
 
 	tmpDir := createTmpNuvfile(t, testNuvfile)

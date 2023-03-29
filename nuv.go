@@ -94,13 +94,18 @@ func Nuv(base string, args []string) error {
 	rest := args
 
 	for _, task := range args {
-		trace("task", task)
-		// try to correct name if it's a prefix
+		trace("task name", task)
+
+		// skip flags
+		if strings.HasPrefix(task, "-") {
+			continue
+		}
+
+		// try to correct name if it's not a flag
 		taskName, err := validateTaskName(task)
 		if err != nil {
 			return err
 		}
-
 		// if valid, check if it's a folder and move to it
 		if isDir(taskName) && exists(taskName, NUVFILE) {
 			os.Chdir(taskName)
@@ -108,6 +113,10 @@ func Nuv(base string, args []string) error {
 			rest = rest[1:]
 		} else {
 			// stop when non folder reached
+			//substitute it with the validated task name
+			if len(rest) == 1 {
+				rest[0] = taskName
+			}
 			break
 		}
 	}
@@ -155,6 +164,9 @@ func Nuv(base string, args []string) error {
 // 3. If the prefix is valid for more than one task, return an error
 // 4. If the prefix is not valid for any task, return an error
 func validateTaskName(name string) (string, error) {
+	if name == "" {
+		return "", fmt.Errorf("task name is empty")
+	}
 	pwd, _ := os.Getwd()
 
 	candidates := []string{}

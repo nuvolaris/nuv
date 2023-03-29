@@ -22,16 +22,16 @@ setup() {
 }
 
 @test "help" {
-run nuv sub opts
-# just one as it is a cat of a message
-assert_line "Usage:"
-run nuv sub opts -h
-assert_line "Usage:"
-run nuv sub opts --help
-assert_line "Usage:"
-# do not check the actual version but ensure the output is not the help test
-run nuv sub opts --version
-refute_output "Usage:"
+    run nuv sub opts
+    # just one as it is a cat of a message
+    assert_line "Usage:"
+    run nuv sub opts -h
+    assert_line "Usage:"
+    run nuv sub opts --help
+    assert_line "Usage:"
+    # do not check the actual version but ensure the output is not the help test
+    run nuv sub opts --version
+    refute_output "Usage:"
 }
 
 @test "cmd" {
@@ -39,7 +39,7 @@ refute_output "Usage:"
     assert_line "hello!"
 }
 
-@test "args" { 
+@test "args" {
     run nuv sub opts args mike
     assert_line "name: mike"
     assert_line "-c: no"
@@ -60,6 +60,6 @@ refute_output "Usage:"
 @test "errors" {
     run nuv sub opts arg1
     assert_line "Usage:"
-    run nuv sub opts arg opt4
+    run nuv sub opts arg1 opt4
     assert_line "Usage:"
 }
