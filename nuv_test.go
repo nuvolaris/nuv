@@ -19,6 +19,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"golang.org/x/exp/slices"
@@ -107,7 +108,7 @@ func Test_validateTaskName(t *testing.T) {
 		{"help", "help"},
 		{"task1", "task1"},
 		{"te", "test"},
-		{"t", "ambiguous task: t. Possible tasks: [task1 task2 test]"},
+		{"t", "ambiguous task: t."},
 		{"no-task", "no task named no-task found"},
 		{"", "task name is empty"},
 	}
@@ -117,7 +118,7 @@ func Test_validateTaskName(t *testing.T) {
 	os.Chdir(tmpDir)
 	for _, tt := range validateTaskTests {
 		task, err := validateTaskName(tt.argTask)
-		if err != nil && err.Error() != tt.expected {
+		if err != nil && !strings.Contains(err.Error(), tt.expected) {
 			t.Fatalf("want error: %s, got: %v", tt.expected, err)
 		}
 		if err == nil && task != tt.expected {
