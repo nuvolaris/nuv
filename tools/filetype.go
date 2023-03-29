@@ -58,20 +58,30 @@ func Filetype() error {
 		return err
 	}
 
+	var extension string
 	if kind == filetype.Unknown {
-		fmt.Println("bin applications/octet-stream")
-		return nil
+		extension = "bin"
+	} else {
+		extension = kind.Extension
 	}
+
+	var mime string
+	if kind == filetype.Unknown {
+		mime = "applications/octet-stream"
+	} else {
+		mime = kind.MIME.Value
+	}
+
 	// if both flags missing or both present, print ext and mime
 	if (!*extensionFlag && !*mimeFlag) || (*extensionFlag && *mimeFlag) {
-		fmt.Println(kind.Extension, kind.MIME.Value)
+		fmt.Println(extension, mime)
 		return nil
 	}
 
 	if *extensionFlag {
-		fmt.Println(kind.Extension)
+		fmt.Println(extension)
 	} else {
-		fmt.Println(kind.MIME.Value)
+		fmt.Println(mime)
 	}
 
 	return nil
