@@ -23,16 +23,16 @@ import (
 )
 
 func Example_locate() {
-	dir, err := locateNuvRoot(".")
+	dir, err := locateNuvRoot("tests")
 	pr(1, err, npath(dir))
-	dir, err = locateNuvRoot("olaris")
+	dir, err = locateNuvRoot(joinpath("tests", "olaris"))
 	pr(2, err, npath(dir))
-	dir, err = locateNuvRoot(joinpath("olaris", "sub"))
+	dir, err = locateNuvRoot(joinpath("tests", joinpath("olaris", "sub")))
 	pr(3, err, npath(dir))
 	// Output:
-	// 1 <nil> /work/olaris
-	// 2 <nil> /work/olaris
-	// 3 <nil> /work/olaris
+	// 1 <nil> /work/tests/olaris
+	// 2 <nil> /work/tests/olaris
+	// 3 <nil> /work/tests/olaris
 }
 
 func Example_locate_git() {
@@ -41,20 +41,21 @@ func Example_locate_git() {
 	os.RemoveAll(nuvdir)
 	os.Setenv("NUV_BIN", "")
 	//_, err :=
-	_, err := locateNuvRoot("tests")
+	_, err := locateNuvRoot(".")
 	pr(1, err)
 	os.Setenv("NUV_BIN", workDir)
 	dir, err := locateNuvRoot("tests")
 	pr(2, err, npath(dir))
 	downloadTasksFromGitHub(true, true)
-	dir, err = locateNuvRoot("tests")
+	dir, err = locateNuvRoot(".")
 	pr(3, err, nhpath(dir))
 	downloadTasksFromGitHub(true, true)
-	dir, err = locateNuvRoot("tests")
+	dir, err = locateNuvRoot(".")
 	pr(4, err, nhpath(dir))
+	os.RemoveAll(nuvdir)
 	// Output:
 	// 1 we cannot find nuvfiles, download them with nuv -update
-	// 2 <nil> /work/olaris
+	// 2 <nil> /work/tests/olaris
 	// Cloning tasks...
 	// 3 <nil> /home/.nuv/olaris
 	// Updating tasks...

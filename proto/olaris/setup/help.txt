@@ -1,7 +1,0 @@
-Subcommand: nuv setup
-
-Usage:
-  docker     [help] ...
-  kubernetes [help] ...
-
-use help to know more about the subcommands.

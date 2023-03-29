@@ -17,22 +17,11 @@
 #
 version: '3'
 
-tasks:
-  default:
-    silent: true
-    cmds:
-    - task -l
+tasks:  
+  opts:
+    desc: opts test
 
-  subsub:
-    silent: true
-    desc: subsub (has sub command)
-
-  date: 
-    desc: current date
-    cmds: 
-      - date
-
-  naval:
-    desc: naval (use --help for details) 
-    cmds:
-      - echo not really implemented
+  simple:
+   desc: simple
+   cmds:
+   - echo simple

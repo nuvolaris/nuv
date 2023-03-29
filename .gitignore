@@ -33,3 +33,5 @@ bin/*/arm64/*
 *.pkg
 version.txt
 .latestcheck
+bin/unzip.exe
+bin/*/LICENSE

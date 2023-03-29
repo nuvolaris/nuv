@@ -14,21 +14,31 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
-version: '3'
 
-tasks:
-  default:
-    silent: true
-    cmds:
-    - task -l
+setup() {
+    load 'test_helper/bats-support/load'
+    load 'test_helper/bats-assert/load'
+    export NO_COLOR=1
+}
 
-  first:
-    desc: first (use --help)
-    cmds:
-      - echo first
+@test "welcome" {
+    run nuv
+    assert_line '* sub:           sub command'
+    assert_line '* testcmd:       test nuv commands'
+}
 
-  second:
-    desc: second
-    cmds:
-    - echo second
+@test "testcmd" {
+    run nuv testcmd
+    assert_line "24"
+}
+
+@test "sub" {
+    run nuv sub
+    assert_line '* opts:         opts test'
+    assert_line '* simple:       simple'
+}
+
+@test "sub simple" {
+    run nuv sub simple
+    assert_line simple
+}
