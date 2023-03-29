@@ -31,6 +31,12 @@ var tools = []string{
 	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir",
 }
 
+func availableCmds() []string {
+	cmds := append(Utils, tools...)
+	cmds = append(cmds, "task")
+	return cmds
+}
+
 func IsTool(name string) bool {
 	if IsUtil(name) {
 		return true
@@ -104,9 +110,7 @@ func RunTool(name string, args []string) (int, error) {
 
 func Help() {
 	fmt.Println("Available tools:")
-	tools := append(Utils, tools...)
-	tools = append(tools, "task")
-	for _, x := range tools {
+	for _, x := range availableCmds() {
 		fmt.Printf("-%s\n", x)
 	}
 }

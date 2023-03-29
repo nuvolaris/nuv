@@ -23,6 +23,8 @@ import (
 	"strings"
 
 	docopt "github.com/docopt/docopt-go"
+	"golang.org/x/exp/slices"
+	"gopkg.in/yaml.v3"
 )
 
 func help() {
@@ -90,13 +92,31 @@ func Nuv(base string, args []string) error {
 		return err
 	}
 	rest := args
-	for _, dir := range args {
-		trace("dir", dir)
-		if isDir(dir) && exists(dir, NUVFILE) {
-			os.Chdir(dir)
+
+	for _, task := range args {
+		trace("task name", task)
+
+		// skip flags
+		if strings.HasPrefix(task, "-") {
+			continue
+		}
+
+		// try to correct name if it's not a flag
+		taskName, err := validateTaskName(task)
+		if err != nil {
+			return err
+		}
+		// if valid, check if it's a folder and move to it
+		if isDir(taskName) && exists(taskName, NUVFILE) {
+			os.Chdir(taskName)
+			//remove it from the args
 			rest = rest[1:]
-			//fmt.Println(dir, rest)
 		} else {
+			// stop when non folder reached
+			//substitute it with the validated task name
+			if len(rest) == 1 {
+				rest[0] = taskName
+			}
 			break
 		}
 	}
@@ -116,13 +136,14 @@ func Nuv(base string, args []string) error {
 		}
 		parsedArgs = append(prefix, parsedArgs...)
 		//fmt.Println("POSTPARSE:", parsedArgs)
-		//pwd, _ := os.Getwd()
-		//fmt.Println("PWD", pwd)
 		Task(parsedArgs...)
 		return nil
 	}
+
+	mainTask := rest[0]
+
 	// unparsed args - separate variable assignments from extra args
-	pre := []string{"-t", NUVFILE, rest[0]}
+	pre := []string{"-t", NUVFILE, mainTask}
 	post := []string{"--"}
 	for _, s := range rest[1:] {
 		if strings.Contains(s, "=") {
@@ -135,4 +156,74 @@ func Nuv(base string, args []string) error {
 	debug(taskArgs)
 	Task(taskArgs...)
 	return nil
+}
+
+// validateTaskName does the following:
+// 1. Check that the given task name is found in the nuvfile.yaml and return it
+// 2. If not found, check if the input is a prefix of any task name, if it is for only one return the proper task name
+// 3. If the prefix is valid for more than one task, return an error
+// 4. If the prefix is not valid for any task, return an error
+func validateTaskName(name string) (string, error) {
+	if name == "" {
+		return "", fmt.Errorf("task name is empty")
+	}
+	pwd, _ := os.Getwd()
+
+	candidates := []string{}
+	tasks := getTaskNamesList(pwd)
+	if !slices.Contains(tasks, "help") {
+		tasks = append(tasks, "help")
+	}
+	for _, t := range tasks {
+		if t == name {
+			return name, nil
+		}
+		if strings.HasPrefix(t, name) {
+			candidates = append(candidates, t)
+		}
+	}
+
+	if len(candidates) == 0 {
+		return "", fmt.Errorf("no task named %s found", name)
+	}
+
+	if len(candidates) == 1 {
+		return candidates[0], nil
+	}
+
+	return "", fmt.Errorf("ambiguous task: %s. Possible tasks: %v", name, candidates)
+}
+
+// obtains the task names from the nuvfile.yaml inside the given directory
+func getTaskNamesList(dir string) []string {
+	m := make(map[interface{}]interface{})
+	if exists(dir, NUVFILE) {
+		dat, err := os.ReadFile(joinpath(dir, NUVFILE))
+		if err != nil {
+			return make([]string, 0)
+		}
+
+		err = yaml.Unmarshal(dat, &m)
+		if err != nil {
+			warn("error reading nuvfile.yml")
+			return make([]string, 0)
+		}
+		tasksMap, ok := m["tasks"].(map[string]interface{})
+		if !ok {
+			// warn("error checking task list, perhaps no tasks defined?")
+			return make([]string, 0)
+		}
+
+		taskNames := make([]string, len(tasksMap))
+
+		i := 0
+		for k := range tasksMap {
+			taskNames[i] = k
+			i++
+		}
+
+		return taskNames
+	}
+
+	return make([]string, 0)
 }
