@@ -50,11 +50,12 @@ Note that to avoid an egg and chicken problem, `nuv` itself is built with his an
 
 The following environment variables allows to ovverride certain defaults.
 
-- `NUV_ROOT` is the  folder where `nuv` looks for its tasks. It is not defined, it follows the algorithm below to find it.
-- `NUV_BIN` is the  folder where `nuv` looks binaries (external command line tools). It is not defined, it defaults to the same directory where  `nuv` is located.
-- `NUV_REPO` is the github repo where `nuv` downloads its tasks. It it is not defined, it defaults to `https://github.com/nuvolaris/olaris`
+- `NUV_ROOT` is the folder where `nuv` looks for its tasks. If not defined, it follows the algorithm below to find it.
+- `NUV_BIN` is the folder where `nuv` looks binaries (external command line tools). If not defined, it defaults to the same directory where  `nuv` is located.
+- `NUV_REPO` is the github repo where `nuv` downloads its tasks. If not defined, it defaults to `https://github.com/nuvolaris/olaris`
 - `NUV_BRANCH` is the branch where `nuv` looks for its tasks. The branch to use is defined at build time and it is the base version (without the patch level). For example, if `nuv` is `0.3.0-morpheus` the branch to use will be `0.3-morpheus`
 - `NUV_CMD` is the actualy command executed - defaults to the absolute path of the target of the symbolic link but it can be overriden
+- `NUV_NO_LOG_PREFIX` can be defined to disable the prefix of the log messages. By default the prefix is enabled.
 
 ## Where `nuv` looks for binaries 
 
