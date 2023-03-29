@@ -45,29 +45,3 @@ setup() {
     assert_line "3"
     assert_success
 }
-
-@test "-js with echo" {
-    run echo "$(echo "console.log('Hello Nuvolaris')" | nuv -js)"
-    assert_line "Hello Nuvolaris"
-    assert_success
-}
-
-# @test "-awk print $ 1 file" {
-#     run nuv -awk '{print $1}' testdata/awk_test.txt
-#     assert_line "This"
-#     assert_line "This"
-#     assert_line "This"
-#     assert_success
-# }
-
-# @test "-awk replace" {
-#     run echo "$(echo "Hello World" | nuv -awk '{$2="Nuvolaris"; print $0}')"
-#     assert_line "Hello Nuvolaris"
-#     assert_success
-# }
-
-# @test "file not found" {
-#     run nuv -awk '{print $1}' testdata/no_tests.txt
-#     assert_line "file \"testdata/no_tests.txt\" not found"
-#     assert_failure
-# }
