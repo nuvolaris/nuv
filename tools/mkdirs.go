@@ -24,6 +24,7 @@ import (
 )
 
 func Mkdirs() error {
+	flag.Usage = printMkdirsHelp
 	// Define command line flags
 	helpFlag := flag.Bool("h", false, "Print help message")
 	parentFlag := flag.Bool("p", false, "Create parent directories")
@@ -33,14 +34,14 @@ func Mkdirs() error {
 
 	// Print help message if -h flag is provided
 	if *helpFlag {
-		printMkdirsHelp()
+		flag.Usage()
 		return nil
 	}
 
 	// Get the list of directories to create from the remaining command line arguments
 	dirs := flag.Args()
 	if len(dirs) == 0 {
-		printMkdirsHelp()
+		flag.Usage()
 	}
 
 	// Create each directory, with or without parent directories
