@@ -109,12 +109,18 @@ func main() {
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
+			var params []string
+			// TODO: small hack to not have a crash when running "nuv -task"
 			if len(args) < 3 {
-				taskmain.Task(args[1:])
-				os.Exit(0)
+				params = args[1:]
+			} else {
+				params = args[2:]
 			}
-			taskmain.Task(args[2:])
-			os.Exit(0)
+			exitCode, err := taskmain.Task(params)
+			if err != nil {
+				log.Println(err)
+			}
+			os.Exit(exitCode)
 		}
 		if cmd == "info" {
 			info()
@@ -150,8 +156,7 @@ func main() {
 	// execute nuv
 	dir, err := getNuvRoot()
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		log.Fatalf("error: %s", err.Error())
 	}
 
 	// check if olaris was recently updated
@@ -159,7 +164,6 @@ func main() {
 	checkUpdated(parent(dir), 24*time.Hour)
 
 	if err := Nuv(dir, args[1:]); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		log.Fatalf("error: %s", err.Error())
 	}
 }

@@ -287,8 +287,14 @@ github.com/nuvolaris/someutils v0.0.0-20230215214008-863dfc0bf05f h1:GGuATfUmfk+
 github.com/nuvolaris/someutils v0.0.0-20230215214008-863dfc0bf05f/go.mod h1:27LYTtM+ymckYJ+I+C5Tg6/ir+QyBQZVNN6TvlNQ1zA=
 github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230216111806-00c2fce2c9af h1:qrWzfVaAS4yBxFP0ZJuSNBi8omKZwS+gzUbvYZsOKvk=
 github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230216111806-00c2fce2c9af/go.mod h1:UvD9D0ygT8FAqFSC5da0eOGUww/R6p6yJ6qw1eQaE4w=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402134833-85c9dab6378a h1:uaCdCLkvkErHCAsCGqnNVfdct63QT3Sns25VcUeOaOs=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402134833-85c9dab6378a/go.mod h1:CTnvj/r7Fzu8FfDwmIC6xAVJAUE7I+D8pq1owkYTCqU=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402141038-0db2546a8eea h1:Bf1ftpuSesgQRdf6DftDsubR0yMe4i3UhNmlyp/IsNQ=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402141038-0db2546a8eea/go.mod h1:CTnvj/r7Fzu8FfDwmIC6xAVJAUE7I+D8pq1owkYTCqU=
 github.com/nuvolaris/task/v3 v3.9.3-0.20230216111806-00c2fce2c9af h1:r8abg+DyUtr6HtXhlD9fD7IRGTMyFjgbyvxufs6JmxM=
 github.com/nuvolaris/task/v3 v3.9.3-0.20230216111806-00c2fce2c9af/go.mod h1:cyE2QNqK69q5ujo/d7ikHv/Z6Y7wtpTCCIUfd0DPDC0=
+github.com/nuvolaris/task/v3 v3.9.3-0.20230312223316-86b1c3692788 h1:kdzFpKIzwwr2bcc+9RztkIS70CdNhXvZlULkZoFqygA=
+github.com/nuvolaris/task/v3 v3.9.3-0.20230312223316-86b1c3692788/go.mod h1:sIKMmkcKbJQEuFJHzfu23rs8VhnQbLoeZ98i1K75ei8=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=

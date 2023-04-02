@@ -27,13 +27,15 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func help() {
+func help() error {
 	if exists(".", NUVOPTS) {
 		fmt.Println(readfile(NUVOPTS))
 	} else {
-		//fmt.Println("-t", "Nuvfile", "-l")
-		Task("-t", NUVFILE, "-l")
+		// In case of syntax error, Task will return an error
+		_, err := Task("-t", NUVFILE, "-l")
+		return err
 	}
+	return nil
 }
 
 // parseArgs parse the arguments acording the docopt
@@ -122,8 +124,7 @@ func Nuv(base string, args []string) error {
 	}
 
 	if len(rest) == 0 || rest[0] == "help" {
-		help()
-		return nil
+		return help()
 	}
 
 	// parsed args
@@ -136,8 +137,8 @@ func Nuv(base string, args []string) error {
 		}
 		parsedArgs = append(prefix, parsedArgs...)
 		//fmt.Println("POSTPARSE:", parsedArgs)
-		Task(parsedArgs...)
-		return nil
+		_, err := Task(parsedArgs...)
+		return err
 	}
 
 	mainTask := rest[0]
@@ -154,8 +155,8 @@ func Nuv(base string, args []string) error {
 	}
 	taskArgs := append(pre, post...)
 	debug(taskArgs)
-	Task(taskArgs...)
-	return nil
+	_, err = Task(taskArgs...)
+	return err
 }
 
 // validateTaskName does the following:
