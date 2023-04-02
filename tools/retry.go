@@ -33,6 +33,7 @@ func ExpBackoffRetry(fn func([]string) error, args []string) error {
 	var helpFlag bool
 	var triesFlag int
 	var maxFlag int
+	var verboseFlag bool
 
 	flag.BoolVar(&helpFlag, "help", false, "Print help message")
 	flag.BoolVar(&helpFlag, "h", false, "Print help message")
@@ -40,6 +41,8 @@ func ExpBackoffRetry(fn func([]string) error, args []string) error {
 	flag.IntVar(&triesFlag, "t", 10, "Set max retries")
 	flag.IntVar(&maxFlag, "max", 60, "Maximum time to run")
 	flag.IntVar(&maxFlag, "m", 60, "Maximum time to run")
+	flag.BoolVar(&verboseFlag, "verbose", false, "Verbose output")
+	flag.BoolVar(&verboseFlag, "v", false, "Verbose output")
 
 	// Parse command line flags
 	os.Args = args
@@ -58,6 +61,9 @@ func ExpBackoffRetry(fn func([]string) error, args []string) error {
 		return nil
 	}
 
+	if verboseFlag {
+		fmt.Printf("Retry Parameters: max time=%d seconds, retries=%d times\n", maxFlag, triesFlag)
+	}
 	err := retry(fn, rest, maxFlag, triesFlag)
 
 	return err
@@ -70,21 +76,22 @@ func retry(fn func([]string) error, args []string, maxTime int, maxRetries int) 
 	err := backoff.Retry(func() error {
 		err := fn(args)
 		if err != nil {
-			fmt.Printf("task failed: %s\n", err.Error())
 			return err
 		}
 		return nil
 	}, backoff.WithMaxRetries(b, uint64(maxRetries)))
 
 	if err != nil {
-		return fmt.Errorf("task failed after %d retries: %s", maxRetries, err.Error())
+		return fmt.Errorf("failure after %d retries or %d seconds.\n%s", maxRetries, maxTime, err.Error())
 	}
 
 	return nil
 }
 
-const usage = `Usage: nuv -retry [options] task [task options]
+const usage = `Usage:
+nuv -retry [options] task [task options]
 -h, --help	Print help message
 -t, --tries=#	Set max retries: Default 10
 -m, --max=secs	Maximum time to run (set to 0 to disable): Default 60 seconds
+-v, --verbose	Verbose output
 `

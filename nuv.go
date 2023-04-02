@@ -158,7 +158,7 @@ func Nuv(base string, args []string) error {
 		}
 	}
 	taskArgs := append(pre, post...)
-	debug(taskArgs)
+	debug("task args: ", taskArgs)
 	_, err = Task(taskArgs...)
 	return err
 }

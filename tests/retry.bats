@@ -21,24 +21,34 @@ setup() {
     export NO_COLOR=1
 }
 
-@test "welcome" {
-    run nuv
-    assert_line '* sub:                     sub command'
-    assert_line '* testcmd:                 test nuv commands'
+@test "nuv -retry help" {
+    run nuv -retry
+    assert_success
+    assert_line "Usage:"
+
+    run nuv -retry -h
+    assert_success
+    assert_line "Usage:"
+
+    run nuv -retry --help
+    assert_success
+    assert_line "Usage:"
 }
 
-@test "testcmd" {
-    run nuv testcmd
-    assert_line "24"
+@test "nuv -retry -t 0" {
+    run nuv -retry -t 0 sub failing
+    assert_line "error: failure after 0 retries or 60 seconds."
+    assert_failure
+
+    run nuv -retry -t 0 -v sub failing
+    assert_line "Retry Parameters: max time=60 seconds, retries=0 times"
 }
 
-@test "sub" {
-    run nuv sub
-    assert_line '* opts:         opts test'
-    assert_line '* simple:       simple'
-}
+@test "nuv -retry -t 1 -m 5" {
+    run nuv -retry -t 1 -m 5 sub failing
+    assert_line "error: failure after 1 retries or 5 seconds."
+    assert_failure
 
-@test "sub simple" {
-    run nuv sub simple
-    assert_line simple
+    run nuv -retry -t 1 -m 5 -v sub failing
+    assert_line "Retry Parameters: max time=5 seconds, retries=1 times"
 }

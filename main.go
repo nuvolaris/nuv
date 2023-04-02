@@ -143,8 +143,7 @@ func main() {
 		}
 		if cmd == "retry" {
 			if err := retryNuv(args); err != nil {
-				log.Println(err)
-				os.Exit(1)
+				log.Fatalf("error: %s", err.Error())
 			}
 			os.Exit(0)
 		}
@@ -183,12 +182,12 @@ func retryNuv(args []string) error {
 	}
 
 	runNuv := func(args []string) error {
-		debug("invoking Nuv in retry with args:", args)
-		if err := Nuv(dir, args); err != nil {
-			log.Println(err)
-			return err
+		debug("Invoking nuv in retry with ", dir, args)
+		err := Nuv(dir, args)
+		if err != nil {
+			log.Println("task failed:", err)
 		}
-		return nil
+		return err
 	}
 
 	return tools.ExpBackoffRetry(runNuv, args[1:])
