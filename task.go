@@ -26,12 +26,12 @@ import (
 
 var taskDryRun = false
 
-func Task(args ...string) {
+func Task(args ...string) (int, error) {
 	if taskDryRun {
 		cur, _ := os.Getwd()
 		dir := path.Base(cur)
 		fmt.Printf("(%s) task %v\n", dir, args)
-	} else {
-		taskmain.Task(append([]string{"task"}, args...))
+		return 0, nil
 	}
+	return taskmain.Task(append([]string{"task"}, args...))
 }

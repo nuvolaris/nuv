@@ -16,7 +16,7 @@ require (
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230215214008-863dfc0bf05f
-	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230216111806-00c2fce2c9af
+	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402141038-0db2546a8eea
 )
 
 require (
@@ -58,13 +58,13 @@ require (
 	github.com/laher/uggo v0.0.0-20140418102112-0ad25fe11c5b // indirect
 	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.17 // indirect
+	github.com/mattn/go-isatty v0.0.17
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mattn/go-zglob v0.0.4 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
 	github.com/nuvolaris/sh/v3 v3.0.0-20230312215406-ee139db1ecdb // indirect
-	github.com/nuvolaris/task/v3 v3.9.3-0.20230216111806-00c2fce2c9af // indirect
+	github.com/nuvolaris/task/v3 v3.9.3-0.20230312223316-86b1c3692788 // indirect
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pjbgf/sha1cd v0.2.3 // indirect

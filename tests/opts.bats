@@ -60,6 +60,8 @@ setup() {
 @test "errors" {
     run nuv sub opts arg1
     assert_line "Usage:"
+    assert_failure
     run nuv sub opts arg1 opt4
     assert_line "Usage:"
+    assert_failure
 }
