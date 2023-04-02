@@ -26,6 +26,8 @@ import (
 )
 
 func Filetype() error {
+	flag.Usage = printFiletypeHelp
+
 	// Define command line flags
 	helpFlag := flag.Bool("h", false, "Print help message")
 	extensionFlag := flag.Bool("e", false, "Show file standard extension")
@@ -36,14 +38,14 @@ func Filetype() error {
 
 	// Print help message if -h flag is provided
 	if *helpFlag {
-		printFiletypeHelp()
+		flag.Usage()
 		return nil
 	}
 
 	// Get the list of directories to create from the remaining command line arguments
 	files := flag.Args()
 	if len(files) != 1 {
-		printFiletypeHelp()
+		flag.Usage()
 		return nil
 	}
 

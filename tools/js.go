@@ -27,6 +27,8 @@ import (
 )
 
 func jsToolMain() error {
+	flag.Usage = printJSHelp
+
 	// Define command line flags
 	helpFlag := flag.Bool("h", false, "Print help message")
 
@@ -37,13 +39,13 @@ func jsToolMain() error {
 	isTerminal := isatty.IsTerminal(os.Stdin.Fd()) || isatty.IsCygwinTerminal(os.Stdin.Fd())
 	// if no input file and no input from pipe, print help message
 	if isTerminal && flag.NArg() == 0 {
-		printJSHelp()
+		flag.Usage()
 		return nil
 	}
 
 	// Print help message if -h flag is provided
 	if *helpFlag {
-		printJSHelp()
+		flag.Usage()
 		return nil
 	}
 
