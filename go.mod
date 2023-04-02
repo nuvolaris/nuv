@@ -16,7 +16,7 @@ require (
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae
-	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402141038-0db2546a8eea
+	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402183349-40db8d138726
 )
 
 require (
