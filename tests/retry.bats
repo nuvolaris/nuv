@@ -19,6 +19,7 @@ setup() {
     load 'test_helper/bats-support/load'
     load 'test_helper/bats-assert/load'
     export NO_COLOR=1
+    export NUV_NO_LOG_PREFIX=1
 }
 
 @test "nuv -retry help" {
@@ -35,20 +36,25 @@ setup() {
     assert_line "Usage:"
 }
 
-@test "nuv -retry -t 0" {
-    run nuv -retry -t 0 sub failing
+@test "nuv -retry fail" {
+    run nuv -retry -t 0 nuv failing
     assert_line "error: failure after 0 retries or 60 seconds."
     assert_failure
 
-    run nuv -retry -t 0 -v sub failing
+    run nuv -retry -t 0 -v nuv failing
     assert_line "Retry Parameters: max time=60 seconds, retries=0 times"
-}
-
-@test "nuv -retry -t 1 -m 5" {
-    run nuv -retry -t 1 -m 5 sub failing
-    assert_line "error: failure after 1 retries or 5 seconds."
+    assert_line "error: failure after 0 retries or 60 seconds."
     assert_failure
 
-    run nuv -retry -t 1 -m 5 -v sub failing
-    assert_line "Retry Parameters: max time=5 seconds, retries=1 times"
+    run nuv -retry -t 5 -m 2 nuv failing
+    assert_line "error: failure after 5 retries or 2 seconds."
+    assert_failure
+}
+
+@test "nuv -retry succeed" {
+    run nuv -retry -t 1 -m 5 nuv fail_then_succeed
+    assert_success
+
+    run nuv -retry -t 1 -m 5 -v nuv fail_then_succeed
+    assert_success
 }
