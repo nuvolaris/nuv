@@ -26,6 +26,7 @@ import (
 
 	"github.com/nuvolaris/nuv/tools"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
+	"github.com/pkg/browser"
 )
 
 func setupCmd(me string) (string, error) {
@@ -160,7 +161,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	// execute nuv
 	dir, err := getNuvRoot()
 	if err != nil {
 		log.Fatalf("error: %s", err.Error())
@@ -170,7 +170,17 @@ func main() {
 	// we pass parent(dir) because we use the olaris parent folder
 	checkUpdated(parent(dir), 24*time.Hour)
 
-	if err := Nuv(dir, args[1:]); err != nil {
-		log.Fatalf("error: %s", err.Error())
+	if len(args) == 1 {
+		// run nuv server and open browser
+		port := getNuvPort()
+		go RunNuvServer(dir, port)
+		if err := browser.OpenURL("http://localhost:" + port); err != nil {
+			log.Fatal(err)
+		}
+		select {}
+	} else {
+		if err := Nuv(dir, args[1:]); err != nil {
+			log.Fatalf("error: %s", err.Error())
+		}
 	}
 }
