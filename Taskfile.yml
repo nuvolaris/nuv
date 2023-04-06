@@ -73,7 +73,6 @@ tasks:
     cmds:
     - bats/bin/bats .
 
-
   clean:
     - rm -f bin/nuv
     - go clean -cache -modcache

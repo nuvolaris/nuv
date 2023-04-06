@@ -14,24 +14,26 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
 
-version: '3'
-tasks:
+setup() {
+    load 'test_helper/bats-support/load'
+    load 'test_helper/bats-assert/load'
+    export NO_COLOR=1
+}
 
-  sub:
-    desc: sub command
+@test "nuv grep tool" {
+    run nuv -grep first olaris/grep.txt
+    assert_success
+    run nuv -grep none olaris/grep.txt
+    assert_failure
+}
 
-  testcmd:
-    desc: test nuv commands
-    cmds:
-    - ht 2>&1 | wc -l
-
-  grep:
-    silent: true
-    cmds:
-    - |
-      if grep {{.GREP}} grep.txt
-      then echo OK
-      else echo KO
-      fi
+@test "nuv grep task" {
+    run nuv grep
+    assert_line KO
+    run nuv grep GREP=first
+    assert_line grep.txt:first
+    assert_line OK
+    run nuv grep GREP=none
+    assert_line KO
+}
