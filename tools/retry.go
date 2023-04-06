@@ -21,12 +21,13 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
 )
 
-func ExpBackoffRetry(fn func([]string) error, args []string) error {
+func ExpBackoffRetry(args []string) error {
 	// Define command line flags
 	flag.Usage = func() { fmt.Print(usage) }
 
@@ -64,7 +65,13 @@ func ExpBackoffRetry(fn func([]string) error, args []string) error {
 	if verboseFlag {
 		fmt.Printf("Retry Parameters: max time=%d seconds, retries=%d times\n", maxFlag, triesFlag)
 	}
-	err := retry(fn, rest, maxFlag, triesFlag)
+	runCmd := func(args []string) error {
+		cmd := exec.Command(rest[0], rest[1:]...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		return cmd.Run()
+	}
+	err := retry(runCmd, rest, maxFlag, triesFlag)
 
 	return err
 }
