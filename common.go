@@ -18,11 +18,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+// default port for nuv server
 
 // default files
 const NUVFILE = "nuvfile.yml"
@@ -42,8 +45,18 @@ type NuvRootJSON struct {
 	Version string `json:"version"`
 }
 
-// get defaults
+const DefaultNuvPort = 9768
 
+func getNuvPort() string {
+	port := os.Getenv("NUV_PORT")
+	if port == "" {
+		port = fmt.Sprintf("%d", DefaultNuvPort)
+	}
+	os.Setenv("NUV_PORT", port)
+	return port
+}
+
+// get defaults
 func getNuvRoot() (string, error) {
 	root := os.Getenv("NUV_ROOT")
 	if root == "" {
