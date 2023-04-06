@@ -61,5 +61,4 @@ func TestIndex(t *testing.T) {
 			resp.Body.Close()
 		})
 	}
-
 }
