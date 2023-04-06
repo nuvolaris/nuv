@@ -31,8 +31,7 @@ tasks:
     - git tag -f {{.BASEVER}}.$(date +%y%m%d%H){{.S}}
     - git tag
 
-  setup:
-    - cd tests/olaris ; git checkout -B test ; cd ..
+  setup: {silent:true} 
 
   build:
     desc: build nuv
