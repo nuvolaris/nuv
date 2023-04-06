@@ -18,23 +18,66 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/pkg/browser"
 )
 
 var WebDir = "web"
 
-func RunNuvServer(dir string, port string) {
-	web_dir := joinpath(dir, WebDir)
-	handler := nuvServerHandler(web_dir)
-	addr := fmt.Sprintf(":%s", port)
-	log.Println("Nuvolaris server started at http://localhost:" + port)
-	if err := http.ListenAndServe(addr, handler); err != nil {
-		log.Fatal(err)
+func Serve(olarisDir string, args []string) error {
+	// Define command line flags
+	flag.Usage = func() { fmt.Print(usage) }
+
+	var helpFlag bool
+	var noBrowserFlag bool
+
+	flag.BoolVar(&helpFlag, "h", false, "Print help message")
+	flag.BoolVar(&helpFlag, "help", false, "Print help message")
+	flag.BoolVar(&noBrowserFlag, "no-browser", false, "Do not open browser")
+
+	// Parse command line flags
+	os.Args = args
+	flag.Parse()
+
+	// Print help message if -h flag is provided
+	if helpFlag {
+		flag.Usage()
+		return nil
 	}
+
+	// run nuv server and open browser
+	port := getNuvPort()
+	webDirPath := joinpath(olarisDir, WebDir)
+	go RunNuvServer(webDirPath, port)
+
+	if !noBrowserFlag {
+		if err := browser.OpenURL("http://localhost:" + port); err != nil {
+			return err
+		}
+	}
+
+	select {}
 }
 
-func nuvServerHandler(web_dir string) http.Handler {
-	return http.FileServer(http.Dir(web_dir))
+func RunNuvServer(webDirPath string, port string) error {
+	handler := nuvServerHandler(webDirPath)
+	addr := fmt.Sprintf(":%s", port)
+
+	log.Println("Nuvolaris server started at http://localhost:" + port)
+	return http.ListenAndServe(addr, handler)
 }
+
+func nuvServerHandler(webDir string) http.Handler {
+	return http.FileServer(http.Dir(webDir))
+}
+
+const usage = `Usage:
+nuv -serve [options]
+-h, --help Print help message
+--no-browser Do not open browser
+`

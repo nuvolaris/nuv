@@ -21,11 +21,15 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
 func TestIndex(t *testing.T) {
-	handler := nuvServerHandler(joinpath("tests/olaris/", WebDir))
+	os.Chdir(workDir)
+	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
+	handler := nuvServerHandler(joinpath(olaris, WebDir))
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
