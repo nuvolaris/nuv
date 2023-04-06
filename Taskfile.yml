@@ -17,14 +17,16 @@
 #
 version: '3'
 vars:
-  BASEVER: 0.3.0-morpheus
+  BRANCH: 0.3.0
+  BASEVER: "{{.BRANCH}}-morpheus"
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
   S: ""
 
 tasks:
 
-  default: task -l
+  default:
+  - task: build
 
   cli-ver:
     - git tag -d $(git tag) 
@@ -36,7 +38,7 @@ tasks:
   build:
     desc: build nuv
     cmds:
-      - go build -ldflags "-X main.NuvVersion={{.VERSION}}"  -o bin/nuv
+      - go build -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"  -o bin/nuv
     sources:
       - '*.go'
       - 'tools/*.go'

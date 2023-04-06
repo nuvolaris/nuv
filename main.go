@@ -119,6 +119,10 @@ func main() {
 			}
 			os.Exit(exitCode)
 		}
+		if cmd == "version" {
+			fmt.Println(NuvVersion)
+			os.Exit(0)
+		}
 		if cmd == "info" {
 			info()
 			os.Exit(0)

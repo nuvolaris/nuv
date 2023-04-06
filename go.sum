@@ -285,6 +285,8 @@ github.com/nuvolaris/sh/v3 v3.0.0-20230312215406-ee139db1ecdb h1:6IkRuVvcazBzLNG
 github.com/nuvolaris/sh/v3 v3.0.0-20230312215406-ee139db1ecdb/go.mod h1:epa2doZ4F/RIonykbbXBOsz2ciFKpn4fsOo4KrJQiGs=
 github.com/nuvolaris/someutils v0.0.0-20230215214008-863dfc0bf05f h1:GGuATfUmfk+GaxbkyGpaEMar46jatYaNtgDmoMUqJ9s=
 github.com/nuvolaris/someutils v0.0.0-20230215214008-863dfc0bf05f/go.mod h1:27LYTtM+ymckYJ+I+C5Tg6/ir+QyBQZVNN6TvlNQ1zA=
+github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae h1:r/98Ma2fvAFYBEQC2OqKsD4tI7r75N7YzhWv2ievhRA=
+github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae/go.mod h1:27LYTtM+ymckYJ+I+C5Tg6/ir+QyBQZVNN6TvlNQ1zA=
 github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230216111806-00c2fce2c9af h1:qrWzfVaAS4yBxFP0ZJuSNBi8omKZwS+gzUbvYZsOKvk=
 github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230216111806-00c2fce2c9af/go.mod h1:UvD9D0ygT8FAqFSC5da0eOGUww/R6p6yJ6qw1eQaE4w=
 github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402134833-85c9dab6378a h1:uaCdCLkvkErHCAsCGqnNVfdct63QT3Sns25VcUeOaOs=
