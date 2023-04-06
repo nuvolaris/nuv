@@ -109,12 +109,9 @@ func main() {
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
-			var params []string
-			// TODO: small hack to not have a crash when running "nuv -task"
-			if len(args) < 3 {
-				params = args[1:]
-			} else {
-				params = args[2:]
+			params := []string{"task"}
+			if len(args) > 2 {
+				params = append(params, args[2:]...)
 			}
 			exitCode, err := taskmain.Task(params)
 			if err != nil {
