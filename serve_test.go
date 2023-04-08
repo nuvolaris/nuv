@@ -67,13 +67,13 @@ func TestIndex(t *testing.T) {
 func TestGetTask(t *testing.T) {
 	os.Chdir(joinpath(workDir, "tests"))
 
-	t.Run("/api/nuv?testcmd invokes testcmd", func(t *testing.T) {
-		request := newTaskRequest("testcmd")
+	t.Run("/api/nuv?test invokes test task", func(t *testing.T) {
+		request := newTaskRequest("test")
 		response := httptest.NewRecorder()
 
 		want := NuvOutput{
-			Stdout: "24",
-			Stderr: "task: [testcmd] ht 2>&1 | wc -l",
+			Stdout: "Dry run: task test",
+			Stderr: "",
 			Status: 0,
 		}
 

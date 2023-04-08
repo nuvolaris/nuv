@@ -115,6 +115,13 @@ func nuvTaskServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func execCommandTasks(tasks []string) NuvOutput {
+	if taskDryRun {
+		return NuvOutput{
+			Stdout: "Dry run: task " + strings.Join(tasks, " "),
+			Stderr: "",
+			Status: 0,
+		}
+	}
 	trace("Running tasks from api:", tasks)
 
 	cmd := exec.Command("nuv", tasks...)
@@ -127,7 +134,6 @@ func execCommandTasks(tasks []string) NuvOutput {
 	if err != nil {
 		warn("Failed to run tasks", tasks, stderr.String(), err)
 	}
-
 	return NuvOutput{
 		Stdout: strings.TrimSpace(stdout.String()),
 		Stderr: strings.TrimSpace(stderr.String()),
