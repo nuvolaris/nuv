@@ -41,7 +41,7 @@ if len(sys.argv) == 1:
     for i in fails:
         print(n, lines[i], end='')
         n += 1
-    print("=== use 'task utest N=<n>' to see the diff")
+    print("=== use 'task utestdiff N=<n>' to see the diff")
     sys.exit(len(fails))
 
 n = int(sys.argv[1])

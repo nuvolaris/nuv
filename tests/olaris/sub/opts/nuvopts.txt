@@ -1,6 +1,6 @@
 Usage:
   opts hello
-  opts args <name>... [-c]
-  opts arg1 <name> arg2 <x> <y> [--fl=<flag>]
-  opts arg3 (opt1|opt2) <x> <y> [--fa|--fb]
+  opts ciao <name>... [-c]
+  opts salve <name> hi <x> <y> [--fl=<flag>]
+  opts sayonara (opt1|opt2) <x> <y> [--fa|--fb]
   opts -h | --help | --version

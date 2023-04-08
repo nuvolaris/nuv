@@ -116,7 +116,7 @@ func Nuv(base string, args []string) error {
 		} else {
 			// stop when non folder reached
 			//substitute it with the validated task name
-			if len(rest) == 1 {
+			if len(rest) > 0 {
 				rest[0] = taskName
 			}
 			break
@@ -129,14 +129,14 @@ func Nuv(base string, args []string) error {
 
 	// parsed args
 	if exists(".", NUVOPTS) {
-		//fmt.Println("PREPARSE:", rest)
+		trace("PREPARSE:", rest)
 		parsedArgs := parseArgs(readfile(NUVOPTS), rest)
 		prefix := []string{"-t", NUVFILE}
 		if len(rest) > 0 && rest[0][0] != '-' {
 			prefix = append(prefix, rest[0])
 		}
 		parsedArgs = append(prefix, parsedArgs...)
-		//fmt.Println("POSTPARSE:", parsedArgs)
+		trace("POSTPARSE:", parsedArgs)
 		_, err := Task(parsedArgs...)
 		return err
 	}

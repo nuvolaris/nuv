@@ -39,29 +39,41 @@ setup() {
     assert_line "hello!"
 }
 
-@test "args" {
-    run nuv sub opts args mike
+@test "ciao" {
+    run nuv sub opts ciao mike
     assert_line "name: mike"
     assert_line "-c: no"
 
-    run nuv sub opts args mike miri -c
+    run nuv sub opts ciao mike miri -c
     assert_line "name: mike"
     assert_line "name: miri"
     assert_line "-c: yes"
 }
 
-@test "arg1 arg3" {
-    run nuv sub opts arg1 aaa arg2 1 2 --fl=ag
-    assert_line "arg1 name=('aaa') arg2 x=1 y=2 --fl=ag"
-    run nuv sub opts arg3 opt1 10 20 --fa
-    assert_line "arg3=true opt1=true opt2=false x=10 y=20 --fa=true --fb=false"
+@test "salve sayonara" {
+    run nuv sub opts salve aaa hi 1 2 --fl=ag
+    assert_line "salve name=('aaa') hi x=1 y=2 --fl=ag"
+    run nuv sub opts sayonara opt1 10 20 --fa
+    assert_line "sayonara=true opt1=true opt2=false x=10 y=20 --fa=true --fb=false"
 }
 
 @test "errors" {
-    run nuv sub opts arg1
+    run nuv sub opts salve
     assert_line "Usage:"
     assert_failure
-    run nuv sub opts arg1 opt4
+    run nuv sub opts salve opt4
     assert_line "Usage:"
     assert_failure
+}
+
+
+@test "shortening" {
+    run nuv s o c mike miri -c
+    assert_line "ciao:"
+    assert_line "name: mike"
+    assert_line "name: miri"
+    assert_line "-c: yes"
+
+    run nuv s o sal aaa hi 1 2 --fl=ag
+    assert_line "salve name=('aaa') hi x=1 y=2 --fl=ag"
 }
