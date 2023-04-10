@@ -28,11 +28,15 @@ import (
 )
 
 func help() error {
-	if exists(".", NUVOPTS) {
+	if os.Getenv("NUV_NO_NUVOPTS") == "" && exists(".", NUVOPTS) {
 		fmt.Println(readfile(NUVOPTS))
 	} else {
 		// In case of syntax error, Task will return an error
-		_, err := Task("-t", NUVFILE, "-l")
+		list := "-l"
+		if os.Getenv("NUV_NO_NUVOPTS") != "" {
+			list = "--list-all"
+		}
+		_, err := Task("-t", NUVFILE, list)
 		return err
 	}
 	return nil
@@ -128,7 +132,7 @@ func Nuv(base string, args []string) error {
 	}
 
 	// parsed args
-	if exists(".", NUVOPTS) {
+	if os.Getenv("NUV_NO_NUVOPTS") == "" && exists(".", NUVOPTS) {
 		trace("PREPARSE:", rest)
 		parsedArgs := parseArgs(readfile(NUVOPTS), rest)
 		prefix := []string{"-t", NUVFILE}
