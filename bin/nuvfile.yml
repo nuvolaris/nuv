@@ -28,8 +28,18 @@ vars:
   EXE: '{{if eq .OS "windows"}}.exe{{end}}'
   ARC: '{{if eq .OS "windows"}}.zip{{else}}.tgz{{end}}'
   ARC2: '{{if eq .OS "windows"}}.zip{{else}}.tar.gz{{end}}'
+  BUILD:
+    sh: |-
+      case "{{.OS}}" in
+      (linux) echo "ubuntu-latest" ;;
+      (windows) echo "windows-latest" ;;
+      (darwin) echo "macos-latest" ;;
+      esac
 
 tasks:
+
+  build: 
+  - task: "{{.BUILD}}"
 
   bin:
   - mkdir -p {{.BIN}}
