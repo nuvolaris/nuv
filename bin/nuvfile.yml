@@ -224,3 +224,10 @@ tasks:
     - ./nuv linux build ARCH=amd64
     - ./nuv linux build ARCH=arm64
     - cp linux/*.deb linux/*.rpm ..
+
+  linux:
+    desc: commands to build linux setup
+  windows:
+    desc: commands to build windows setup
+  darwin:
+    desc: commands to build macos setup

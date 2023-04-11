@@ -22,6 +22,7 @@ vars:
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
   S: ""
+  DEBUG: ""
 
 tasks:
 
@@ -38,12 +39,20 @@ tasks:
   build:
     desc: build nuv
     cmds:
-      - go build -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"  -o bin/nuv
+      - go build {{.DEBUG}} -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"  -o bin/nuv
     sources:
       - '*.go'
       - 'tools/*.go'
     generates:
       - bin/nuv
+
+  debug:
+    cmds:
+    - task: build
+      vars:
+        DEBUG: "-gcflags '-l -N'"
+    - dlv exec ./bin/nuv -- {{.CLI_ARGS}}
+
 
   install:
     desc: install nuv using a local folder for binaries
@@ -89,6 +98,3 @@ tasks:
               python3 difftest.py
         else  python3 difftest.py {{.N}}
         fi
-
-  centos:
-  - docker run --mount type=bind,source=$PWD,target=/mnt -ti rockylinux:8
