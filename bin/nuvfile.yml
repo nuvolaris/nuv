@@ -27,6 +27,7 @@ vars:
   BIN: "{{.OS}}/{{.ARCH}}"
   EXE: '{{if eq .OS "windows"}}.exe{{end}}'
   ARC: '{{if eq .OS "windows"}}.zip{{else}}.tgz{{end}}'
+  ARC2: '{{if eq .OS "windows"}}.zip{{else}}.tar.gz{{end}}'
 
 tasks:
 
@@ -61,6 +62,18 @@ tasks:
     status:
     - test -e {{.TGT}}{{.EXE}}
 
+  download-archive2:
+    dir: "{{.BIN}}"
+    cmds:
+    - task: unzip.exe
+    - ht -o {{.TGT}}{{.ARC}} -d {{.SRC}}
+    - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC}}{{end}}'
+    - mv {{.OS}}-{{.ARCH}}/{{.TGT}}{{.EXE}} .
+    - rm {{.TGT}}{{.ARC}} {{.OS}}-{{.ARCH}}/*
+    - rmdir {{.OS}}-{{.ARCH}}
+    status:
+    - test -e {{.TGT}}{{.EXE}}
+
   kubectl:
     cmds:
     - task: download
@@ -74,13 +87,6 @@ tasks:
       vars:
         SRC: "https://kind.sigs.k8s.io/dl/v0.17.0/kind-{{OS}}-{{.ARCH}}"
         TGT: kind
-
-  ytt:
-    cmds:
-    - task: download
-      vars:
-        SRC: "https://github.com/carvel-dev/ytt/releases/download/v0.40.4/ytt-{{.OS}}-{{.ARCH}}"
-        TGT: ytt
 
   kops:
     cmds:
@@ -121,7 +127,17 @@ tasks:
               esac
         TGT: k3sup
 
+  echo-download-archive: echo "{{.SRC}}"
 
+  helm:
+    vars:
+      BASE: "https://get.helm.sh/helm-v3.11.2"
+    cmds:
+    - task: download-archive2
+      vars:
+        SRC: "{{.BASE}}-{{.OS}}-{{.ARCH}}{{.ARC2}}"
+        TGT: helm
+  
   nuv:
     dir: ".."
     cmds:
@@ -158,11 +174,11 @@ tasks:
     desc: download all tools for {{.OS}}-{{.ARCH}}
     cmds:
     - task: nuv
-    - task: kind
     - task: kubectl
-    - task: ytt
-    - task: k3sup
+    - task: helm
+    - task: kind
     - task: kops
+    - task: k3sup
 
   windows-latest:
     desc: build a msi installer for windows
