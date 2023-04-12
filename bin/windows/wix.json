@@ -9,7 +9,6 @@
       "../windows/amd64/nuv.exe",
       "../windows/amd64/kubectl.exe",
       "../windows/amd64/kind.exe",
-      "../windows/amd64/ytt.exe",
       "../windows/amd64/k3sup.exe",
       "../windows/amd64/kops.exe"
     ]
