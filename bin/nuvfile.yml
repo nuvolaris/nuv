@@ -185,10 +185,11 @@ tasks:
     cmds:
     - task: nuv
     - task: kubectl
-    - task: helm
     - task: kind
     - task: kops
     - task: k3sup
+    # TODO: for some reasons, helm download does not work in github actions
+    #- task: helm
 
   windows-latest:
     desc: build a msi installer for windows
