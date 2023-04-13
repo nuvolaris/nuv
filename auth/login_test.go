@@ -28,10 +28,9 @@ import (
 )
 
 // setupMockServer sets up a new mock HTTP server with the given test data and expected response
-func setupMockServer(t *testing.T, inLogin, inPass string) *httptest.Server {
+func setupMockServer(t *testing.T, expectedLogin, expectedPass, expectedRes string) *httptest.Server {
 	t.Helper()
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Read the request body and unmarshal the JSON data
 		var requestBody map[string]string
 		err := json.NewDecoder(r.Body).Decode(&requestBody)
 		if err != nil {
@@ -41,17 +40,16 @@ func setupMockServer(t *testing.T, inLogin, inPass string) *httptest.Server {
 
 		if login, ok := requestBody["login"]; !ok {
 			t.Error("expected login field in request body")
-		} else if login != inLogin {
-			t.Errorf("expected login %s, got %s", inLogin, login)
+		} else if login != expectedLogin {
+			t.Errorf("expected login %s, got %s", expectedLogin, login)
 		}
 		if password, ok := requestBody["password"]; !ok {
 			t.Error("expected password field in request body")
-		} else if password != inPass {
-			t.Errorf("expected password %s, got %s", inPass, password)
+		} else if password != expectedPass {
+			t.Errorf("expected password %s, got %s", expectedPass, password)
 		}
 
-		// Write the expected response
-		w.Write([]byte("{ \"fakeCred\": \"test\"}"))
+		w.Write([]byte(expectedRes))
 	}))
 
 	return server
@@ -86,7 +84,7 @@ func TestLoginCmd(t *testing.T) {
 	})
 
 	t.Run("with only apihost adds received credentials to secret store", func(t *testing.T) {
-		mockServer := setupMockServer(t, "nuvolaris", "a password")
+		mockServer := setupMockServer(t, "nuvolaris", "a password", "{\"fakeCred\": \"test\"}")
 		defer mockServer.Close()
 
 		oldPwdReader := pwdReader
@@ -112,7 +110,7 @@ func TestLoginCmd(t *testing.T) {
 	})
 
 	t.Run("with apihost and user adds received credentials to secret store", func(t *testing.T) {
-		mockServer := setupMockServer(t, "a user", "a password")
+		mockServer := setupMockServer(t, "a user", "a password", "{ \"fakeCred\": \"test\"}")
 		defer mockServer.Close()
 
 		oldPwdReader := pwdReader
@@ -136,10 +134,30 @@ func TestLoginCmd(t *testing.T) {
 			t.Errorf("Expected test, got %s", cred)
 		}
 	})
+
+	t.Run("error when response body is invalid", func(t *testing.T) {
+		mockServer := setupMockServer(t, "a user", "a password", "invalid json")
+		defer mockServer.Close()
+
+		oldPwdReader := pwdReader
+		pwdReader = &stubPasswordReader{
+			Password:    "a password",
+			ReturnError: false,
+		}
+		err := LoginCmd([]string{mockServer.URL, "a user"})
+		pwdReader = oldPwdReader
+
+		if err == nil {
+			t.Error("Expected error, got nil")
+		}
+		if err.Error() != "failed to decode response from login request" {
+			t.Errorf("Expected error to be 'failed to decode response from login request', got %s", err.Error())
+		}
+	})
 }
 
 func Test_doLogin(t *testing.T) {
-	mockServer := setupMockServer(t, "a user", "a password")
+	mockServer := setupMockServer(t, "a user", "a password", "{\"fakeCred\": \"test\"}")
 	defer mockServer.Close()
 
 	cred, err := doLogin(mockServer.URL, "a user", "a password")

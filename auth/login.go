@@ -20,6 +20,7 @@ package auth
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -87,7 +88,7 @@ func doLogin(url, user, password string) (map[string]string, error) {
 	var responseBody map[string]string
 	err = json.NewDecoder(resp.Body).Decode(&responseBody)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("failed to decode response from login request")
 	}
 
 	return responseBody, nil
