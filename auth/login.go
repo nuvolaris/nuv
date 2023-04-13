@@ -48,9 +48,9 @@ func LoginCmd(args []string) error {
 	fmt.Print("Enter Password: ")
 	pwd, err := AskPassword()
 	if err != nil {
-		fmt.Println()
 		return err
 	}
+	fmt.Println()
 	url := args[0] + whiskLoginPath
 	user := defaultUser
 	if len(args) > 1 {
