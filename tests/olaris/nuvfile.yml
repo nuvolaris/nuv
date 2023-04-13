@@ -16,22 +16,31 @@
 # under the License.
 #
 
-version: '3'
+version: "3"
 tasks:
-
   sub:
     desc: sub command
 
   testcmd:
     desc: test nuv commands
     cmds:
-    - ht 2>&1 | wc -l
+      - ht 2>&1 | wc -l
+
+  failing:
+    desc: failing
+    cmds:
+      - exit 1
+
+  fail_then_succeed:
+    desc: fail then success
+    cmds:
+      - ../test_helper/fail_then_succeed.sh
 
   grep:
     silent: true
     cmds:
-    - |
-      if grep {{.GREP}} grep.txt
-      then echo OK
-      else echo KO
-      fi
+      - |
+        if grep {{.GREP}} grep.txt
+        then echo OK
+        else echo KO
+        fi

@@ -141,6 +141,12 @@ func main() {
 			fmt.Println("nuvfiles updated successfully")
 			os.Exit(0)
 		}
+		if cmd == "retry" {
+			if err := tools.ExpBackoffRetry(args[1:]); err != nil {
+				log.Fatalf("error: %s", err.Error())
+			}
+			os.Exit(0)
+		}
 		// check if it is an embedded to and invoke it
 		if tools.IsTool(cmd) {
 			code, err := tools.RunTool(cmd, args[2:])

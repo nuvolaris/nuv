@@ -27,7 +27,7 @@ import (
 )
 
 var tools = []string{
-	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype",
+	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "retry",
 }
 
 func availableCmds() []string {
