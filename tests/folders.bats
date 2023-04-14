@@ -23,6 +23,8 @@ setup() {
 
 @test "welcome" {
     run nuv
+    assert_line '* fail_then_succeed:       fail then success'
+    assert_line '* failing:                 failing'
     assert_line '* sub:                     sub command'
     assert_line '* testcmd:                 test nuv commands'
 }
@@ -41,4 +43,9 @@ setup() {
 @test "sub simple" {
     run nuv sub simple
     assert_line simple
+}
+
+@test "other" {
+    run nuv o s
+    assert_line "hidden"
 }
