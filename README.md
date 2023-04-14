@@ -17,6 +17,9 @@
   ~ under the License.
   ~
 -->
+
+![example workflow](https://github.com/nuvolaris/nuv/actions/workflows/check.yml/badge.svg) ![Nuv Latest Release](https://badgen.net/github/release/nuvolaris/nuv/stable) ![License](https://badgen.net/github/license/nuvolaris/nuv) 
+
 **WARNING: this is still work in progress**
 
 The code may not build, there can be errors that will destroy your hard disk and so on.
