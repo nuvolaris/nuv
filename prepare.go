@@ -59,10 +59,10 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 
 		// Pull the latest changes from the origin remote and merge into the current branch
 		err = w.Pull(&git.PullOptions{RemoteName: "origin"})
-		if err.Error() == "already up-to-date" {
-			return localDir, nil
-		}
 		if err != nil {
+			if err.Error() == "already up-to-date" {
+				return localDir, nil
+			}
 			return "", err
 		}
 		return localDir, nil

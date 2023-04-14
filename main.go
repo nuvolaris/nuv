@@ -131,6 +131,12 @@ func main() {
 			tools.Help()
 			os.Exit(0)
 		}
+		if cmd == "serve" {
+			if err := Serve(retrieveRootDir(), args[1:]); err != nil {
+				log.Fatalf("error: %v", err)
+			}
+			os.Exit(0)
+		}
 		if cmd == "update" {
 			// ok no up, nor down, let's download it
 			err := pullTasks(true, true)
@@ -160,12 +166,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	// execute nuv
-	dir, err := getNuvRoot()
-	if err != nil {
-		log.Fatalf("error: %s", err.Error())
-	}
-
+	dir := retrieveRootDir()
 	// check if olaris was recently updated
 	// we pass parent(dir) because we use the olaris parent folder
 	checkUpdated(parent(dir), 24*time.Hour)
@@ -173,4 +174,12 @@ func main() {
 	if err := Nuv(dir, args[1:]); err != nil {
 		log.Fatalf("error: %s", err.Error())
 	}
+}
+
+func retrieveRootDir() string {
+	dir, err := getNuvRoot()
+	if err != nil {
+		log.Fatalf("error: %s", err.Error())
+	}
+	return dir
 }

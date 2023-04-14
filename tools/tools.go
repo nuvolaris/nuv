@@ -32,7 +32,8 @@ var tools = []string{
 
 func availableCmds() []string {
 	cmds := append(Utils, tools...)
-	cmds = append(cmds, "task")
+	extra_cmds := []string{"update", "serve", "help", "info", "version", "task"}
+	cmds = append(cmds, extra_cmds...)
 	return cmds
 }
 
@@ -72,7 +73,6 @@ func RunTool(name string, args []string) (int, error) {
 		if err := Wsk(cmd); err != nil {
 			return 1, err
 		}
-		return 0, nil
 	case "ht":
 		//fmt.Println("=== ht ===")
 		os.Args = append([]string{"ht"}, args...)

@@ -287,8 +287,8 @@ github.com/nuvolaris/sh/v3 v3.0.0-20230312215406-ee139db1ecdb h1:6IkRuVvcazBzLNG
 github.com/nuvolaris/sh/v3 v3.0.0-20230312215406-ee139db1ecdb/go.mod h1:epa2doZ4F/RIonykbbXBOsz2ciFKpn4fsOo4KrJQiGs=
 github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae h1:r/98Ma2fvAFYBEQC2OqKsD4tI7r75N7YzhWv2ievhRA=
 github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae/go.mod h1:27LYTtM+ymckYJ+I+C5Tg6/ir+QyBQZVNN6TvlNQ1zA=
-github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402183349-40db8d138726 h1:Q2sJ3VvGzgWelTPD3N3qjSN00LgZUphEcr7LcOWfknA=
-github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402183349-40db8d138726/go.mod h1:CTnvj/r7Fzu8FfDwmIC6xAVJAUE7I+D8pq1owkYTCqU=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402141038-0db2546a8eea h1:Bf1ftpuSesgQRdf6DftDsubR0yMe4i3UhNmlyp/IsNQ=
+github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402141038-0db2546a8eea/go.mod h1:CTnvj/r7Fzu8FfDwmIC6xAVJAUE7I+D8pq1owkYTCqU=
 github.com/nuvolaris/task/v3 v3.9.3-0.20230312223316-86b1c3692788 h1:kdzFpKIzwwr2bcc+9RztkIS70CdNhXvZlULkZoFqygA=
 github.com/nuvolaris/task/v3 v3.9.3-0.20230312223316-86b1c3692788/go.mod h1:sIKMmkcKbJQEuFJHzfu23rs8VhnQbLoeZ98i1K75ei8=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
@@ -313,6 +313,8 @@ github.com/pelletier/go-toml v1.8.1 h1:1Nf83orprkJyknT6h7zbuEGUEjcyVlCxSUGTENmNC
 github.com/pelletier/go-toml v1.8.1/go.mod h1:T2/BmBdy8dvIRq1a/8aqjN41wvWlN4lrapLU/GW4pbc=
 github.com/pjbgf/sha1cd v0.2.3 h1:uKQP/7QOzNtKYH7UTohZLcjF5/55EnTw0jO/Ru4jZwI=
 github.com/pjbgf/sha1cd v0.2.3/go.mod h1:HOK9QrgzdHpbc2Kzip0Q1yi3M2MFGPADtR6HjG65m5M=
+github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 h1:KoWmjvw+nsYOo29YJK9vDA65RGE3NrOnUtO7a+RF9HU=
+github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8/go.mod h1:HKlIX3XHQyzLZPlr7++PzdhaXEj94dEiJgZDTsxEqUI=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
@@ -499,6 +501,7 @@ golang.org/x/sys v0.0.0-20210304203436-1243437a8ec7/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210320140829-1e4c9ba3b0c4/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20210616045830-e2b7044e8c71/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
