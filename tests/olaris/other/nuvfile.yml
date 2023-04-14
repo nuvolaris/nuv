@@ -19,5 +19,6 @@ version: "3"
 
 tasks:
   simple:
+    desc: simple task in other
     cmds:
       - echo hidden

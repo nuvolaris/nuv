@@ -45,7 +45,10 @@ setup() {
     assert_line simple
 }
 
-@test "other" {
+@test "other with shortening" {
+    run nuv o
+    assert_line "* simple:       simple task in other"
+
     run nuv o s
     assert_line "hidden"
 }
