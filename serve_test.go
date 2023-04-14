@@ -18,6 +18,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -29,7 +30,7 @@ import (
 func TestIndex(t *testing.T) {
 	os.Chdir(workDir)
 	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
-	handler := nuvServerHandler(joinpath(olaris, WebDir))
+	handler := webFileServerHandler(joinpath(olaris, WebDir))
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
@@ -60,5 +61,47 @@ func TestIndex(t *testing.T) {
 			}
 			resp.Body.Close()
 		})
+	}
+}
+
+func TestGetTask(t *testing.T) {
+	os.Chdir(joinpath(workDir, "tests"))
+
+	t.Run("/api/nuv?test invokes test task", func(t *testing.T) {
+		request := newTaskRequest("test")
+		response := httptest.NewRecorder()
+
+		want := NuvOutput{
+			Stdout: "Dry run: task test",
+			Stderr: "",
+			Status: 0,
+		}
+
+		nuvTaskServer(response, request)
+
+		assertResponseBody(t, response.Body.Bytes(), want)
+	})
+}
+
+func newTaskRequest(task string) *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, "/api/nuv?"+task, nil)
+	return req
+}
+
+func assertResponseBody(t testing.TB, body []byte, want NuvOutput) {
+	got := NuvOutput{}
+	err := json.Unmarshal(body, &got)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Helper()
+	if got.Status != want.Status {
+		t.Errorf("expected status %v; got %v", want.Status, got.Status)
+	}
+	if got.Stdout != want.Stdout {
+		t.Errorf("expected stdout %v; got %v", want.Stdout, got.Stdout)
+	}
+	if got.Stderr != want.Stderr {
+		t.Errorf("expected stderr %v; got %v", want.Stderr, got.Stderr)
 	}
 }
