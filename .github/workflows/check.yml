@@ -15,17 +15,21 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-name: License Check
+name: Checks
 on: 
   push:
     branches:
     - '*'
     tags-ignore:
     - '*'
+  pull_request:
+    branches:
+    - 'main'
+
 
 jobs:
-  check:
-    name: Check
+  license-check:
+    name: License Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout recursive
@@ -34,6 +38,15 @@ jobs:
           submodules: recursive
       - name: License check
         uses: apache/skywalking-eyes/header@501a28d2fb4a9b962661987e50cf0219631b32ff
+      
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout recursive
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - uses: actions/setup-go@v4
         with:
           go-version: '>=1.19.0'
