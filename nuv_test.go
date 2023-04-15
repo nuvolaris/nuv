@@ -151,8 +151,70 @@ func Test_getTaskNamesList(t *testing.T) {
 		}
 	})
 
+	t.Run("should return array of task names if tasks in nuvfile + subfolders names as tasks with nuvfile in them", func(t *testing.T) {
+
+		tmpDir := createTmpNuvfile(t, "tasks:\n  task1: a\n  task2: b\n")
+		defer os.RemoveAll(tmpDir)
+
+		// create subfolder with nuvfile
+		subDir := filepath.Join(tmpDir, "sub")
+		err := os.Mkdir(subDir, 0755)
+		if err != nil {
+			t.Fatal(err)
+		}
+		subNuvfile := filepath.Join(subDir, "nuvfile.yml")
+		err = os.WriteFile(subNuvfile, []byte("tasks:\n  task3: a\n  task4: b\n"), 0644)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// create subfolder without nuvfile
+		subDir2 := filepath.Join(tmpDir, "sub2")
+		err = os.Mkdir(subDir2, 0755)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		tasks := getTaskNamesList(tmpDir)
+		if len(tasks) != 3 {
+			t.Fatalf("expected 3 tasks, got %d", len(tasks))
+		}
+
+		if !slices.Contains(tasks, "task1") || !slices.Contains(tasks, "task2") || !slices.Contains(tasks, "sub") {
+			t.Fatalf("expected task1, task2, sub, got %v", tasks)
+		}
+	})
+
+	t.Run("avoids duplicate when subfolder with nuvfile has same name as task", func(t *testing.T) {
+
+		tmpDir := createTmpNuvfile(t, "tasks:\n  task1: a\n  task2: b\n")
+		defer os.RemoveAll(tmpDir)
+
+		// create subfolder with nuvfile
+		subDir := filepath.Join(tmpDir, "task1")
+		err := os.Mkdir(subDir, 0755)
+		if err != nil {
+			t.Fatal(err)
+		}
+		subNuvfile := filepath.Join(subDir, "nuvfile.yml")
+		err = os.WriteFile(subNuvfile, []byte("tasks:\n  task3: a\n  task4: b\n"), 0644)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		tasks := getTaskNamesList(tmpDir)
+		if len(tasks) != 2 {
+			t.Fatalf("expected 2 tasks, got %d: %v", len(tasks), tasks)
+		}
+
+		if !slices.Contains(tasks, "task1") || !slices.Contains(tasks, "task2") {
+			t.Fatalf("expected task1, task2, got %v", tasks)
+		}
+	})
+
 }
 
+// createTmpNuvfile creates a temp folder with nuvfile.yml
 func createTmpNuvfile(t *testing.T, content string) string {
 	t.Helper()
 	// create temp folder with nuvfile.yml

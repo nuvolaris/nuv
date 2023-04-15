@@ -15,34 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-
 version: "3"
+
 tasks:
-  other:
-
-  sub:
-    desc: sub command
-
-  testcmd:
-    desc: test nuv commands
+  simple:
+    desc: simple task in other
     cmds:
-      - ht 2>&1 | wc -l
-
-  failing:
-    desc: failing
-    cmds:
-      - exit 1
-
-  fail_then_succeed:
-    desc: fail then success
-    cmds:
-      - ../test_helper/fail_then_succeed.sh
-
-  grep:
-    silent: true
-    cmds:
-      - |
-        if grep {{.GREP}} grep.txt
-        then echo OK
-        else echo KO
-        fi
+      - echo hidden

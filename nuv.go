@@ -202,6 +202,7 @@ func validateTaskName(name string) (string, error) {
 // obtains the task names from the nuvfile.yaml inside the given directory
 func getTaskNamesList(dir string) []string {
 	m := make(map[interface{}]interface{})
+	var taskNames []string
 	if exists(dir, NUVFILE) {
 		dat, err := os.ReadFile(joinpath(dir, NUVFILE))
 		if err != nil {
@@ -219,16 +220,34 @@ func getTaskNamesList(dir string) []string {
 			return make([]string, 0)
 		}
 
-		taskNames := make([]string, len(tasksMap))
-
-		i := 0
 		for k := range tasksMap {
-			taskNames[i] = k
-			i++
+			taskNames = append(taskNames, k)
 		}
 
+	}
+
+	// for each subfolder, check if it has a nuvfile.yaml
+	// if it does, add it to the list of tasks
+
+	// get subfolders
+	subfolders, err := os.ReadDir(dir)
+	if err != nil {
+		warn("error reading subfolders of", dir)
 		return taskNames
 	}
 
-	return make([]string, 0)
+	for _, f := range subfolders {
+		if f.IsDir() {
+			subfolder := joinpath(dir, f.Name())
+			if exists(subfolder, NUVFILE) {
+				// check if not contained
+				name := f.Name()
+				if !slices.Contains(taskNames, name) {
+					taskNames = append(taskNames, name)
+				}
+			}
+		}
+	}
+
+	return taskNames
 }
