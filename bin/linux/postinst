@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-ln -sf /usr/nuvolaris/bin/nuv /usr/bin/nuv
+ln -sf /usr/nuvolaris/nuv /usr/bin/nuv
