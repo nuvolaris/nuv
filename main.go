@@ -24,6 +24,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/nuvolaris/nuv/auth"
 	"github.com/nuvolaris/nuv/tools"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
 )
@@ -149,6 +150,12 @@ func main() {
 		}
 		if cmd == "retry" {
 			if err := tools.ExpBackoffRetry(args[1:]); err != nil {
+				log.Fatalf("error: %s", err.Error())
+			}
+			os.Exit(0)
+		}
+		if cmd == "login" {
+			if err := auth.LoginCmd(args[2:]); err != nil {
 				log.Fatalf("error: %s", err.Error())
 			}
 			os.Exit(0)
