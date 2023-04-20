@@ -47,8 +47,9 @@ tasks:
   download:
     dir: "{{.BIN}}"
     cmds:
-    - ht -o {{.TGT}} -d {{.SRC}}
+    - curl -L -ccookie.txt -o{{.TGT}} {{.SRC}}
     - '{{if eq .OS "windows"}}mv {{.TGT}} {{.TGT}}.exe{{else}}chmod +x {{.TGT}}{{end}}'
+    - rm cookie.txt
     status:
     - test -e {{.TGT}}{{.EXE}}
 
@@ -66,9 +67,10 @@ tasks:
     dir: "{{.BIN}}"
     cmds:
     - task: unzip.exe
-    - ht -o {{.TGT}}{{.ARC}} -d {{.SRC}}
+    - curl -L -ccookie.txt -o{{.TGT}}{{.ARC}} {{.SRC}}
     - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC}} {{.TGT}}{{end}}'
     - rm {{.TGT}}{{.ARC}}
+    - rm cookie.txt
     status:
     - test -e {{.TGT}}{{.EXE}}
 
@@ -76,11 +78,12 @@ tasks:
     dir: "{{.BIN}}"
     cmds:
     - task: unzip.exe
-    - ht -o {{.TGT}}{{.ARC}} -d {{.SRC}}
+    - curl -L -ccookie.txt -o{{.TGT}}{{.ARC}} {{.SRC}}
     - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC}}{{end}}'
     - mv {{.OS}}-{{.ARCH}}/{{.TGT}}{{.EXE}} .
     - rm {{.TGT}}{{.ARC}} {{.OS}}-{{.ARCH}}/*
     - rmdir {{.OS}}-{{.ARCH}}
+    - rm cookie.txt
     status:
     - test -e {{.TGT}}{{.EXE}}
 
