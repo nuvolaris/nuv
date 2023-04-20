@@ -31,7 +31,7 @@ type PasswordReader interface {
 type StdInPasswordReader struct{}
 
 func (r StdInPasswordReader) ReadPassword() (string, error) {
-	pwd, error := term.ReadPassword(syscall.Stdin)
+	pwd, error := term.ReadPassword(int(syscall.Stdin))
 	return string(pwd), error
 }
 
