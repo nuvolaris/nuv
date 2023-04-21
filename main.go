@@ -145,7 +145,6 @@ func main() {
 				log.Println(err)
 				os.Exit(1)
 			}
-			fmt.Println("nuvfiles updated successfully")
 			os.Exit(0)
 		}
 		if cmd == "retry" {

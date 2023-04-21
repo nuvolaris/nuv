@@ -42,9 +42,7 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	}
 	//fmt.Println(localDir)
 
-	// Updating an exiting tools
-	// TODO: wait 24 hours...
-
+	// Updating existing tools
 	if exists(nuvDir, "olaris") {
 		fmt.Println("Updating tasks...")
 		r, err := git.PlainOpen(localDir)
@@ -61,10 +59,13 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 		err = w.Pull(&git.PullOptions{RemoteName: "origin"})
 		if err != nil {
 			if err.Error() == "already up-to-date" {
+				fmt.Println("Your tasks are already up to date!")
 				return localDir, nil
 			}
 			return "", err
 		}
+
+		fmt.Println("Nuvfiles updated successfully")
 		return localDir, nil
 	}
 
@@ -82,6 +83,10 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	createLatestCheckFile(parent(localDir))
+
+	fmt.Println("Nuvfiles downloaded successfully")
 	// clone
 	return localDir, nil
 }
