@@ -24,7 +24,7 @@ setup() {
 
 @test "nuv -update" {
     run nuv -update
-    assert_line "nuvfiles updated successfully"
+    assert_line "Nuvfiles downloaded successfully"
     assert_success
 }
 
@@ -32,19 +32,17 @@ setup() {
     NUV_VERSION=0.2.0 run nuv -update
     assert_line "Your nuv version 0.2.0 is older than the required version in nuvroot.json."
     assert_line "Please update nuv to the latest version."
-    assert_line "nuvfiles updated successfully"
     assert_success
 }
 
 @test "nuv -update with bad version" {
     NUV_VERSION=notsemver run nuv -update
     assert_line "Unable to validate nuv version notsemver : Invalid Semantic Version"
-    assert_line "nuvfiles updated successfully"
     assert_success
 }
 
 @test "nuv -update with newer version" {
     NUV_VERSION=1.2.3 run nuv -update
-    assert_line "nuvfiles updated successfully"
+    assert_line "Your tasks are already up to date!"
     assert_success
 }

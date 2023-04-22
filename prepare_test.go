@@ -57,6 +57,7 @@ func Example_locate_git() {
 	// 1 we cannot find nuvfiles, download them with nuv -update
 	// 2 <nil> /work/tests/olaris
 	// Cloning tasks...
+	// Nuvfiles downloaded successfully
 	// 3 <nil> /home/.nuv/olaris
 	// Updating tasks...
 	// 4 <nil> /home/.nuv/olaris
