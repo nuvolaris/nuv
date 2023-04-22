@@ -61,3 +61,6 @@
 [submodule "tools/envsubst"]
 	path = tools/envsubst
 	url = https://github.com/nuvolaris/envsubst/
+[submodule "tools/goph"]
+	path = tools/goph
+	url = https://github.com/nuvolaris/goph
