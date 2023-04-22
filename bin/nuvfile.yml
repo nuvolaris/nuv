@@ -140,6 +140,24 @@ tasks:
               esac
         TGT: k3sup
 
+  mc:
+    vars:
+      BASE: "https://dl.min.io/client/mc/release/"
+      MC_VER: "RELEASE.2023-03-23T20-03-04Z"
+    cmds:
+    - task: download
+      vars:
+        SRC:
+          sh: > 
+              case {{.OS}}-{{.ARCH}} in
+              (linux-amd64)   echo {{.BASE}}linux-amd64/archive/mc.{{.MC_VER}} ;;
+              (linux-arm64)   echo {{.BASE}}linux-arm64/archive/mc.{{.MC_VER}} ;;
+              (darwin-amd64)  echo {{.BASE}}darwin-amd64/archive/mc.{{.MC_VER}} ;;
+              (darwin-arm64)  echo {{.BASE}}darwin-arm64/archive/mc.{{.MC_VER}} ;;
+              (windows-amd64) echo {{.BASE}}windows-amd64/archive/mc.{{.MC_VER}} ;;
+              esac
+        TGT: mc
+
   echo-download-archive: echo "{{.SRC}}"
 
   helm:
@@ -191,6 +209,7 @@ tasks:
     - task: kind
     - task: kops
     - task: k3sup
+    - task: mc
     # TODO: for some reasons, helm download does not work in github actions
     #- task: helm
 
