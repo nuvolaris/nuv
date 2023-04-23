@@ -69,7 +69,7 @@ func Example_checkUpdated_uptodate() {
 	)
 
 	// run checkUpdated and check if it creates the latest_check file
-	checkUpdated(tmpDir, 1*time.Second)
+	createLatestCheckFile(tmpDir)
 
 	if exists(tmpDir, ".latestcheck") {
 		pr("latest_check file created")
@@ -103,7 +103,7 @@ func Example_checkUpdated_outdated() {
 	)
 
 	// run checkUpdated and check if it creates the latest_check file
-	checkUpdated(tmpDir, 1*time.Second)
+	createLatestCheckFile(tmpDir)
 
 	if exists(tmpDir, ".latestcheck") {
 		pr("latest_check file created")
