@@ -173,6 +173,7 @@ func main() {
 	}
 
 	dir := retrieveRootDir()
+
 	// check if olaris was recently updated
 	// we pass parent(dir) because we use the olaris parent folder
 	checkUpdated(parent(dir), 24*time.Hour)

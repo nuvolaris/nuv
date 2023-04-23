@@ -84,9 +84,10 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 		return "", err
 	}
 
-	createLatestCheckFile(parent(localDir))
-
 	fmt.Println("Nuvfiles downloaded successfully")
+
+	createLatestCheckFile(nuvDir)
+
 	// clone
 	return localDir, nil
 }

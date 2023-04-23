@@ -18,7 +18,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"time"
 
@@ -37,10 +39,8 @@ func checkUpdated(base string, timeInterval time.Duration) {
 	}
 
 	// get info on latest_check file
-	file, err := os.Stat(latest_check_path)
-	if err != nil {
-		// if latest_check file doesn't exist, or error accessing it, create it
-		createLatestCheckFile(base)
+	file, ok := checkLatestFile(latest_check_path)
+	if !ok {
 		return
 	}
 
@@ -60,6 +60,19 @@ func checkUpdated(base string, timeInterval time.Duration) {
 			fmt.Print("Tasks up to date!\n\n")
 		}
 	}
+}
+
+func checkLatestFile(path string) (fs.FileInfo, bool) {
+	file, err := os.Stat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		debug("latestcheck file not found, skipping update check")
+		return nil, false
+	} else if err != nil {
+		debug("failed to access .latestcheck file info", err)
+		return nil, false
+	}
+
+	return file, true
 }
 
 func createLatestCheckFile(base string) {
