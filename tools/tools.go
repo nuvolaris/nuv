@@ -110,7 +110,9 @@ func RunTool(name string, args []string) (int, error) {
 		}
 	case "random":
 		os.Args = append([]string{"random"}, args...)
-		RandomGenerator()
+		if err := RandTool(); err != nil {
+			return 1, err
+		}
 	}
 	return 0, nil
 }
