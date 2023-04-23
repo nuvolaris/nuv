@@ -27,12 +27,12 @@ import (
 )
 
 var tools = []string{
-	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "retry",
+	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random",
 }
 
 func availableCmds() []string {
 	cmds := append(Utils, tools...)
-	extra_cmds := []string{"update", "serve", "help", "info", "version", "task"}
+	extra_cmds := []string{"update", "serve", "help", "info", "version", "retry", "task"}
 	cmds = append(cmds, extra_cmds...)
 	return cmds
 }
@@ -108,6 +108,9 @@ func RunTool(name string, args []string) (int, error) {
 		if err := Filetype(); err != nil {
 			return 1, err
 		}
+	case "random":
+		os.Args = append([]string{"random"}, args...)
+		RandomGenerator()
 	}
 	return 0, nil
 }
