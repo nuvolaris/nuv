@@ -17,9 +17,12 @@
 #
 version: '3'
 
-tasks:  
+tasks:
   opts:
     desc: opts test
+  
+  vars:
+    desc: vars test
 
   simple:
    desc: simple
