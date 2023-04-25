@@ -84,3 +84,34 @@ setup() {
   assert_line 'S=3 SS=2 SSS=4 overriden SS=2'
 }
 
+@test "saved-vars" {
+    run nuv sub vars clean
+    run nuv sub vars v1v2
+    assert_line 'V1=x V2='
+    run nuv sub vars save1 V1=a
+    run nuv sub vars v1v2
+    assert_line 'V1=a V2='
+    run nuv sub vars save1 V1=b V2=c
+    run nuv sub vars v1v2
+    assert_line 'V1=b V2=c'
+    run nuv sub vars save2 V2=d
+    run nuv sub vars v1v2
+    assert_line 'V1=b V2=d'
+    run nuv sub vars v1v2 V1=a
+    assert_line 'V1=a V2=d'
+    run nuv sub vars v1v2 V2=c
+    assert_line 'V1=b V2=c'
+    run nuv sub vars clean
+}
+
+
+
+
+
+nuv sub vars save2 V1=a
+
+V1= V2=
+nuv sub vars v1v2
+
+
+

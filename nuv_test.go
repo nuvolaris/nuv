@@ -17,6 +17,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -125,6 +126,23 @@ func Test_validateTaskName(t *testing.T) {
 		}
 
 	}
+}
+
+func ExampleTmp() {
+	setupTmp()
+	fmt.Println(nhpath(os.Getenv("NUV_TMP")))
+	// Output:
+	// /home/.nuv/tmp
+}
+
+func ExampleLoadArgs() {
+	os.Chdir(workDir)
+	fmt.Println(1, loadSavedArgs())
+	os.Chdir(joinpath("tests", "testdata"))
+	fmt.Println(2, loadSavedArgs())
+	// Output:
+	// 1 []
+	// 2 [V1=hello V2=hello V2=world]
 }
 
 func Test_getTaskNamesList(t *testing.T) {

@@ -62,6 +62,7 @@ The following environment variables allows to ovverride certain defaults.
 - `NUV_NO_LOG_PREFIX` can be defined to disable the prefix of the log messages. By default the prefix is enabled.
 - `NUV_NO_NUVOPTS` can be defined to disable nuvopts parsing. Useful to test hidden tasks. When this is enabled it also shows all the tasks instead of just those with a description.
 - `NUV_PORT` is the port where `nuv` will run the web server. If not defined, it defaults to `9678`.
+- `NUV_TMP` is a temporary folder where you can store temp files - defaults to `~/.nuv/tmp`
 
 ## Where `nuv` looks for binaries 
 
@@ -127,7 +128,26 @@ If there is a `nuvopts.txt`, it will interpret it as a  [`docopt`](http://docopt
 
 A command like `nuv setup kubernetes install --context=k3s` will look in the folder `setup/kubernetes` in the `nuv root` if it is there, select `install` as task to execute and parse the `--context=k3s`. It is equivalent to invoke `cd setup/kubernetes ; task install -- context=k3s`.
 
+If there is a `nuvopts.txt` with a `command <name> --flag --fl=<val>` the passed parameters will be: `_name_=<name> __flag=true __fl=true _val_=<val>`.
+
 Note that also this will also use the downloaded tools and the embedded commands of `nuv`.
+
+## Saving state
+
+If you want to save values from a precedent execution to be provided as variables, simply write a file with a name starting and eding with `_`. 
+
+Nuv will read all the `_*_` files assuming they are in a format `<key>=<value>`, will skip any line starting with `#` and add to the command line invoking task.
+
+So if you have  a file `_server_` with:
+
+```
+# the server
+_SERVER=myserver
+# the user
+_USER=myuser
+```
+
+at the end of `task` invocation there will be `_SERVER=myserver` `_USER=myuser`
 
 ## Embedded tools
 

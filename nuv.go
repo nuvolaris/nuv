@@ -17,12 +17,16 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 
 	docopt "github.com/docopt/docopt-go"
+	"github.com/mitchellh/go-homedir"
 	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 )
@@ -88,10 +92,67 @@ func parseArgs(usage string, args []string) []string {
 	return res
 }
 
+// setupTmp sets up a tmp folder
+func setupTmp() {
+	// setup NUV_TMP
+	var err error
+	tmp := os.Getenv("NUV_TMP")
+	if tmp == "" {
+		tmp, err = homedir.Expand("~/.nuv/tmp")
+		if err == nil {
+			os.Setenv("NUV_TMP", tmp)
+		}
+	}
+	if err == nil {
+		err = os.MkdirAll(tmp, 0755)
+	}
+	if err != nil {
+		warn("cannot create tmp dir", err)
+		os.Exit(1)
+	}
+}
+
+// load saved args in files names _*_ in current directory
+func loadSavedArgs() []string {
+	res := []string{}
+	files, err := ioutil.ReadDir(".")
+	if err != nil {
+		return res
+	}
+	r := regexp.MustCompile(`^_.+_$`) // regex to match file names that start and end with '_'
+	for _, f := range files {
+		if !f.IsDir() && r.MatchString(f.Name()) {
+			debug("reading vars from " + f.Name())
+			file, err := os.Open(f.Name())
+			if err != nil {
+				warn("cannot read " + f.Name())
+				continue
+			}
+			defer file.Close()
+
+			scanner := bufio.NewScanner(file)
+			r := regexp.MustCompile(`^[a-zA-Z0-9]+=`) // regex to match lines that start with an alphanumeric sequence followed by '='
+			for scanner.Scan() {
+				line := scanner.Text()
+				if r.MatchString(line) {
+					debug("found var " + line)
+					res = append(res, line)
+				}
+			}
+			if err := scanner.Err(); err != nil {
+				warn(err)
+				continue
+			}
+		}
+	}
+	return res
+}
+
 // Nuv parse args moving
 // into the folder corresponding to args
 // then parse them with docopts and invokes task
 func Nuv(base string, args []string) error {
+	setupTmp()
 	// go down using args as subcommands
 	err := os.Chdir(base)
 	if err != nil {
@@ -131,6 +192,9 @@ func Nuv(base string, args []string) error {
 		return help()
 	}
 
+	// load saved args
+	savedArgs := loadSavedArgs()
+
 	// parsed args
 	if os.Getenv("NUV_NO_NUVOPTS") == "" && exists(".", NUVOPTS) {
 		trace("PREPARSE:", rest)
@@ -139,6 +203,8 @@ func Nuv(base string, args []string) error {
 		if len(rest) > 0 && rest[0][0] != '-' {
 			prefix = append(prefix, rest[0])
 		}
+
+		parsedArgs = append(savedArgs, parsedArgs...)
 		parsedArgs = append(prefix, parsedArgs...)
 		trace("POSTPARSE:", parsedArgs)
 		_, err := Task(parsedArgs...)
@@ -149,6 +215,7 @@ func Nuv(base string, args []string) error {
 
 	// unparsed args - separate variable assignments from extra args
 	pre := []string{"-t", NUVFILE, mainTask}
+	pre = append(pre, savedArgs...)
 	post := []string{"--"}
 	for _, s := range rest[1:] {
 		if strings.Contains(s, "=") {
@@ -158,6 +225,7 @@ func Nuv(base string, args []string) error {
 		}
 	}
 	taskArgs := append(pre, post...)
+
 	debug("task args: ", taskArgs)
 	_, err = Task(taskArgs...)
 	return err

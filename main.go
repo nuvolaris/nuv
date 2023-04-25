@@ -33,6 +33,7 @@ func setupCmd(me string) (string, error) {
 	if os.Getenv("NUV_CMD") != "" {
 		return os.Getenv("NUV_CMD"), nil
 	}
+
 	// look in path
 	me, err := exec.LookPath(me)
 	if err != nil {
@@ -81,6 +82,7 @@ func info() {
 	fmt.Println("CMD:", tools.GetNuvCmd())
 	fmt.Println("BIN:", os.Getenv("NUV_BIN"))
 	fmt.Println("REPO:", getNuvRepo())
+	fmt.Println("TMP:", os.Getenv("NUV_TMP"))
 	root, _ := getNuvRoot()
 	fmt.Println("ROOT:", root)
 }
@@ -89,9 +91,12 @@ func main() {
 	if os.Getenv("NUV_NO_LOG_PREFIX") != "" {
 		log.SetFlags(0)
 	}
+
 	if os.Getenv("NUV_VERSION") != "" {
 		NuvVersion = os.Getenv("NUV_VERSION")
 	}
+
+	setupTmp()
 
 	var err error
 	me := os.Args[0]
@@ -120,7 +125,7 @@ func main() {
 			}
 			os.Exit(exitCode)
 		}
-		if cmd == "version" {
+		if cmd == "version" || cmd == "v" {
 			fmt.Println(NuvVersion)
 			os.Exit(0)
 		}

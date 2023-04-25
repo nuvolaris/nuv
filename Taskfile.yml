@@ -74,13 +74,14 @@ tasks:
   utest:
     desc: unit test nuv
     cmds:
+    - rm -Rf ~/.nuv/olaris
     - go test
 
   itest:
     desc: integration tests nuv
     dir: tests
     cmds:
-    - rm -Rvf ~/.nuv/olaris
+    - rm -Rf ~/.nuv/olaris
     - bats/bin/bats .
 
   clean:
