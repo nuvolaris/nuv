@@ -152,7 +152,6 @@ func loadSavedArgs() []string {
 // into the folder corresponding to args
 // then parse them with docopts and invokes task
 func Nuv(base string, args []string) error {
-	setupTmp()
 	// go down using args as subcommands
 	err := os.Chdir(base)
 	if err != nil {
@@ -227,6 +226,7 @@ func Nuv(base string, args []string) error {
 	taskArgs := append(pre, post...)
 
 	debug("task args: ", taskArgs)
+	setupTmp()
 	_, err = Task(taskArgs...)
 	return err
 }

@@ -96,8 +96,6 @@ func main() {
 		NuvVersion = os.Getenv("NUV_VERSION")
 	}
 
-	setupTmp()
-
 	var err error
 	me := os.Args[0]
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
