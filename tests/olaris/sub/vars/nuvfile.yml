@@ -1,5 +1,8 @@
 version: 3
 
+dotenv: 
+- env
+
 vars:
 
   V: p2
@@ -20,6 +23,10 @@ env:
   OP:
     sh: echo "{{.V}}"
 
+  E: 3
+
+  S:
+    sh: echo ${SS:-3}
 
 tasks:
   
@@ -43,3 +50,16 @@ tasks:
     desc: priority
     cmds:
     - echo pOP={{.OP}} pOE={{.OE}}  eOE=$OE eOP=$OP
+
+  env:
+    desc: env
+    cmds:
+    - echo E=$E EE=$EE
+
+  saved:
+    desc: saved
+    cmds:
+    - echo S=$S SS=$SS SSS=$SSS overriden SS=${SS:-5}
+    env:
+      SSS:
+        sh: echo ${SS:-4}

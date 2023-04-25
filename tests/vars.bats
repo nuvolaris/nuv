@@ -68,3 +68,19 @@ setup() {
     run env V=e1 nuv sub vars prio V=p1
     assert_line 'pOP=p1 pOE=e1 eOE=e1 eOP=p1'
 }
+
+@test "saved" {
+  # local override envfile
+  # external override envfile
+
+  run nuv sub vars env
+  assert_line  'E=3 EE=2'
+
+  run env E=1 nuv sub vars env
+  assert_line 'E=1 EE=2'
+
+  # saved locally
+  run nuv sub vars saved
+  assert_line 'S=3 SS=2 SSS=4 overriden SS=2'
+}
+

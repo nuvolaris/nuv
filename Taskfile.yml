@@ -80,6 +80,7 @@ tasks:
     desc: integration tests nuv
     dir: tests
     cmds:
+    - rm -Rvf ~/.nuv/olaris
     - bats/bin/bats .
 
   clean:
