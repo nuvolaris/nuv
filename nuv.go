@@ -128,8 +128,6 @@ func loadSavedArgs() []string {
 				warn("cannot read " + f.Name())
 				continue
 			}
-			defer file.Close()
-
 			scanner := bufio.NewScanner(file)
 			r := regexp.MustCompile(`^[a-zA-Z0-9]+=`) // regex to match lines that start with an alphanumeric sequence followed by '='
 			for scanner.Scan() {
@@ -139,7 +137,9 @@ func loadSavedArgs() []string {
 					res = append(res, line)
 				}
 			}
-			if err := scanner.Err(); err != nil {
+			err = scanner.Err()
+			file.Close()
+			if err != nil {
 				warn(err)
 				continue
 			}

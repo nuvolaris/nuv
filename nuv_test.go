@@ -23,6 +23,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/mitchellh/go-homedir"
 	"golang.org/x/exp/slices"
 )
 
@@ -129,8 +130,12 @@ func Test_validateTaskName(t *testing.T) {
 }
 
 func ExampleTmp() {
+	os.Chdir(workDir)
+	nuvdir, _ := homedir.Expand("~/.nuv")
+	os.RemoveAll(nuvdir)
 	setupTmp()
 	fmt.Println(nhpath(os.Getenv("NUV_TMP")))
+	os.RemoveAll(nuvdir)
 	// Output:
 	// /home/.nuv/tmp
 }

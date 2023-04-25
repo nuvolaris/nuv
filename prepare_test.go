@@ -23,6 +23,7 @@ import (
 )
 
 func Example_locate() {
+	os.Chdir(workDir)
 	dir, err := locateNuvRoot("tests")
 	pr(1, err, npath(dir))
 	dir, err = locateNuvRoot(joinpath("tests", "olaris"))
@@ -36,6 +37,7 @@ func Example_locate() {
 }
 
 func Example_locate_git() {
+	os.Chdir(workDir)
 	NuvBranch = "test"
 	nuvdir, _ := homedir.Expand("~/.nuv")
 	os.RemoveAll(nuvdir)

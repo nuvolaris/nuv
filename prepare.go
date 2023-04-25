@@ -143,18 +143,21 @@ func locateNuvRoot(cur string) (string, error) {
 	// search the root from here
 	search := locateNuvRootSearch(cur)
 	if search != "" {
+		trace("found searching up:", search)
 		return search, nil
 	}
 
 	// is there  olaris folder?
 	olaris := joinpath(cur, "olaris")
 	if exists(cur, "olaris") && exists(olaris, NUVFILE) && exists(olaris, NUVROOT) {
+		trace("found sub olaris:", olaris)
 		return olaris, nil
 	}
 
 	// is there an olaris folder in ~/.nuv ?
 	olaris, err = homedir.Expand("~/.nuv/olaris")
 	if err == nil && exists(olaris, NUVFILE) && exists(olaris, NUVROOT) {
+		trace("found sub ~/.nuv/olaris:", olaris)
 		return olaris, nil
 	}
 
@@ -163,6 +166,7 @@ func locateNuvRoot(cur string) (string, error) {
 	if nuvBin != "" {
 		olaris = joinpath(nuvBin, "olaris")
 		if exists(olaris, NUVFILE) && exists(olaris, NUVROOT) {
+			trace("found sub NUV_BIN olaris:", olaris)
 			return olaris, nil
 		}
 	}
