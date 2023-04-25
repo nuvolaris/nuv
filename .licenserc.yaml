@@ -23,13 +23,14 @@ header:
 
   paths-ignore:
     - nuv
+    - env
     - go.mod
     - go.sum
     - '**/*.help'
     - 'attic/**'
     - 'bin/**'
     - 'tools/*/**'
-    - '_*'
+    - '**/_*'
     - '*.off'
     - 'tryit/**'
     - 'nuvroot.json'
