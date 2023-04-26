@@ -96,6 +96,13 @@ func main() {
 		NuvVersion = os.Getenv("NUV_VERSION")
 	}
 
+	setupTmp()
+
+	/*
+		Read nuvroot.json config map
+		Then read config.json
+	*/
+
 	var err error
 	me := os.Args[0]
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
@@ -162,6 +169,13 @@ func main() {
 			}
 			os.Exit(0)
 		}
+		if cmd == "config" {
+			os.Args = args[1:]
+			if err := ConfigTool(); err != nil {
+				log.Fatalf("error: %s", err.Error())
+			}
+			os.Exit(0)
+		}
 		// check if it is an embedded to and invoke it
 		if tools.IsTool(cmd) {
 			code, err := tools.RunTool(cmd, args[2:])
@@ -192,4 +206,23 @@ func retrieveRootDir() string {
 		log.Fatalf("error: %s", err.Error())
 	}
 	return dir
+}
+
+func readConfigVars(dir string) (map[string]interface{}, error) {
+	nuvRoot, err := readNuvRootFile(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	configs, err := readNuvConfigFile(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	// Note: config.json overrides config of nuvroot.json
+	for k, v := range nuvRoot.Config {
+		configs[k] = v
+	}
+
+	return configs, nil
 }

@@ -32,7 +32,7 @@ var tools = []string{
 
 func availableCmds() []string {
 	cmds := append(Utils, tools...)
-	extra_cmds := []string{"update", "serve", "help", "info", "version", "retry", "task"}
+	extra_cmds := []string{"config", "update", "serve", "help", "info", "version", "retry", "task"}
 	cmds = append(cmds, extra_cmds...)
 	return cmds
 }
@@ -114,6 +114,7 @@ func RunTool(name string, args []string) (int, error) {
 			return 1, err
 		}
 	}
+
 	return 0, nil
 }
 

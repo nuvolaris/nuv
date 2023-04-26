@@ -18,6 +18,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -31,6 +32,7 @@ import (
 const NUVFILE = "nuvfile.yml"
 const NUVROOT = "nuvroot.json"
 const NUVOPTS = "nuvopts.txt"
+const CONFIGFILE = "config.json"
 
 // repo where download tasks
 const NUVREPO = "http://github.com/nuvolaris/olaris"
@@ -42,7 +44,8 @@ var NuvBranch = "main"
 
 // Represents nuvroot.json. It is used to parse the file.
 type NuvRootJSON struct {
-	Version string `json:"version"`
+	Version string                 `json:"version"`
+	Config  map[string]interface{} `json:"config"`
 }
 
 const DefaultNuvPort = 9768
@@ -88,6 +91,29 @@ func getNuvBranch() string {
 	}
 	os.Setenv("NUV_BRANCH", branch)
 	return branch
+}
+
+func readNuvRootFile(dir string) (NuvRootJSON, error) {
+	data := NuvRootJSON{}
+	json_buf, err := os.ReadFile(joinpath(dir, NUVROOT))
+	if err != nil {
+		return NuvRootJSON{}, err
+	}
+	json.Unmarshal(json_buf, &data)
+	return data, nil
+}
+
+func readNuvConfigFile(dir string) (map[string]interface{}, error) {
+	data := make(map[string]interface{})
+	json_buf, err := os.ReadFile(joinpath(dir, CONFIGFILE))
+	if os.IsNotExist(err) {
+		return data, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	json.Unmarshal(json_buf, &data)
+	return data, nil
 }
 
 // utils
