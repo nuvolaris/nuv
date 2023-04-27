@@ -17,7 +17,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -101,12 +100,10 @@ func pullTasks(force, silent bool) error {
 	}
 
 	// validate NuvVersion semver against nuvroot.json
-	data := NuvRootJSON{}
-	json_buf, err := os.ReadFile(joinpath(localDir, NUVROOT))
+	nuvRoot, err := readNuvRootFile(localDir)
 	if err != nil {
 		return err
 	}
-	json.Unmarshal(json_buf, &data)
 
 	// check if the version is up to date
 	nuvVersion, err := semver.NewVersion(NuvVersion)
@@ -116,9 +113,9 @@ func pullTasks(force, silent bool) error {
 		return nil
 	}
 
-	nuvRootVersion, err := semver.NewVersion(data.Version)
+	nuvRootVersion, err := semver.NewVersion(nuvRoot.Version)
 	if err != nil {
-		warn("Unable to validate nuvroot.json version", data.Version, ":", err)
+		warn("Unable to validate nuvroot.json version", nuvRoot.Version, ":", err)
 		return nil
 	}
 
