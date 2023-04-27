@@ -88,13 +88,18 @@ func info() {
 }
 
 func main() {
+	// set version
+	if os.Getenv("NUV_VERSION") != "" {
+		NuvVersion = os.Getenv("NUV_VERSION")
+	}
+
+	// disable log
 	if os.Getenv("NUV_NO_LOG_PREFIX") != "" {
 		log.SetFlags(0)
 	}
 
-	if os.Getenv("NUV_VERSION") != "" {
-		NuvVersion = os.Getenv("NUV_VERSION")
-	}
+	// setup NUV_TMP
+	setupTmp()
 
 	var err error
 	me := os.Args[0]

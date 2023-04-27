@@ -178,6 +178,12 @@ tasks:
       -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"
       -o bin/{{.BIN}}/nuv{{.EXE}}
 
+  config.sh:
+    cmds:
+    - cp config.sh {{.BIN}}/config.sh
+    - chmod +x {{.BIN}}/config.sh
+
+
   clean:
     desc: cleanup {{.OS}}/{{.ARCH}}
     ignore_error: true
@@ -210,6 +216,8 @@ tasks:
     - task: kops
     - task: k3sup
     - task: mc
+    # temporary
+    - task: config.sh
     # TODO: for some reasons, helm download does not work in github actions
     #- task: helm
 
