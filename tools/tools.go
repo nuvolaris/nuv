@@ -26,15 +26,15 @@ import (
 	"github.com/nuvolaris/goawk"
 )
 
+// available in taskfiles
+// note some of them are implrmrn
 var tools = []string{
-	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random",
+	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random", "config", "retry",
 }
 
-func availableCmds() []string {
-	cmds := append(Utils, tools...)
-	extra_cmds := []string{"config", "update", "serve", "help", "info", "version", "retry", "task"}
-	cmds = append(cmds, extra_cmds...)
-	return cmds
+// not available in taskfiles
+var extra_tools = []string{
+	"update", "serve", "help", "info", "version", "task",
 }
 
 func IsTool(name string) bool {
@@ -113,14 +113,20 @@ func RunTool(name string, args []string) (int, error) {
 		if err := RandTool(); err != nil {
 			return 1, err
 		}
+	case "config":
+		{
+			os.Args = append([]string{"config"}, args...)
+			if err := nuv.ConfigTool(); err != nil {
+				return 1, err
+			}
+		}
 	}
-
 	return 0, nil
 }
 
 func Help() {
 	fmt.Println("Available tools:")
-	for _, x := range availableCmds() {
+	for _, x := range append(tools, extra_tools...) {
 		fmt.Printf("-%s\n", x)
 	}
 }
