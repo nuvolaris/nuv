@@ -67,8 +67,8 @@ require (
 	github.com/mattn/go-zglob v0.0.4 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
-	github.com/nuvolaris/sh/v3 v3.0.0-20230427174537-c9fdb8d0e5c7 // indirect
-	github.com/nuvolaris/task/v3 v3.9.3-0.20230427174724-3b60728d4719 // indirect
+	github.com/nuvolaris/sh/v3 v3.0.0-20230427192741-eeb0121e1ff7 // indirect
+	github.com/nuvolaris/task/v3 v3.9.3-0.20230427192803-c799c6ab1de6 // indirect
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pjbgf/sha1cd v0.2.3 // indirect
