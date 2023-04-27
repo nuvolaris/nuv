@@ -107,6 +107,7 @@ func readNuvConfigFile(dir string) (map[string]interface{}, error) {
 	data := make(map[string]interface{})
 	json_buf, err := os.ReadFile(joinpath(dir, CONFIGFILE))
 	if os.IsNotExist(err) {
+		debug("config.json file not found")
 		return data, nil
 	}
 	if err != nil {

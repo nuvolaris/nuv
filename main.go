@@ -24,6 +24,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/mitchellh/go-homedir"
 	"github.com/nuvolaris/nuv/auth"
 	"github.com/nuvolaris/nuv/tools"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
@@ -96,13 +97,6 @@ func main() {
 		NuvVersion = os.Getenv("NUV_VERSION")
 	}
 
-	setupTmp()
-
-	/*
-		Read nuvroot.json config map
-		Then read config.json
-	*/
-
 	var err error
 	me := os.Args[0]
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
@@ -112,6 +106,16 @@ func main() {
 			os.Exit(1)
 		}
 		setupBinPath(tools.NuvCmd)
+	}
+
+	nuvRootDir := retrieveRootDir()
+
+	setupTmp()
+
+	err = setAllConfigEnvVars()
+	if err != nil {
+		warn("cannot apply env vars from config", err)
+		os.Exit(1)
 	}
 
 	// first argument with prefix "-" is an embedded tool
@@ -143,7 +147,7 @@ func main() {
 			os.Exit(0)
 		}
 		if cmd == "serve" {
-			if err := Serve(retrieveRootDir(), args[1:]); err != nil {
+			if err := Serve(nuvRootDir, args[1:]); err != nil {
 				log.Fatalf("error: %v", err)
 			}
 			os.Exit(0)
@@ -189,13 +193,11 @@ func main() {
 		os.Exit(0)
 	}
 
-	dir := retrieveRootDir()
-
 	// check if olaris was recently updated
 	// we pass parent(dir) because we use the olaris parent folder
-	checkUpdated(parent(dir), 24*time.Hour)
+	checkUpdated(parent(nuvRootDir), 24*time.Hour)
 
-	if err := Nuv(dir, args[1:]); err != nil {
+	if err := Nuv(nuvRootDir, args[1:]); err != nil {
 		log.Fatalf("error: %s", err.Error())
 	}
 }
@@ -208,21 +210,16 @@ func retrieveRootDir() string {
 	return dir
 }
 
-func readConfigVars(dir string) (map[string]interface{}, error) {
-	nuvRoot, err := readNuvRootFile(dir)
+func setAllConfigEnvVars() error {
+	trace("setting all config env vars")
+	dir := retrieveRootDir()
+	nuvHome, err := homedir.Expand("~/.nuv")
+
 	if err != nil {
-		return nil, err
+		warn("unable to read config.json")
+		return err
 	}
 
-	configs, err := readNuvConfigFile(dir)
-	if err != nil {
-		return nil, err
-	}
-
-	// Note: config.json overrides config of nuvroot.json
-	for k, v := range nuvRoot.Config {
-		configs[k] = v
-	}
-
-	return configs, nil
+	debug(nuvHome)
+	return applyAllConfigEnvVars(dir, nuvHome)
 }

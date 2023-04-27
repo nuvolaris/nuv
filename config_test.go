@@ -18,8 +18,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -379,4 +381,232 @@ func Test_buildKeyValueMap(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_rebuildConfigEnvVars(t *testing.T) {
+	testCases := []struct {
+		name  string
+		input map[string]interface{}
+		want  map[string]string
+	}{
+		{
+			name:  "Empty",
+			input: map[string]interface{}{},
+			want:  map[string]string{},
+		},
+		{
+			name:  "Single env var",
+			input: map[string]interface{}{"foo": "bar"},
+			want:  map[string]string{"foo": "bar"},
+		},
+		{
+			name:  "Multiple env vars",
+			input: map[string]interface{}{"foo": "bar", "baz": "qux"},
+			want:  map[string]string{"foo": "bar", "baz": "qux"},
+		},
+		{
+			name:  "Nested env vars",
+			input: map[string]interface{}{"foo": map[string]interface{}{"bar": "baz"}},
+			want:  map[string]string{"foo_bar": "baz"},
+		},
+		{
+			name:  "Nested env vars 2",
+			input: map[string]interface{}{"foo": map[string]interface{}{"bar": map[string]interface{}{"baz": "qux"}}},
+			want:  map[string]string{"foo_bar_baz": "qux"},
+		},
+		{
+			name:  "Multiple nested env vars",
+			input: map[string]interface{}{"foo": map[string]interface{}{"bar": "baz", "qux": "quux"}},
+			want:  map[string]string{"foo_bar": "baz", "foo_qux": "quux"},
+		},
+		{
+			name:  "Multiple nested env vars 2",
+			input: map[string]interface{}{"foo": map[string]interface{}{"bar": map[string]interface{}{"baz": "qux"}, "quux": "corge"}},
+			want:  map[string]string{"foo_bar_baz": "qux", "foo_quux": "corge"},
+		},
+		{
+			name:  "Multiple nested env vars 3",
+			input: map[string]interface{}{"foo": map[string]interface{}{"bar": map[string]interface{}{"baz": "qux"}, "quux": map[string]interface{}{"corge": "grault"}}},
+			want:  map[string]string{"foo_bar_baz": "qux", "foo_quux_corge": "grault"},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := rebuildConfigEnvVars(tc.input)
+
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("Expected %v, got %v", tc.want, got)
+			}
+		})
+	}
+
+}
+
+func Test_applyNuvRootConfigEnvVars(t *testing.T) {
+	t.Run("no env vars set when nuvroot.json config not set", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
+
+		createTestNuvRootFile(t, tmpDir, true)
+
+		err := applyNuvRootConfigEnvVars(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		// assert no env vars set
+		for k := range testEnvVars {
+			if os.Getenv(k) != "" {
+				t.Errorf("env var %s should not be set", k)
+			}
+		}
+	})
+
+	t.Run("env vars from nuvroot.json config when present ", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
+
+		createTestNuvRootFile(t, tmpDir, false)
+
+		err := applyNuvRootConfigEnvVars(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		assertEnvVar(t)
+
+		// reset vars
+		for k := range testEnvVars {
+			os.Setenv(k, "")
+		}
+	})
+}
+
+func Test_applyConfigJsonEnvVars(t *testing.T) {
+
+	t.Run("env vars from config.json when exists", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
+
+		// create config.json
+		createTestConfigJson(t, tmpDir, testEnvVars)
+
+		err := applyConfigJsonEnvVars(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		assertEnvVar(t)
+
+		// reset vars
+		for k := range testEnvVars {
+			os.Setenv(k, "")
+		}
+	})
+
+}
+
+func Test_applyAllConfigEnvVars(t *testing.T) {
+	tmpDir, _ := os.MkdirTemp("", "nuv")
+	defer os.RemoveAll(tmpDir)
+
+	// create nuvroot.json
+	createTestNuvRootFile(t, tmpDir, false)
+
+	// create config.json
+	overrideTestEnvVar := map[string]interface{}{
+		"test": map[string]interface{}{
+			"env": map[string]interface{}{
+				"var2": "test2-override",
+			},
+			"var3": "test3-override",
+		},
+	}
+
+	createTestConfigJson(t, tmpDir, overrideTestEnvVar)
+
+	err := applyAllConfigEnvVars(tmpDir, tmpDir)
+	if err != nil {
+		t.Errorf("error: %v", err)
+	}
+
+	if os.Getenv("NUV_TEST_ENV_VAR") != "test" {
+		t.Errorf("env var NUV_TEST_ENV_VAR should be set to test")
+	}
+
+	if os.Getenv("TEST_ENV_VAR2") != "test2-override" {
+		t.Errorf("env var TEST_ENV_VAR2 should be set to test2-override")
+	}
+
+	if os.Getenv("TEST_VAR3") != "test3-override" {
+		t.Errorf("env var TEST_VAR3 should be set to test3-override")
+	}
+
+	if os.Getenv("TEST4") != "test4" {
+		t.Errorf("env var TEST4 should be set to test4")
+	}
+
+	// reset vars
+	for k := range testEnvVars {
+		os.Setenv(k, "")
+	}
+}
+
+var testExpectedEnvVars = map[string]string{
+	"NUV_TEST_ENV_VAR": "test",
+	"TEST_ENV_VAR2":    "test2",
+	"TEST_VAR3":        "test3",
+	"TEST4":            "test4",
+}
+
+var testEnvVars = map[string]interface{}{
+	"nuv": map[string]interface{}{
+		"test": map[string]interface{}{
+			"env": map[string]interface{}{
+				"var": "test",
+			},
+		},
+	},
+	"test": map[string]interface{}{
+		"env": map[string]interface{}{
+			"var2": "test2",
+		},
+		"var3": "test3",
+	},
+	"test4": "test4",
+}
+
+func assertEnvVar(t *testing.T) {
+	t.Helper()
+	for k, v := range testExpectedEnvVars {
+		if os.Getenv(k) != v {
+			t.Errorf("env var %s should be set to %s", k, v)
+		}
+	}
+}
+
+func createTestNuvRootFile(t *testing.T, dir string, onlyVersion bool) {
+	t.Helper()
+	path := filepath.Join(dir, "nuvroot.json")
+	var nuvRootStr string
+	if onlyVersion {
+		nuvRootStr = "{ \"version\": \"0.3.0\" }"
+	} else {
+		configJson, err := json.Marshal(testEnvVars)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+		nuvRootStr = fmt.Sprintf("{ \"version\": \"0.3.0\", \"config\": %s }", configJson)
+	}
+	os.WriteFile(path, []byte(nuvRootStr), 0644)
+}
+
+func createTestConfigJson(t *testing.T, dir string, envVars map[string]interface{}) {
+	t.Helper()
+	configJson, err := json.Marshal(envVars)
+	if err != nil {
+		t.Errorf("error: %v", err)
+	}
+	os.WriteFile(filepath.Join(dir, "config.json"), []byte(configJson), 0644)
 }

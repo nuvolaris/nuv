@@ -28,11 +28,43 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
-var (
-	helpFlag bool
-)
+type keyValues map[string]string
+
+func (kv *keyValues) String() string {
+	return fmt.Sprintf("%v", *kv)
+}
+
+func (kv *keyValues) Set(value string) error {
+	parts := strings.SplitN(value, "=", 2)
+	if len(parts) != 2 {
+		return fmt.Errorf("invalid key-value pair: %q", value)
+	}
+	key := parts[0]
+	val := parts[1]
+
+	if key == "" || val == "" {
+		return fmt.Errorf("invalid key-value pair: %q", value)
+	}
+
+	if *kv == nil {
+		*kv = make(keyValues)
+	}
+	(*kv)[key] = val
+	return nil
+}
+
+func printConfigToolUsage() {
+	fmt.Print(`Usage:
+nuv -config [-h|--help] KEY=VALUE [KEY=VALUE ...]
+
+Set config values passed as key-value pairs.
+
+-h, --help    show this help
+`)
+}
 
 func ConfigTool() error {
+	var helpFlag bool
 
 	flag.Usage = printConfigToolUsage
 
@@ -95,7 +127,14 @@ func runConfigTool(input []string, dir string) error {
 	}
 
 	// Write the config file
-	return os.WriteFile(joinpath(dir, CONFIGFILE), configJSON, 0644)
+	err = os.WriteFile(joinpath(dir, CONFIGFILE), configJSON, 0644)
+	if err != nil {
+		warn("failed to write config.json")
+		return err
+	}
+
+	fmt.Println("Config updated")
+	return nil
 }
 
 func buildConfigObject(kv keyValues) (map[string]interface{}, error) {
@@ -213,37 +252,73 @@ func buildKeyValueMap(pairs []string) (keyValues, error) {
 	return kv, nil
 }
 
-type keyValues map[string]string
-
-func (kv *keyValues) String() string {
-	return fmt.Sprintf("%v", *kv)
-}
-
-func (kv *keyValues) Set(value string) error {
-	parts := strings.SplitN(value, "=", 2)
-	if len(parts) != 2 {
-		return fmt.Errorf("invalid key-value pair: %q", value)
-	}
-	key := parts[0]
-	val := parts[1]
-
-	if key == "" || val == "" {
-		return fmt.Errorf("invalid key-value pair: %q", value)
+func applyAllConfigEnvVars(nuvRootDir, configJsonDir string) error {
+	if err := applyNuvRootConfigEnvVars(nuvRootDir); err != nil {
+		return err
 	}
 
-	if *kv == nil {
-		*kv = make(keyValues)
+	if err := applyConfigJsonEnvVars(configJsonDir); err != nil {
+		return err
 	}
-	(*kv)[key] = val
+
 	return nil
 }
 
-func printConfigToolUsage() {
-	fmt.Print(`Usage:
-nuv -config [-h|--help] KEY=VALUE [KEY=VALUE ...]
+func applyNuvRootConfigEnvVars(nuvRootDir string) error {
+	trace("Applying env vars from nuvroot.json...")
+	nuvRoot, err := readNuvRootFile(nuvRootDir)
+	if err != nil {
+		return err
+	}
 
-Set config values passed as key-value pairs.
+	nuvRootConfigEnv := rebuildConfigEnvVars(nuvRoot.Config)
 
--h, --help    show this help
-`)
+	for k, v := range nuvRootConfigEnv {
+		key := strings.ToUpper(k)
+		os.Setenv(key, v)
+		debug("Set env var (nuvroot.json)", key, "=", v)
+	}
+
+	return nil
+}
+
+func applyConfigJsonEnvVars(configJsonDir string) error {
+	trace("Applying env vars from config.json...")
+	configs, err := readNuvConfigFile(configJsonDir)
+	if err != nil {
+		return err
+	}
+	configEnv := rebuildConfigEnvVars(configs)
+
+	for k, v := range configEnv {
+		key := strings.ToUpper(k)
+		os.Setenv(key, v)
+		debug("Set env var (config.json)", key, "=", v)
+	}
+
+	return nil
+}
+
+func rebuildConfigEnvVars(config map[string]interface{}) map[string]string {
+	outputMap := make(map[string]string)
+	traverse(config, "", outputMap)
+	return outputMap
+}
+
+func traverse(inputMap map[string]interface{}, prefix string, outputMap map[string]string) {
+	for k, v := range inputMap {
+		if m, ok := v.(map[string]interface{}); ok {
+			if prefix == "" {
+				traverse(m, k, outputMap)
+			} else {
+				traverse(m, fmt.Sprintf("%s_%s", prefix, k), outputMap)
+			}
+		} else {
+			if prefix == "" {
+				outputMap[k] = fmt.Sprintf("%v", v)
+			} else {
+				outputMap[fmt.Sprintf("%s_%s", prefix, k)] = fmt.Sprintf("%v", v)
+			}
+		}
+	}
 }
