@@ -27,7 +27,7 @@ import (
 )
 
 // available in taskfiles
-// note some of them are implrmrn
+// note some of them are implemented in main.go (config, retry)
 var tools = []string{
 	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random", "config", "retry",
 }
@@ -112,13 +112,6 @@ func RunTool(name string, args []string) (int, error) {
 		os.Args = append([]string{"random"}, args...)
 		if err := RandTool(); err != nil {
 			return 1, err
-		}
-	case "config":
-		{
-			os.Args = append([]string{"config"}, args...)
-			if err := nuv.ConfigTool(); err != nil {
-				return 1, err
-			}
 		}
 	}
 	return 0, nil
