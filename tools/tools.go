@@ -33,7 +33,7 @@ var tools = []string{
 }
 
 // not available in taskfiles
-var extra_tools = []string{
+var extraTools = []string{
 	"update", "serve", "help", "info", "version", "task",
 }
 
@@ -119,7 +119,7 @@ func RunTool(name string, args []string) (int, error) {
 
 func Help() {
 	fmt.Println("Available tools:")
-	for _, x := range append(tools, extra_tools...) {
+	for _, x := range append(tools, extraTools...) {
 		fmt.Printf("-%s\n", x)
 	}
 }

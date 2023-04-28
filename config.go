@@ -116,10 +116,9 @@ func runConfigTool(input []string, dir string) error {
 	}
 
 	// Merge the input config into the existing config
-	// NOTE: input value override existing config.json values
-	for k, v := range newConfig {
-		config[k] = v
-	}
+	// NOTE: input keys are merged with existing config.json keys
+	// with priority given to the new keys (in case of conflicts)
+	config = mergeMaps(config, newConfig)
 
 	configJSON, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
@@ -132,9 +131,7 @@ func runConfigTool(input []string, dir string) error {
 		warn("failed to write config.json")
 		return err
 	}
-
-	fmt.Println("Config updated")
-	return nil
+	return err
 }
 
 func buildConfigObject(kv keyValues) (map[string]interface{}, error) {
@@ -321,4 +318,46 @@ func traverse(inputMap map[string]interface{}, prefix string, outputMap map[stri
 			}
 		}
 	}
+}
+
+// mergeMaps merges map2 into map1 overwriting any values in map1 with values from map2
+// when there are conflicts. It returns the merged map.
+func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
+	mergedMap := make(map[string]interface{})
+
+	for key, value := range map1 {
+
+		map2Value, ok := map2[key]
+		// key doesn't exist in map2 so add it to the merged map
+		if !ok {
+			mergedMap[key] = value
+			continue
+		}
+
+		// key exists in map2 but map1 value is NOT a map, so add value from map2
+		mapFromMap1, ok := value.(map[string]interface{})
+		if !ok {
+			mergedMap[key] = map2Value
+			continue
+		}
+
+		mapFromMap2, ok := map2Value.(map[string]interface{})
+		// key exists in map2, map1 value IS a map but map2 value is not, so overwrite with map2
+		if !ok {
+			mergedMap[key] = mapFromMap2
+			continue
+		}
+
+		// key exists in map2, map1 value IS a map, map2 value IS a map, so merge recursively
+		mergedMap[key] = mergeMaps(mapFromMap1, mapFromMap2)
+	}
+
+	// add any keys that exist in map2 but not in map1
+	for key, value := range map2 {
+		if _, ok := mergedMap[key]; !ok {
+			mergedMap[key] = value
+		}
+	}
+
+	return mergedMap
 }

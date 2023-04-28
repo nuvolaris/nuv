@@ -79,7 +79,7 @@ func Test_runConfigTool(t *testing.T) {
 		}
 	})
 
-	t.Run("existing config.json is overridden", func(t *testing.T) {
+	t.Run("existing value is overridden", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
 
@@ -100,6 +100,37 @@ func Test_runConfigTool(t *testing.T) {
 
 		want := map[string]interface{}{
 			"foo": "new",
+		}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("existing key object is merged", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
+
+		err := runConfigTool([]string{"foo_bar=bar"}, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		err = runConfigTool([]string{"foo_baz=baz"}, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		got, err := readNuvConfigFile(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		want := map[string]interface{}{
+			"foo": map[string]interface{}{
+				"bar": "bar",
+				"baz": "baz",
+			},
 		}
 
 		if !reflect.DeepEqual(got, want) {
@@ -609,4 +640,87 @@ func createTestConfigJson(t *testing.T, dir string, envVars map[string]interface
 		t.Errorf("error: %v", err)
 	}
 	os.WriteFile(filepath.Join(dir, "config.json"), []byte(configJson), 0644)
+}
+
+func Test_mergeMaps(t *testing.T) {
+	testCases := []struct {
+		name     string
+		m1       map[string]interface{}
+		m2       map[string]interface{}
+		expected map[string]interface{}
+	}{
+		{
+			name: "m1 empty",
+			m1:   map[string]interface{}{},
+			m2: map[string]interface{}{
+				"test": "test",
+			},
+			expected: map[string]interface{}{
+				"test": "test",
+			},
+		},
+		{
+			name: "m2 empty",
+			m1: map[string]interface{}{
+				"test": "test",
+			},
+			m2: map[string]interface{}{},
+			expected: map[string]interface{}{
+				"test": "test",
+			},
+		},
+		{
+			name: "m1 and m2 not empty",
+			m1: map[string]interface{}{
+				"test": "test",
+			},
+			m2: map[string]interface{}{
+				"test2": "test2",
+			},
+			expected: map[string]interface{}{
+				"test":  "test",
+				"test2": "test2",
+			},
+		},
+		{
+			name: "m1 and m2 not empty with same key",
+			m1: map[string]interface{}{
+				"test": "test",
+			},
+			m2: map[string]interface{}{
+				"test": "test2",
+			},
+			expected: map[string]interface{}{
+				"test": "test2",
+			},
+		},
+		{
+			name: "m1 and m2 not empty with same key and nested map",
+			m1: map[string]interface{}{
+				"test": map[string]interface{}{
+					"test": "test",
+				},
+			},
+			m2: map[string]interface{}{
+				"test": map[string]interface{}{
+					"test2": "test2",
+				},
+			},
+			expected: map[string]interface{}{
+				"test": map[string]interface{}{
+					"test":  "test",
+					"test2": "test2",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := mergeMaps(tc.m1, tc.m2)
+			if !reflect.DeepEqual(result, tc.expected) {
+				t.Errorf("expected: %v, got: %v", tc.expected, result)
+			}
+		})
+	}
 }
