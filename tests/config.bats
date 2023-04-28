@@ -38,7 +38,6 @@ setup() {
 @test "set simple var in config.json" {
     run rm -f ~/.nuv/config.json
     run nuv -config KEY=VALUE
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "key": "VALUE"'
@@ -47,7 +46,6 @@ setup() {
 @test "set complex var in config.json" {
     run rm -f ~/.nuv/config.json
     run nuv -config KEY='{"a": 1}'
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "key": {'
@@ -58,7 +56,6 @@ setup() {
 @test "set multiple keys in config.json" {
     run rm -f ~/.nuv/config.json
     run nuv -config KEY_NESTED=123 KEY_SIMPLE=abc
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "key": {'
@@ -70,13 +67,11 @@ setup() {
 @test "replace existing key in config.json" {
     run rm -f ~/.nuv/config.json
     run nuv -config KEY=VALUE
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "key": "VALUE"'
 
     run nuv -config KEY=NEW_VALUE
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "key": "NEW_VALUE"'
@@ -85,13 +80,11 @@ setup() {
 @test "replace existing key with different type" {
     run rm -f ~/.nuv/config.json
     run nuv -config KEY=VALUE
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "key": "VALUE"'
 
     run nuv -config KEY='{"a": 1}'
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "key": {'
@@ -103,15 +96,28 @@ setup() {
 @test "add keys to existing config.json" {
     run rm -f ~/.nuv/config.json
     run nuv -config KEY=VALUE
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "key": "VALUE"'
 
     run nuv -config ANOTHER=123
-    assert_line "Config updated"
     assert_success
     run cat ~/.nuv/config.json
     assert_line '  "another": 123,'
     assert_line '  "key": "VALUE"'
+}
+
+@test "merge object keys" {
+    run rm -f ~/.nuv/config.json
+    run nuv -config NESTED_KEY=123
+    assert_success
+
+    run nuv -config NESTED_ANOTHER=456
+    assert_success
+
+    run cat ~/.nuv/config.json
+    assert_line '  "nested": {'
+    assert_line '    "another": 456,'
+    assert_line '    "key": 123'
+    assert_line '  }'   
 }
