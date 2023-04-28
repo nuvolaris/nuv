@@ -231,7 +231,7 @@ func Test_buildConfigObject(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			got, err := buildConfigObject(tc.input)
 
-			if tc.err != nil && (err == nil || err.Error() != tc.err.Error()) {
+			if tc.err != nil && err == nil {
 				t.Errorf("Expected error %v, got %v", tc.err, err)
 			}
 

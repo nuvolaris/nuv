@@ -60,22 +60,30 @@ nuv -config [-h|--help] KEY=VALUE [KEY=VALUE ...]
 Set config values passed as key-value pairs.
 
 -h, --help    show this help
+-d, --dump    dump the configs
 `)
 }
 
 func ConfigTool() error {
 	var helpFlag bool
+	var dumpFlag bool
 
 	flag.Usage = printConfigToolUsage
 
 	flag.BoolVar(&helpFlag, "h", false, "show this help")
 	flag.BoolVar(&helpFlag, "help", false, "show this help")
+	flag.BoolVar(&dumpFlag, "dump", false, "dump the config file")
+	flag.BoolVar(&dumpFlag, "d", false, "dump the config file")
 
 	flag.Parse()
 
 	if helpFlag {
 		flag.Usage()
 		return nil
+	}
+
+	if dumpFlag {
+		return dumpAll()
 	}
 
 	// Get the input string from the remaining command line arguments
@@ -132,6 +140,42 @@ func runConfigTool(input []string, dir string) error {
 		return err
 	}
 	return err
+}
+
+func dumpAll() error {
+	home, err := homedir.Expand("~/.nuv")
+	if err != nil {
+		return err
+	}
+	nuvRootDir, err := getNuvRoot()
+	if err != nil {
+		return err
+	}
+
+	nuvRoot, err := readNuvRootFile(nuvRootDir)
+	if err != nil {
+		return err
+	}
+	nuvRootConfigEnv := rebuildConfigEnvVars(nuvRoot.Config)
+
+	configs, err := readNuvConfigFile(home)
+	if err != nil {
+		return err
+	}
+	configEnv := rebuildConfigEnvVars(configs)
+
+	for k, v := range nuvRootConfigEnv {
+		if _, ok := configEnv[k]; !ok {
+			key := strings.ToUpper(k)
+			fmt.Printf("%s=%s\n", key, v)
+		}
+	}
+	for k, v := range configEnv {
+		key := strings.ToUpper(k)
+		fmt.Printf("%s=%s\n", key, v)
+	}
+
+	return nil
 }
 
 func buildConfigObject(kv keyValues) (map[string]interface{}, error) {

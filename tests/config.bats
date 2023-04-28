@@ -121,3 +121,14 @@ setup() {
     assert_line '    "key": 123'
     assert_line '  }'   
 }
+
+@test "dump configs" {
+    run rm -f ~/.nuv/config.json
+    run nuv -config KEY=VALUE ANOTHER=123
+    assert_success
+
+    run nuv -config --dump
+    assert_success
+    assert_line 'KEY=VALUE'
+    assert_line 'ANOTHER=123'
+}
