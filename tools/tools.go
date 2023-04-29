@@ -29,7 +29,7 @@ import (
 // available in taskfiles
 // note some of them are implemented in main.go (config, retry)
 var tools = []string{
-	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random", "config", "retry",
+	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random", "datefmt", "config", "retry",
 }
 
 // not available in taskfiles
@@ -111,6 +111,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "random":
 		os.Args = append([]string{"random"}, args...)
 		if err := RandTool(); err != nil {
+			return 1, err
+		}
+	case "datefmt":
+		os.Args = append([]string{"datefmt"}, args...)
+		if err := DateFmtTool(); err != nil {
 			return 1, err
 		}
 	}
