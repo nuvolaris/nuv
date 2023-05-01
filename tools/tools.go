@@ -31,6 +31,7 @@ import (
 // note some of them are implemented in main.go (config, retry)
 var tools = []string{
 	"awk", "die", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random", "datefmt", "config", "retry",
+	"ssh",
 }
 
 // not available in taskfiles
@@ -117,6 +118,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "datefmt":
 		os.Args = append([]string{"datefmt"}, args...)
 		if err := DateFmtTool(); err != nil {
+			return 1, err
+		}
+	case "ssh":
+		os.Args = append([]string{"ssh"}, args...)
+		if err := SshTool(); err != nil {
 			return 1, err
 		}
 	case "die":
