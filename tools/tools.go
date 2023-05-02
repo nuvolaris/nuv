@@ -19,6 +19,7 @@ package tools
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	gojq "github.com/itchyny/gojq/cli"
 	"github.com/nojima/httpie-go"
@@ -29,7 +30,7 @@ import (
 // available in taskfiles
 // note some of them are implemented in main.go (config, retry)
 var tools = []string{
-	"awk", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random", "datefmt", "config", "retry",
+	"awk", "die", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random", "datefmt", "config", "retry",
 }
 
 // not available in taskfiles
@@ -118,13 +119,20 @@ func RunTool(name string, args []string) (int, error) {
 		if err := DateFmtTool(); err != nil {
 			return 1, err
 		}
+	case "die":
+		if len(args) > 0 {
+			fmt.Println(strings.Join(args, " "))
+		}
+		return 1, nil
 	}
 	return 0, nil
 }
 
 func Help() {
 	fmt.Println("Available tools:")
-	for _, x := range append(tools, extraTools...) {
+	availableTools := append(tools, extraTools...)
+	availableTools = append(availableTools, Utils...)
+	for _, x := range availableTools {
 		fmt.Printf("-%s\n", x)
 	}
 }

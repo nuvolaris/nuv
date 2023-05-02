@@ -75,6 +75,8 @@ var (
 )
 
 func DateFmtTool() error {
+	flag.Usage = printDateFmtUsage
+
 	flag.BoolVar(&helpFlag, "h", false, "print this help info")
 	flag.BoolVar(&helpFlag, "help", false, "print this help info")
 	flag.Int64Var(&timestampFlag, "t", time.Now().Unix(), "unix timestamp to convert")
@@ -88,7 +90,7 @@ func DateFmtTool() error {
 	flag.Parse()
 
 	if helpFlag {
-		printDateFmtUsage()
+		flag.Usage()
 		return nil
 	}
 
