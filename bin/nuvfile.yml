@@ -210,6 +210,7 @@ tasks:
     - task: kops
     - task: k3sup
     - task: mc
+    - task: eksctl
     # TODO: for some reasons, helm download does not work in github actions
     #- task: helm
 
