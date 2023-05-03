@@ -23,8 +23,10 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 
+	"github.com/nuvolaris/nuv/tools"
 	"github.com/zalando/go-keyring"
 )
 
@@ -53,7 +55,8 @@ func LoginCmd(args []string) error {
 		return err
 	}
 	fmt.Println()
-	url := args[0] + whiskLoginPath
+	apihost := args[0]
+	url := apihost + whiskLoginPath
 	user := defaultUser
 	if len(args) > 1 {
 		user = args[1]
@@ -68,7 +71,12 @@ func LoginCmd(args []string) error {
 	if err := storeCredentials(creds); err != nil {
 		return err
 	}
-	return nil
+
+	auth, err := keyring.Get(nuvSecretServiceName, "AUTH")
+	if err != nil {
+		return err
+	}
+	return wskPropertySet(apihost, auth)
 }
 
 func doLogin(url, user, password string) (map[string]string, error) {
@@ -87,21 +95,21 @@ func doLogin(url, user, password string) (map[string]string, error) {
 	}
 	defer resp.Body.Close()
 
-	var responseBody map[string]string
-	err = json.NewDecoder(resp.Body).Decode(&responseBody)
+	if resp.StatusCode != http.StatusOK {
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("login failed with status code %d", resp.StatusCode)
+		}
+		return nil, fmt.Errorf("login failed (%d): %s", resp.StatusCode, string(body))
+	}
+
+	var creds map[string]string
+	err = json.NewDecoder(resp.Body).Decode(&creds)
 	if err != nil {
 		return nil, errors.New("failed to decode response from login request")
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		errormsg, ok := responseBody["error"]
-		if !ok {
-			return nil, fmt.Errorf("login failed with status code %d", resp.StatusCode)
-		}
-		return nil, fmt.Errorf("login failed (%d): %s", resp.StatusCode, errormsg)
-	}
-
-	return responseBody, nil
+	return creds, nil
 }
 
 func storeCredentials(creds map[string]string) error {
@@ -112,5 +120,14 @@ func storeCredentials(creds map[string]string) error {
 		}
 	}
 
+	return nil
+}
+
+func wskPropertySet(apihost, auth string) error {
+	args := []string{"property", "set", "--apihost", apihost, "--auth", auth}
+	cmd := append([]string{"wsk"}, args...)
+	if err := tools.Wsk(cmd); err != nil {
+		return err
+	}
 	return nil
 }
