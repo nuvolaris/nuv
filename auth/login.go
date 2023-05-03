@@ -29,9 +29,11 @@ import (
 )
 
 const usage = `Usage:
-nuv login <apihost> [<user>]`
+nuv login <apihost> [<user>]
 
-const whiskLoginPath = "/api/v1/web/whisk-system/login"
+Login to a Nuvolaris instance. If no user is specified, the default user "nuvolaris" is used.`
+
+const whiskLoginPath = "/api/v1/web/whisk-system/nuv/login"
 const defaultUser = "nuvolaris"
 const nuvSecretServiceName = "nuvolaris"
 
@@ -62,7 +64,11 @@ func LoginCmd(args []string) error {
 		return err
 	}
 
-	return storeCredentials(creds)
+	fmt.Println("Successfully logged in as " + user + ".")
+	if err := storeCredentials(creds); err != nil {
+		return err
+	}
+	return nil
 }
 
 func doLogin(url, user, password string) (map[string]string, error) {
@@ -81,14 +87,18 @@ func doLogin(url, user, password string) (map[string]string, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("login failed with status code %d", resp.StatusCode)
-	}
-
 	var responseBody map[string]string
 	err = json.NewDecoder(resp.Body).Decode(&responseBody)
 	if err != nil {
 		return nil, errors.New("failed to decode response from login request")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		errormsg, ok := responseBody["error"]
+		if !ok {
+			return nil, fmt.Errorf("login failed with status code %d", resp.StatusCode)
+		}
+		return nil, fmt.Errorf("login failed (%d): %s", resp.StatusCode, errormsg)
 	}
 
 	return responseBody, nil
