@@ -12,7 +12,7 @@ require (
 	github.com/nojima/httpie-go v0.7.0
 	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675
 	github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c
-	github.com/nuvolaris/goja/gojamain v0.0.0-20230315181922-61fd5fa112c9
+	github.com/nuvolaris/goja/gojamain v0.0.0-20230504161530-a973bab4a652
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae

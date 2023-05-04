@@ -54,12 +54,12 @@ setup() {
     # missing input format
     run nuv -datefmt -s "2023-01-01"
     assert_failure
-    assert_output "error: both --str and --ifmt must be provided"
+    assert_output "error: both --str and --if must be provided. Only str given: 2023-01-01"
 
     # missing input string
     run nuv -datefmt --if DateOnly
     assert_failure
-    assert_output "error: both --str and --ifmt must be provided"
+    assert_output "error: both --str and --if must be provided. Only input format given: DateOnly"
 
     # wrong input format
     run nuv -datefmt -s "2023-01-01" --if NotAFormat

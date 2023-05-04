@@ -283,8 +283,8 @@ github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e967
 github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675/go.mod h1:scN6eGT0YjABIs2bLh+CfWdOFZgmkefhv0pA9RBCEaM=
 github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c h1:L9HLHEk9rLllwSYyzg8fu7ScPfCX773sWu55TzavywQ=
 github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c/go.mod h1:/9Rq7gSfPOW2G7aq2Rii4kbNl9o3GJSGvBjikGMs74I=
-github.com/nuvolaris/goja/gojamain v0.0.0-20230315181922-61fd5fa112c9 h1:fvC/HuvZK67G6Q1V6yMxeeAxi5LyhIgZ+4A6oLR1Nso=
-github.com/nuvolaris/goja/gojamain v0.0.0-20230315181922-61fd5fa112c9/go.mod h1:rQ9eKxdnf+QLnA8nuHk9nPiW051abtrynmImsADKv4E=
+github.com/nuvolaris/goja/gojamain v0.0.0-20230504161530-a973bab4a652 h1:IS0KdICIqEyjosSc7uwEtpAXP9Iv8O0ISW81+3EmYx4=
+github.com/nuvolaris/goja/gojamain v0.0.0-20230504161530-a973bab4a652/go.mod h1:rQ9eKxdnf+QLnA8nuHk9nPiW051abtrynmImsADKv4E=
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e h1:2h78o6j0FsvMBQwMoma6H1Q+sKxFLaykPn1TbyTHhFk=
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e/go.mod h1:Gv6ayVTiLPzMp3oA808nO5JxwXSN//vWxMu+qtG6Rf8=
 github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e h1:JEpF1YOoZKTU3U7k57Km3FytF6CaEAx0MkYIlGH5X34=

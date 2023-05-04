@@ -103,9 +103,11 @@ func ConfigTool() error {
 }
 
 func runConfigTool(input []string, dir string) error {
+	trace("run config tool")
 	config := make(map[string]interface{})
 	// Check if the config file exists
 	if exists(dir, CONFIGFILE) {
+		debug("config.json exists")
 		// If it exists, load it
 		configFromFile, err := readNuvConfigFile(dir)
 		if err != nil {
