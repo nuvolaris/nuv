@@ -24,6 +24,7 @@ import (
 	"io"
 	"os"
 	"testing"
+	"time"
 )
 
 type fakeRandomGenerator struct {
@@ -105,4 +106,13 @@ func TestRandom(t *testing.T) {
 			output.Reset()
 		})
 	}
+}
+
+func Example() {
+	fmt.Println(time.DateTime)
+	fmt.Println(time.DateOnly)
+	fmt.Println(time.TimeOnly)
+
+	// Output:
+	// -
 }

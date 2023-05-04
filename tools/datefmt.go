@@ -61,9 +61,10 @@ var dateFormats = map[string]string{
 	"StampMilli": time.StampMilli,
 	"StampMicro": time.StampMicro,
 	"StampNano":  time.StampNano,
-	"DateTime":   time.DateTime,
-	"DateOnly":   time.DateOnly,
-	"TimeOnly":   time.TimeOnly,
+	// hack! for some reason on GitHub Actions those constants are missing - replaced with their value
+	"DateTime": "2006-01-02 15:04:05", //time.DateTime,
+	"DateOnly": "2006-01-02",          //time.DateOnly,
+	"TimeOnly": "15:04:05",            //time.TimeOnly,
 }
 
 var (
