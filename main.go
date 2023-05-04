@@ -99,9 +99,6 @@ func main() {
 		log.SetFlags(0)
 	}
 
-	// setup NUV_TMP
-	setupTmp()
-
 	var err error
 	me := os.Args[0]
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
@@ -111,16 +108,6 @@ func main() {
 			os.Exit(1)
 		}
 		setupBinPath(tools.NuvCmd)
-	}
-
-	nuvRootDir := retrieveRootDir()
-
-	setupTmp()
-
-	err = setAllConfigEnvVars()
-	if err != nil {
-		warn("cannot apply env vars from config", err)
-		os.Exit(1)
 	}
 
 	// first argument with prefix "-" is an embedded tool
@@ -152,7 +139,7 @@ func main() {
 			os.Exit(0)
 		}
 		if cmd == "serve" {
-			if err := Serve(nuvRootDir, args[1:]); err != nil {
+			if err := Serve(retrieveRootDir(), args[1:]); err != nil {
 				log.Fatalf("error: %v", err)
 			}
 			os.Exit(0)
@@ -198,6 +185,16 @@ func main() {
 		os.Exit(0)
 	}
 
+	nuvRootDir := retrieveRootDir()
+
+	setupTmp()
+
+	err = setAllConfigEnvVars(nuvRootDir)
+	if err != nil {
+		warn("cannot apply env vars from config", err)
+		os.Exit(1)
+	}
+
 	// check if olaris was recently updated
 	// we pass parent(dir) because we use the olaris parent folder
 	checkUpdated(parent(nuvRootDir), 24*time.Hour)
@@ -215,9 +212,8 @@ func retrieveRootDir() string {
 	return dir
 }
 
-func setAllConfigEnvVars() error {
+func setAllConfigEnvVars(nuvRootDir string) error {
 	trace("setting all config env vars")
-	dir := retrieveRootDir()
 	nuvHome, err := homedir.Expand("~/.nuv")
 
 	if err != nil {
@@ -226,5 +222,5 @@ func setAllConfigEnvVars() error {
 	}
 
 	debug(nuvHome)
-	return applyAllConfigEnvVars(dir, nuvHome)
+	return applyAllConfigEnvVars(nuvRootDir, nuvHome)
 }

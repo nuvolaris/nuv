@@ -24,7 +24,6 @@ import (
 	"io"
 	"os"
 	"testing"
-	"time"
 )
 
 type fakeRandomGenerator struct {

@@ -34,7 +34,7 @@ nuv -datefmt [options] [arguments]
 Print date with different formats. If no time stamp or date strings are given, uses current time.
 
 -h, --help		print this help info
--t, --timestamp	unix timestamp to format (default: current time)
+-t, --timestamp		unix timestamp to format (default: current time)
 -s, --str 	  	date string to format
 --if			input format to use with input date string (via --str)
 -f, --of		output format to use (default: UnixDate)
@@ -62,9 +62,11 @@ var dateFormats = map[string]string{
 	"StampMicro": time.StampMicro,
 	"StampNano":  time.StampNano,
 	// hack! for some reason on GitHub Actions those constants are missing - replaced with their value
-	"DateTime": "2006-01-02 15:04:05", //time.DateTime,
-	"DateOnly": "2006-01-02",          //time.DateOnly,
-	"TimeOnly": "15:04:05",            //time.TimeOnly,
+	"DateTime":     time.DateTime,
+	"DateOnly":     time.DateOnly,
+	"TimeOnly":     time.TimeOnly,
+	"ms":           "Milliseconds",
+	"Milliseconds": "Milliseconds",
 }
 
 var (
@@ -111,16 +113,28 @@ func DateFmtTool() error {
 			return err
 		}
 
-		fmt.Println(currentDate.Format(ofmt))
+		fmt.Println(applyFormat(currentDate, ofmt))
 
 		return nil
 	}
 
-	if (strFlag != "" && iFmtFlag == "") || (strFlag == "" && iFmtFlag != "") {
-		return fmt.Errorf("error: both --str and --ifmt must be provided")
+	if strFlag != "" && iFmtFlag == "" {
+		return fmt.Errorf("error: both --str and --if must be provided. Only str given: %s", strFlag)
+	}
+	if strFlag == "" && iFmtFlag != "" {
+		return fmt.Errorf("error: both --str and --if must be provided. Only input format given: %s", iFmtFlag)
 	}
 
 	date := time.Unix(timestampFlag, 0)
-	fmt.Println(date.Format(ofmt))
+	fmt.Println(applyFormat(date, ofmt))
 	return nil
+}
+
+func applyFormat(date time.Time, ofmt string) string {
+	switch ofmt {
+	case "Milliseconds":
+		return fmt.Sprintf("%d", date.UnixMilli())
+	default:
+		return date.Format(ofmt)
+	}
 }
