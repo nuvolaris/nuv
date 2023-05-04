@@ -18,7 +18,7 @@
 version: '3'
 vars:
   BRANCH: 0.3.0
-  BASEVER: "{{.BRANCH}}-morpheus"
+  BASEVER: "{{.BRANCH}}-dev"
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
   S: ""
@@ -31,7 +31,7 @@ tasks:
 
   cli-ver:
     - git tag -d $(git tag) 
-    - git tag -f {{.BASEVER}}.$(date +%y%m%d%H){{.S}}
+    - git tag -f {{.BASEVER}}.$(date +%y%m%d%H%M){{.S}}
     - git tag
 
   setup: {silent:true} 
