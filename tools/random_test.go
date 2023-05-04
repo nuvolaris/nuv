@@ -107,12 +107,3 @@ func TestRandom(t *testing.T) {
 		})
 	}
 }
-
-func Example() {
-	fmt.Println(time.DateTime)
-	fmt.Println(time.DateOnly)
-	fmt.Println(time.TimeOnly)
-
-	// Output:
-	// -
-}
