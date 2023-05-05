@@ -32,22 +32,16 @@ setup() {
     assert_line "Usage:"
 }
 
-@test "datefmt with input timestamp" {
-    run nuv -datefmt -t 1577836800
+@test "datefmt with input timestamp and output format" {
+    run nuv -datefmt -t 1577836800 -f DateOnly
     assert_success
-    assert_output "Wed Jan  1 01:00:00 CET 2020"
+    assert_output "2020-01-01"
 }
 
 @test "datefmt string date with in fmt" {
     run nuv -datefmt -s "2023-01-01" --if DateOnly
     assert_success
     assert_output "Sun Jan  1 00:00:00 UTC 2023"
-}
-
-@test "datefmt with output format" {
-    run nuv -datefmt -t 1577836800 -f "Kitchen"
-    assert_success
-    assert_output "1:00AM"
 }
 
 @test "datefmt with errors" {

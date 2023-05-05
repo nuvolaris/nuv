@@ -19,6 +19,9 @@ setup() {
     load 'test_helper/bats-support/load'
     load 'test_helper/bats-assert/load'
     export NO_COLOR=1
+
+    # create ~/.nuv if it doesn't exist
+    mkdir -p ~/.nuv
 }
 
 @test "config usage print" {
