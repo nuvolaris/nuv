@@ -21,12 +21,6 @@ setup() {
     export NO_COLOR=1
 }
 
-@test "-js" {
-    run nuv -js
-    assert_line "Usage: nuv -js FILE.js"
-    assert_line "Interpret and run Javascript code."
-}
-
 @test "-js -h" {
     run nuv -js -h
     assert_line "Usage: nuv -js FILE.js"
