@@ -92,35 +92,38 @@ func touchLatestCheckFile(latest_check_path string) {
 }
 
 func checkRemoteOlarisNewer(olaris_path string) bool {
-	isRemoteNewer := false
-
 	repo, err := git.PlainOpen(olaris_path)
 	if err != nil {
 		warn("failed to check olaris folder", err)
 		return false
 	}
 
-	localRef, _ := repo.Head()
+	localRef, err := repo.Head()
+	if err != nil {
+		warn("failed to check olaris folder", err)
+		return false
+	}
 
 	remote, err := repo.Remote("origin")
 	if err != nil {
-		warn("failed to check remote", err)
+		warn("failed to check remote olaris", err)
 		return false
 	}
-	if err := remote.Fetch(&git.FetchOptions{}); err != nil {
-		warn("failed to fetch remote", err)
+	_ = remote.Fetch(&git.FetchOptions{})
+	remoteRefs, err := remote.List(&git.ListOptions{})
+	if err != nil {
+		warn("failed to check remote olaris", err)
 		return false
 	}
-	remoteRefs, _ := remote.List(&git.ListOptions{})
 
 	// check ref is in refs
 	for _, remoteRef := range remoteRefs {
 		if localRef.Name().String() == remoteRef.Name().String() {
 			// is hash different?
 			if localRef.Hash().String() != remoteRef.Hash().String() {
-				isRemoteNewer = true
+				return true
 			}
 		}
 	}
-	return isRemoteNewer
+	return false
 }
