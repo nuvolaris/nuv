@@ -630,7 +630,7 @@ func createTestNuvRootFile(t *testing.T, dir string, onlyVersion bool) {
 		}
 		nuvRootStr = fmt.Sprintf("{ \"version\": \"0.3.0\", \"config\": %s }", configJson)
 	}
-	os.WriteFile(path, []byte(nuvRootStr), 0644)
+	_ = os.WriteFile(path, []byte(nuvRootStr), 0644)
 }
 
 func createTestConfigJson(t *testing.T, dir string, envVars map[string]interface{}) {
@@ -639,7 +639,7 @@ func createTestConfigJson(t *testing.T, dir string, envVars map[string]interface
 	if err != nil {
 		t.Errorf("error: %v", err)
 	}
-	os.WriteFile(filepath.Join(dir, "config.json"), []byte(configJson), 0644)
+	_ = os.WriteFile(filepath.Join(dir, "config.json"), []byte(configJson), 0644)
 }
 
 func Test_mergeMaps(t *testing.T) {

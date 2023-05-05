@@ -73,4 +73,20 @@ jobs:
         run: |
           rm -Rf ~/.nuv/olaris
           bats/bin/bats .
-      
+
+  linter:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout recursive
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.20.2'
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout=3m

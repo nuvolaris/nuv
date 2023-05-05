@@ -99,7 +99,9 @@ func readNuvRootFile(dir string) (NuvRootJSON, error) {
 	if err != nil {
 		return NuvRootJSON{}, err
 	}
-	json.Unmarshal(json_buf, &data)
+	if err := json.Unmarshal(json_buf, &data); err != nil {
+		warn("nuvroot.json parsed with an error", err)
+	}
 	return data, nil
 }
 
@@ -113,7 +115,12 @@ func readNuvConfigFile(dir string) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	json.Unmarshal(json_buf, &data)
+	if err := json.Unmarshal(json_buf, &data); err != nil {
+		if data == nil {
+			return nil, err
+		}
+		warn("config.json parsed with an error", err)
+	}
 	return data, nil
 }
 

@@ -19,7 +19,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"sort"
@@ -115,7 +114,7 @@ func setupTmp() {
 // load saved args in files names _*_ in current directory
 func loadSavedArgs() []string {
 	res := []string{}
-	files, err := ioutil.ReadDir(".")
+	files, err := os.ReadDir(".")
 	if err != nil {
 		return res
 	}
@@ -174,7 +173,9 @@ func Nuv(base string, args []string) error {
 		}
 		// if valid, check if it's a folder and move to it
 		if isDir(taskName) && exists(taskName, NUVFILE) {
-			os.Chdir(taskName)
+			if err := os.Chdir(taskName); err != nil {
+				return err
+			}
 			//remove it from the args
 			rest = rest[1:]
 		} else {

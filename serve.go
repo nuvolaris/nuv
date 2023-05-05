@@ -111,7 +111,9 @@ func nuvTaskServer(w http.ResponseWriter, r *http.Request) {
 
 	// write output to response
 	outjson, _ := json.Marshal(nuvOut)
-	w.Write(outjson)
+	if _, err := w.Write(outjson); err != nil {
+		debug("Failed to write response", err)
+	}
 }
 
 func execCommandTasks(tasks []string) NuvOutput {

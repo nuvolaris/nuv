@@ -28,7 +28,7 @@ import (
 )
 
 func TestIndex(t *testing.T) {
-	os.Chdir(workDir)
+	_ = os.Chdir(workDir)
 	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
 	handler := webFileServerHandler(joinpath(olaris, WebDir))
 	ts := httptest.NewServer(handler)
@@ -65,7 +65,7 @@ func TestIndex(t *testing.T) {
 }
 
 func TestGetTask(t *testing.T) {
-	os.Chdir(joinpath(workDir, "tests"))
+	_ = os.Chdir(joinpath(workDir, "tests"))
 
 	t.Run("/api/nuv?test invokes test task", func(t *testing.T) {
 		request := newTaskRequest("test")
