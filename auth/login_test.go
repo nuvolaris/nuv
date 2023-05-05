@@ -49,7 +49,7 @@ func setupMockServer(t *testing.T, expectedLogin, expectedPass, expectedRes stri
 			t.Errorf("expected password %s, got %s", expectedPass, password)
 		}
 
-		w.Write([]byte(expectedRes))
+		_, _ = w.Write([]byte(expectedRes))
 	}))
 
 	return server

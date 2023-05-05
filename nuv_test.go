@@ -27,9 +27,9 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func ExampleNuvArg() {
+func Example_nuvArg() {
 	// test
-	os.Chdir(workDir)
+	_ = os.Chdir(workDir)
 	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
 	err := Nuv(olaris, split("testcmd"))
 	pr(2, err)
@@ -52,7 +52,7 @@ func ExampleNuvArg() {
 
 func ExampleNuv() {
 	// test
-	os.Chdir(workDir)
+	_ = os.Chdir(workDir)
 	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
 	err := Nuv(olaris, split(""))
 	pr(1, err)
@@ -80,7 +80,7 @@ func ExampleNuv() {
 }
 
 func ExampleParseArgs() {
-	os.Chdir(workDir)
+	_ = os.Chdir(workDir)
 	usage := readfile("tests/olaris/sub/opts/nuvopts.txt")
 	args := parseArgs(usage, split("ciao mike miri max"))
 	pr(1, args)
@@ -116,7 +116,7 @@ func Test_validateTaskName(t *testing.T) {
 
 	tmpDir := createTmpNuvfile(t, testNuvfile)
 	defer os.RemoveAll(tmpDir)
-	os.Chdir(tmpDir)
+	_ = os.Chdir(tmpDir)
 	for _, tt := range validateTaskTests {
 		task, err := validateTaskName(tt.argTask)
 		if err != nil && !strings.Contains(err.Error(), tt.expected) {
@@ -129,8 +129,8 @@ func Test_validateTaskName(t *testing.T) {
 	}
 }
 
-func ExampleTmp() {
-	os.Chdir(workDir)
+func Example_setupTmp() {
+	_ = os.Chdir(workDir)
 	nuvdir, _ := homedir.Expand("~/.nuv")
 	os.RemoveAll(nuvdir)
 	setupTmp()
@@ -140,10 +140,10 @@ func ExampleTmp() {
 	// /home/.nuv/tmp
 }
 
-func ExampleLoadArgs() {
-	os.Chdir(workDir)
+func Example_loadArgs() {
+	_ = os.Chdir(workDir)
 	fmt.Println(1, loadSavedArgs())
-	os.Chdir(joinpath("tests", "testdata"))
+	_ = os.Chdir(joinpath("tests", "testdata"))
 	fmt.Println(2, loadSavedArgs())
 	// Output:
 	// 1 []

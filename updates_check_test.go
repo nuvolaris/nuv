@@ -43,14 +43,22 @@ func resetOneCommit(repo *git.Repository) {
 		Order: git.LogOrderCommitterTime,
 	})
 
-	commIter.Next()
-	secondLastCommit, _ := commIter.Next()
+	if _, err := commIter.Next(); err != nil {
+		pr("failed to get first commit", err)
+	}
+	secondLastCommit, err := commIter.Next()
+	if err != nil {
+		pr("failed to get second last commit", err)
+	}
 
 	w, _ := repo.Worktree()
-	w.Reset(&git.ResetOptions{
+	if err := w.Reset(&git.ResetOptions{
 		Mode:   git.HardReset,
 		Commit: secondLastCommit.Hash,
-	})
+	}); err != nil {
+		pr("failed to reset repo", err)
+	}
+
 }
 
 func Example_checkUpdated_uptodate() {
@@ -63,7 +71,7 @@ func Example_checkUpdated_uptodate() {
 
 	olarisTmpPath := joinpath(tmpDir, "olaris")
 
-	_, err = git.PlainClone(olarisTmpPath, false, &git.CloneOptions{
+	_, _ = git.PlainClone(olarisTmpPath, false, &git.CloneOptions{
 		URL:      getNuvRepo(),
 		Progress: os.Stderr},
 	)
@@ -97,7 +105,7 @@ func Example_checkUpdated_outdated() {
 
 	olarisTmpPath := joinpath(tmpDir, "olaris")
 
-	repo, err := git.PlainClone(olarisTmpPath, false, &git.CloneOptions{
+	repo, _ := git.PlainClone(olarisTmpPath, false, &git.CloneOptions{
 		URL:      getNuvRepo(),
 		Progress: os.Stderr},
 	)

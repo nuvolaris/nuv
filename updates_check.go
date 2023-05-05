@@ -97,13 +97,20 @@ func checkRemoteOlarisNewer(olaris_path string) bool {
 	repo, err := git.PlainOpen(olaris_path)
 	if err != nil {
 		warn("failed to check olaris folder", err)
-		return isRemoteNewer
+		return false
 	}
 
 	localRef, _ := repo.Head()
 
-	remote, _ := repo.Remote("origin")
-	remote.Fetch(&git.FetchOptions{})
+	remote, err := repo.Remote("origin")
+	if err != nil {
+		warn("failed to check remote", err)
+		return false
+	}
+	if err := remote.Fetch(&git.FetchOptions{}); err != nil {
+		warn("failed to fetch remote", err)
+		return false
+	}
 	remoteRefs, _ := remote.List(&git.ListOptions{})
 
 	// check ref is in refs

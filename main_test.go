@@ -34,9 +34,9 @@ func pr(args ...any) {
 }
 
 // as creates a string array
-func as(s ...string) []string {
-	return s
-}
+// func as(s ...string) []string {
+// 	return s
+// }
 
 var homeDir = ""
 var workDir = ""

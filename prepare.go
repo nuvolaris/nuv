@@ -34,7 +34,9 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	os.MkdirAll(nuvDir, 0755)
+	if err := os.MkdirAll(nuvDir, 0755); err != nil {
+		return "", err
+	}
 	localDir, err := homedir.Expand("~/.nuv/olaris")
 	if err != nil {
 		return "", err
@@ -121,8 +123,8 @@ func pullTasks(force, silent bool) error {
 
 	// check if the version is up to date, if not warn the user but continue
 	if nuvVersion.LessThan(nuvRootVersion) {
-		warn("Your nuv version", nuvVersion, "is older than the required version in nuvroot.json.")
-		warn("Please update nuv to the latest version.")
+		fmt.Printf("Your nuv version %v is older than the required version in nuvroot.json.\n", nuvVersion)
+		fmt.Println("Please update nuv to the latest version.")
 	}
 
 	return nil

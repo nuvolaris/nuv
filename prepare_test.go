@@ -23,7 +23,7 @@ import (
 )
 
 func Example_locate() {
-	os.Chdir(workDir)
+	_ = os.Chdir(workDir)
 	dir, err := locateNuvRoot("tests")
 	pr(1, err, npath(dir))
 	dir, err = locateNuvRoot(joinpath("tests", "olaris"))
@@ -37,21 +37,20 @@ func Example_locate() {
 }
 
 func Example_locate_git() {
-	os.Chdir(workDir)
+	_ = os.Chdir(workDir)
 	NuvBranch = "test"
 	nuvdir, _ := homedir.Expand("~/.nuv")
-	os.RemoveAll(nuvdir)
-	os.Setenv("NUV_BIN", "")
-	//_, err :=
+	_ = os.RemoveAll(nuvdir)
+	_ = os.Setenv("NUV_BIN", "")
 	_, err := locateNuvRoot(".")
 	pr(1, err)
-	os.Setenv("NUV_BIN", workDir)
+	_ = os.Setenv("NUV_BIN", workDir)
 	dir, err := locateNuvRoot("tests")
 	pr(2, err, npath(dir))
-	downloadTasksFromGitHub(true, true)
+	_, _ = downloadTasksFromGitHub(true, true)
 	dir, err = locateNuvRoot(".")
 	pr(3, err, nhpath(dir))
-	downloadTasksFromGitHub(true, true)
+	_, _ = downloadTasksFromGitHub(true, true)
 	dir, err = locateNuvRoot(".")
 	pr(4, err, nhpath(dir))
 	os.RemoveAll(nuvdir)
