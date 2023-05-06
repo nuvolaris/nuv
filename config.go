@@ -149,7 +149,9 @@ func removeConfigValues(input []string, config map[string]interface{}) ([]byte, 
 		if err != nil {
 			return nil, err
 		}
-		recursiveDelete(config, 0, keys)
+		if success := recursiveDelete(config, 0, keys); !success {
+			warn("key not found", key)
+		}
 	}
 	return json.MarshalIndent(config, "", "  ")
 }
@@ -160,6 +162,7 @@ func recursiveDelete(config map[string]interface{}, index int, keys []string) bo
 			return false
 		}
 		delete(config, keys[index])
+
 		return true
 	}
 
@@ -168,7 +171,12 @@ func recursiveDelete(config map[string]interface{}, index int, keys []string) bo
 		return false
 	}
 
-	return recursiveDelete(conf, index+1, keys)
+	success := recursiveDelete(conf, index+1, keys)
+	// if the parent map is empty, delete it
+	if success && len(conf) == 0 {
+		delete(config, keys[index])
+	}
+	return true
 }
 
 func writeConfigValues(input []string, dir string, config map[string]interface{}) ([]byte, error) {

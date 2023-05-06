@@ -167,5 +167,5 @@ setup() {
     run nuv -config --remove NESTED_ANOTHER
     assert_success
     run cat ~/.nuv/config.json
-    assert_line '  "nested": {}'
+    assert_line '{}'
 }
