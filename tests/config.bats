@@ -135,3 +135,37 @@ setup() {
     assert_line 'KEY=VALUE'
     assert_line 'ANOTHER=123'
 }
+
+@test "remove config values" {
+    run rm -f ~/.nuv/config.json
+    run nuv -config KEY=VALUE ANOTHER=123
+    assert_success
+
+    run nuv -config --remove KEY
+    assert_success
+    run cat ~/.nuv/config.json
+    assert_line '  "another": 123'
+
+    run nuv -config --remove ANOTHER
+    assert_success
+    run cat ~/.nuv/config.json
+    assert_line '{}'
+}
+
+@test "remove nested values" {
+    run rm -f ~/.nuv/config.json
+    run nuv -config NESTED_KEY=VALUE NESTED_ANOTHER=123
+    assert_success
+
+    run nuv -config --remove NESTED_KEY
+    assert_success
+    run cat ~/.nuv/config.json
+    assert_line '  "nested": {'
+    assert_line '    "another": 123'
+    assert_line '  }'
+
+    run nuv -config --remove NESTED_ANOTHER
+    assert_success
+    run cat ~/.nuv/config.json
+    assert_line '{}'
+}

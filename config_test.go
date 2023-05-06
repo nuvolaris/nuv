@@ -31,7 +31,7 @@ func Test_runConfigTool(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
 
-		err := runConfigTool([]string{"foo=bar"}, tmpDir)
+		err := runConfigTool([]string{"foo=bar"}, tmpDir, false)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -50,16 +50,16 @@ func Test_runConfigTool(t *testing.T) {
 		}
 	})
 
-	t.Run("existing config.json", func(t *testing.T) {
+	t.Run("write values on existing config.json", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
 
-		err := runConfigTool([]string{"foo=bar"}, tmpDir)
+		err := runConfigTool([]string{"foo=bar"}, tmpDir, false)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
 
-		err = runConfigTool([]string{"bar=baz"}, tmpDir)
+		err = runConfigTool([]string{"bar=baz"}, tmpDir, false)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -79,16 +79,16 @@ func Test_runConfigTool(t *testing.T) {
 		}
 	})
 
-	t.Run("existing value is overridden", func(t *testing.T) {
+	t.Run("write existing value is overridden", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
 
-		err := runConfigTool([]string{"foo=bar"}, tmpDir)
+		err := runConfigTool([]string{"foo=bar"}, tmpDir, false)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
 
-		err = runConfigTool([]string{"foo=new"}, tmpDir)
+		err = runConfigTool([]string{"foo=new"}, tmpDir, false)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -107,16 +107,16 @@ func Test_runConfigTool(t *testing.T) {
 		}
 	})
 
-	t.Run("existing key object is merged", func(t *testing.T) {
+	t.Run("write existing key object is merged", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
 
-		err := runConfigTool([]string{"foo_bar=bar"}, tmpDir)
+		err := runConfigTool([]string{"foo_bar=bar"}, tmpDir, false)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
 
-		err = runConfigTool([]string{"foo_baz=baz"}, tmpDir)
+		err = runConfigTool([]string{"foo_baz=baz"}, tmpDir, false)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -132,6 +132,83 @@ func Test_runConfigTool(t *testing.T) {
 				"baz": "baz",
 			},
 		}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("remove existing key", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
+
+		err := runConfigTool([]string{"FOO=bar"}, tmpDir, false)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		err = runConfigTool([]string{"FOO"}, tmpDir, true)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		got, err := readNuvConfigFile(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		want := map[string]interface{}{}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("remove nested key object", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
+
+		err := runConfigTool([]string{"FOO_BAR=bar", "FOO_BAZ=baz"}, tmpDir, false)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		err = runConfigTool([]string{"FOO_BAR"}, tmpDir, true)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		got, err := readNuvConfigFile(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		want := map[string]interface{}{
+			"foo": map[string]interface{}{
+				"baz": "baz",
+			},
+		}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("remove non-existing key", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
+
+		err := runConfigTool([]string{"foo"}, tmpDir, true)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		got, err := readNuvConfigFile(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		want := map[string]interface{}{}
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %v, want %v", got, want)
@@ -723,4 +800,8 @@ func Test_mergeMaps(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_removeConfigValue(t *testing.T) {
+
 }
