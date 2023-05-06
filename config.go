@@ -59,14 +59,16 @@ nuv -config [-h|--help] KEY=VALUE [KEY=VALUE ...]
 
 Set config values passed as key-value pairs.
 
--h, --help    show this help
--d, --dump    dump the configs
+-h, --help    	show this help
+-r, --remove    remove config values
+-d, --dump    	dump the configs
 `)
 }
 
 func ConfigTool() error {
 	var helpFlag bool
 	var dumpFlag bool
+	var removeFlag bool
 
 	flag.Usage = printConfigToolUsage
 
@@ -74,6 +76,8 @@ func ConfigTool() error {
 	flag.BoolVar(&helpFlag, "help", false, "show this help")
 	flag.BoolVar(&dumpFlag, "dump", false, "dump the config file")
 	flag.BoolVar(&dumpFlag, "d", false, "dump the config file")
+	flag.BoolVar(&removeFlag, "remove", false, "remove config values")
+	flag.BoolVar(&removeFlag, "r", false, "remove config values")
 
 	flag.Parse()
 
@@ -86,6 +90,11 @@ func ConfigTool() error {
 		return dumpAll()
 	}
 
+	home, err := homedir.Expand("~/.nuv")
+	if err != nil {
+		return err
+	}
+
 	// Get the input string from the remaining command line arguments
 	input := flag.Args()
 
@@ -94,15 +103,10 @@ func ConfigTool() error {
 		return nil
 	}
 
-	home, err := homedir.Expand("~/.nuv")
-	if err != nil {
-		return err
-	}
-
-	return runConfigTool(input, home)
+	return runConfigTool(input, home, removeFlag)
 }
 
-func runConfigTool(input []string, dir string) error {
+func runConfigTool(input []string, dir string, remove bool) error {
 	trace("run config tool")
 	config := make(map[string]interface{})
 	// Check if the config file exists
@@ -116,21 +120,15 @@ func runConfigTool(input []string, dir string) error {
 		config = configFromFile
 	}
 
-	kv, err := buildKeyValueMap(input)
-	if err != nil {
-		return err
-	}
-	newConfig, err := buildConfigObject(kv)
-	if err != nil {
-		return err
+	var configJSON []byte
+	var err error
+
+	if remove {
+		configJSON, err = removeConfigValues(input, config)
+	} else {
+		configJSON, err = writeConfigValues(input, dir, config)
 	}
 
-	// Merge the input config into the existing config
-	// NOTE: input keys are merged with existing config.json keys
-	// with priority given to the new keys (in case of conflicts)
-	config = mergeMaps(config, newConfig)
-
-	configJSON, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -142,6 +140,53 @@ func runConfigTool(input []string, dir string) error {
 		return err
 	}
 	return err
+}
+
+func removeConfigValues(input []string, config map[string]interface{}) ([]byte, error) {
+	debug("removing config values", input)
+	for _, key := range input {
+		keys, err := parseKey(strings.ToLower(key))
+		if err != nil {
+			return nil, err
+		}
+		recursiveDelete(config, 0, keys)
+	}
+	return json.MarshalIndent(config, "", "  ")
+}
+
+func recursiveDelete(config map[string]interface{}, index int, keys []string) bool {
+	if index == len(keys)-1 {
+		if _, ok := config[keys[index]]; !ok {
+			return false
+		}
+		delete(config, keys[index])
+		return true
+	}
+
+	conf, ok := config[keys[index]].(map[string]interface{})
+	if !ok {
+		return false
+	}
+
+	return recursiveDelete(conf, index+1, keys)
+}
+
+func writeConfigValues(input []string, dir string, config map[string]interface{}) ([]byte, error) {
+	kv, err := buildKeyValueMap(input)
+	if err != nil {
+		return nil, err
+	}
+	newConfig, err := buildConfigObject(kv)
+	if err != nil {
+		return nil, err
+	}
+
+	// Merge the input config into the existing config
+	// NOTE: input keys are merged with existing config.json keys
+	// with priority given to the new keys (in case of conflicts)
+	config = mergeMaps(config, newConfig)
+
+	return json.MarshalIndent(config, "", "  ")
 }
 
 func dumpAll() error {
