@@ -217,7 +217,12 @@ func Nuv(base string, args []string) error {
 	pre := []string{"-t", NUVFILE, mainTask}
 	pre = append(pre, savedArgs...)
 	post := []string{"--"}
-	for _, s := range rest[1:] {
+	args1 := rest[1:]
+	extra := os.Getenv("EXTRA")
+	if extra != "" {
+		args1 = append(args1, strings.Split(extra, " ")...)
+	}
+	for _, s := range args1 {
 		if strings.Contains(s, "=") {
 			pre = append(pre, s)
 		} else {

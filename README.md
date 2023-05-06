@@ -53,6 +53,7 @@ Note that to avoid an egg and chicken problem, `nuv` itself is built with his an
 
 The following environment variables allows to ovverride certain defaults.
 
+- `DEBUG` and `TRACE` when set gives debugging and tracing informations, `EXTRA` appends extra arguments to the task invocation - useful when you need to set extra variables with a nuvopts active.
 - `NUV_ROOT` is the folder where `nuv` looks for its tasks. If not defined, it follows the algorithm below to find it.
 - `NUV_BIN` is the folder where `nuv` looks for binaries (external command line tools). If not defined, it defaults to the same directory where  `nuv` is located.
 - `NUV_REPO` is the github repo where `nuv` downloads its tasks. If not defined, it defaults to `https://github.com/nuvolaris/olaris`.

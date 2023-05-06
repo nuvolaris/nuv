@@ -105,11 +105,13 @@ tasks:
   upgrade-tool:
     - |
       cd tools/sh
+      git fetch --all
       git checkout origin/nuvolaris -B nuvolaris
       go get github.com/nuvolaris/nuv@latest
       git commit -m "updated go mod" -a
       git push origin nuvolaris
       cd ../task
+      git fetch --all
       git checkout origin/nuvolaris -B nuvolaris
       go get github.com/nuvolaris/sh/v3@nuvolaris
       git commit -m "updated go mod" -a
