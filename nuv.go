@@ -206,6 +206,11 @@ func Nuv(base string, args []string) error {
 
 		parsedArgs = append(savedArgs, parsedArgs...)
 		parsedArgs = append(prefix, parsedArgs...)
+		extra := os.Getenv("EXTRA")
+		if extra != "" {
+			trace("EXTRA:", extra)
+			parsedArgs = append(parsedArgs, strings.Split(extra, " ")...)
+		}
 		trace("POSTPARSE:", parsedArgs)
 		_, err := Task(parsedArgs...)
 		return err
@@ -220,6 +225,7 @@ func Nuv(base string, args []string) error {
 	args1 := rest[1:]
 	extra := os.Getenv("EXTRA")
 	if extra != "" {
+		trace("EXTRA:", extra)
 		args1 = append(args1, strings.Split(extra, " ")...)
 	}
 	for _, s := range args1 {
