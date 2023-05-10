@@ -87,20 +87,6 @@ tasks:
     status:
     - test -e {{.TGT}}{{.EXE}}
 
-  # no special case for windows :(
-  download-archive3:
-    dir: "{{.BIN}}"
-    cmds:
-    - curl -L -ccookie.txt -o{{.TGT}}{{.ARC}} {{.SRC}}
-    - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC}}{{end}}'
-    - mv {{.OS}}-{{.ARCH}}/{{.TGT}}{{.EXE}} .
-    - rm {{.TGT}}{{.ARC}} {{.OS}}-{{.ARCH}}/*
-    - rmdir {{.OS}}-{{.ARCH}}
-    - rm cookie.txt
-    status:
-    - test -e {{.TGT}}{{.EXE}}  
-
-
   q:
     dir: "{{.BIN}}"
     vars:
@@ -108,8 +94,8 @@ tasks:
     cmds:
     - echo "{{.BIN}}"
     - curl -L -ccookie.txt -oq.tar.gz {{.SRC}}
-    - /usr/bin/tar xzvf q.tar.gz q{{.EXE}}
-    - rm  q.tar.gz cookie.txt
+    - '{{if eq .OS "windows"}}tar.exe{{else}}/usr/bin/tar{{end}} xzvf q.tar.gz q{{.EXE}}'
+    - rm q.tar.gz cookie.txt
   
   kubectl:
     cmds:
