@@ -17,18 +17,24 @@
 
 package tools
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 func ExampleURLEncTool() {
 	os.Args = []string{"urlenc", "p@ss", "w&rd"}
-	URLEncTool()
+	fmt.Println(URLEncTool())
 	os.Args = []string{"urlenc", "-s=:", "p@ss", "w&rd"}
-	URLEncTool()
+	fmt.Println(URLEncTool())
 	os.Setenv("PASS", "p@ass")
 	os.Args = []string{"urlenc", "-e", "PASS", "WORD"}
-	URLEncTool()
-	//  Output:
+	fmt.Println(URLEncTool())
+	// Output:
 	// p%40ss&w%26rd
+	// <nil>
 	// p%40ss:w%26rd
+	// <nil>
 	// p%40ass&
+	// <nil>
 }
