@@ -55,6 +55,7 @@ func getNuvPort() string {
 	if port == "" {
 		port = fmt.Sprintf("%d", DefaultNuvPort)
 	}
+	//nolint:errcheck
 	os.Setenv("NUV_PORT", port)
 	return port
 }
@@ -71,6 +72,7 @@ func getNuvRoot() (string, error) {
 			return "", err
 		}
 	}
+	//nolint:errcheck
 	os.Setenv("NUV_ROOT", root)
 	return root, nil
 }
@@ -80,6 +82,7 @@ func getNuvRepo() string {
 	if repo == "" {
 		repo = NUVREPO
 	}
+	//nolint:errcheck
 	os.Setenv("NUV_REPO", repo)
 	return repo
 }
@@ -89,6 +92,7 @@ func getNuvBranch() string {
 	if branch == "" {
 		branch = NuvBranch
 	}
+	//nolint:errcheck
 	os.Setenv("NUV_BRANCH", branch)
 	return branch
 }

@@ -149,6 +149,7 @@ func checkPortAvailable(port string) bool {
 	if err != nil {
 		return false
 	}
+	//nolint:errcheck
 	ln.Close()
 	return true
 }

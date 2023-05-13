@@ -371,6 +371,7 @@ func applyNuvRootConfigEnvVars(nuvRootDir string) error {
 
 	for k, v := range nuvRootConfigEnv {
 		key := strings.ToUpper(k)
+		//nolint:errcheck
 		os.Setenv(key, v)
 		debug("Set env var (nuvroot.json)", key, "=", v)
 	}
@@ -388,6 +389,7 @@ func applyConfigJsonEnvVars(configJsonDir string) error {
 
 	for k, v := range configEnv {
 		key := strings.ToUpper(k)
+		//nolint:errcheck
 		os.Setenv(key, v)
 		debug("Set env var (config.json)", key, "=", v)
 	}
