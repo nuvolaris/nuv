@@ -12,7 +12,8 @@
       "../windows/amd64/k3sup.exe",
       "../windows/amd64/kops.exe",
       "../windows/amd64/mc.exe",
-      "../windows/amd64/eksctl.exe"
+      "../windows/amd64/eksctl.exe",
+      "../windows/amd64/q.exe"
     ]
   },
   "directories": [

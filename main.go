@@ -61,6 +61,7 @@ func setupCmd(me string) (string, error) {
 		return "", err
 	}
 	trace("ME:", me)
+	//nolint:errcheck
 	os.Setenv("NUV_CMD", me)
 	return me, nil
 }

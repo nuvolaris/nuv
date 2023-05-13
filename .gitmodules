@@ -64,3 +64,6 @@
 [submodule "tools/goph"]
 	path = tools/goph
 	url = https://github.com/nuvolaris/goph
+[submodule "tools/goja_nodejs"]
+	path = tools/goja_nodejs
+	url = https://github.com/nuvolaris/goja_nodejs

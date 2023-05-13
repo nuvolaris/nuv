@@ -99,6 +99,7 @@ func setupTmp() {
 	if tmp == "" {
 		tmp, err = homedir.Expand("~/.nuv/tmp")
 		if err == nil {
+			//nolint:errcheck
 			os.Setenv("NUV_TMP", tmp)
 		}
 	}
@@ -137,6 +138,7 @@ func loadSavedArgs() []string {
 				}
 			}
 			err = scanner.Err()
+			//nolint:errcheck
 			file.Close()
 			if err != nil {
 				warn(err)
