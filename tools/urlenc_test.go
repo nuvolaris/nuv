@@ -19,7 +19,7 @@ package tools
 
 import "os"
 
-func ExampleUrlEnc() {
+func ExampleUrlEncTool() {
 	os.Args = []string{"urlenc", "p@ss", "w&rd"}
 	URLEncTool()
 	os.Args = []string{"urlenc", "-s=:", "p@ss", "w&rd"}

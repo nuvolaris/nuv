@@ -34,7 +34,10 @@ func URLEncTool() error {
 	help := fs.Bool("h", false, "Show help")
 
 	// Parse command-line flags
-	fs.Parse(os.Args[1:])
+	err := fs.Parse(os.Args[1:])
+	if err != nil {
+		return err
+	}
 
 	if *help {
 		fs.Usage()
