@@ -26,9 +26,14 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/nuvolaris/nuv/tools"
 	"github.com/zalando/go-keyring"
 )
+
+type LoginResult struct {
+	Login   string
+	Auth    string
+	ApiHost string
+}
 
 const usage = `Usage:
 nuv login <apihost> [<user>]
@@ -39,20 +44,20 @@ const whiskLoginPath = "/api/v1/web/whisk-system/nuv/login"
 const defaultUser = "nuvolaris"
 const nuvSecretServiceName = "nuvolaris"
 
-func LoginCmd(args []string) error {
+func LoginCmd(args []string) (*LoginResult, error) {
 	flag.Usage = func() {
 		fmt.Println(usage)
 	}
 
 	if len(args) == 0 {
 		flag.Usage()
-		return nil
+		return nil, nil
 	}
 
 	fmt.Print("Enter Password: ")
 	pwd, err := AskPassword()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	fmt.Println()
 	apihost := args[0]
@@ -64,19 +69,23 @@ func LoginCmd(args []string) error {
 
 	creds, err := doLogin(url, user, pwd)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	fmt.Println("Successfully logged in as " + user + ".")
 	if err := storeCredentials(creds); err != nil {
-		return err
+		return nil, err
 	}
 
 	auth, err := keyring.Get(nuvSecretServiceName, "AUTH")
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return wskPropertySet(apihost, auth)
+
+	return &LoginResult{
+		Login:   user,
+		Auth:    auth,
+		ApiHost: apihost,
+	}, nil
 }
 
 func doLogin(url, user, password string) (map[string]string, error) {
@@ -120,14 +129,5 @@ func storeCredentials(creds map[string]string) error {
 		}
 	}
 
-	return nil
-}
-
-func wskPropertySet(apihost, auth string) error {
-	args := []string{"property", "set", "--apihost", apihost, "--auth", auth}
-	cmd := append([]string{"wsk"}, args...)
-	if err := tools.Wsk(cmd); err != nil {
-		return err
-	}
 	return nil
 }

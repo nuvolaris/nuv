@@ -55,7 +55,7 @@ func setupMockServer(t *testing.T, expectedLogin, expectedPass, expectedRes stri
 	return server
 }
 func ExampleLoginCmd_noArgs() {
-	err := LoginCmd([]string{})
+	_, err := LoginCmd([]string{})
 	fmt.Println(err)
 	// Output:
 	// Usage:
@@ -73,13 +73,16 @@ func TestLoginCmd(t *testing.T) {
 			ReturnError: false,
 		}
 
-		err := LoginCmd([]string{"fakeApiHost", "fakeUser"})
+		res, err := LoginCmd([]string{"fakeApiHost", "fakeUser"})
 		pwdReader = oldPwdReader
 		if err == nil {
 			t.Error("Expected error, got nil")
 		}
 		if err.Error() != "password is empty" {
 			t.Errorf("Expected error to be 'password is empty', got %s", err.Error())
+		}
+		if res != nil {
+			t.Errorf("Expected response to be nil, got %v", res)
 		}
 	})
 
@@ -92,11 +95,15 @@ func TestLoginCmd(t *testing.T) {
 			Password:    "a password",
 			ReturnError: false,
 		}
-		err := LoginCmd([]string{mockServer.URL})
+		loginResult, err := LoginCmd([]string{mockServer.URL})
 		pwdReader = oldPwdReader
 
 		if err != nil {
 			t.Errorf("Expected no error, got %s", err.Error())
+		}
+
+		if loginResult == nil {
+			t.Error("Expected result, got nil")
 		}
 
 		cred, err := keyring.Get(nuvSecretServiceName, "fakeCred")
@@ -118,11 +125,15 @@ func TestLoginCmd(t *testing.T) {
 			Password:    "a password",
 			ReturnError: false,
 		}
-		err := LoginCmd([]string{mockServer.URL, "a user"})
+		loginResult, err := LoginCmd([]string{mockServer.URL, "a user"})
 		pwdReader = oldPwdReader
 
 		if err != nil {
 			t.Errorf("Expected no error, got %s", err.Error())
+		}
+
+		if loginResult == nil {
+			t.Error("Expected result, got nil")
 		}
 
 		cred, err := keyring.Get(nuvSecretServiceName, "fakeCred")
@@ -144,7 +155,7 @@ func TestLoginCmd(t *testing.T) {
 			Password:    "a password",
 			ReturnError: false,
 		}
-		err := LoginCmd([]string{mockServer.URL, "a user"})
+		loginResult, err := LoginCmd([]string{mockServer.URL, "a user"})
 		pwdReader = oldPwdReader
 
 		if err == nil {
@@ -152,6 +163,10 @@ func TestLoginCmd(t *testing.T) {
 		}
 		if err.Error() != "failed to decode response from login request" {
 			t.Errorf("Expected error to be 'failed to decode response from login request', got %s", err.Error())
+		}
+
+		if loginResult != nil {
+			t.Errorf("Expected loginResult to be nil, got %v", loginResult)
 		}
 	})
 }

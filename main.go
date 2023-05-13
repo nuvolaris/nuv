@@ -161,9 +161,16 @@ func main() {
 			os.Exit(0)
 		}
 		if cmd == "login" {
-			if err := auth.LoginCmd(args[2:]); err != nil {
+			loginResult, err := auth.LoginCmd(args[2:])
+			if err != nil {
 				log.Fatalf("error: %s", err.Error())
 			}
+
+			fmt.Println("Successfully logged in as " + loginResult.Login + ".")
+			if err := wskPropertySet(loginResult.ApiHost, loginResult.Auth); err != nil {
+				log.Fatalf("error: %s", err.Error())
+			}
+			fmt.Println("Nuvolaris host and auth set successfully. You are now ready to use nuv -wsk!")
 			os.Exit(0)
 		}
 		if cmd == "config" {
@@ -224,4 +231,13 @@ func setAllConfigEnvVars(nuvRootDir string) error {
 
 	debug(nuvHome)
 	return applyAllConfigEnvVars(nuvRootDir, nuvHome)
+}
+
+func wskPropertySet(apihost, auth string) error {
+	args := []string{"property", "set", "--apihost", apihost, "--auth", auth}
+	cmd := append([]string{"wsk"}, args...)
+	if err := tools.Wsk(cmd); err != nil {
+		return err
+	}
+	return nil
 }

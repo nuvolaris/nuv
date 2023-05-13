@@ -20,6 +20,11 @@ require (
 )
 
 require (
+	github.com/kr/fs v0.1.0 // indirect
+	github.com/pkg/sftp v1.13.5 // indirect
+)
+
+require (
 	code.cloudfoundry.org/bytefmt v0.0.0-20200131002437-cf55d5288a48 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0
@@ -67,6 +72,7 @@ require (
 	github.com/mattn/go-zglob v0.0.4 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
+	github.com/nuvolaris/goph v0.0.0-20230425125736-e7c6bed14c20
 	github.com/nuvolaris/sh/v3 v3.0.0-20230506145920-eb793bb1aedd // indirect
 	github.com/nuvolaris/task/v3 v3.9.3-0.20230506150239-88df5a81e409 // indirect
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
@@ -84,13 +90,13 @@ require (
 	github.com/vbauerster/mpb/v5 v5.0.2 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/zalando/go-keyring v0.2.2
-	golang.org/x/crypto v0.3.0 // indirect
+	golang.org/x/crypto v0.6.0
 	golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb
-	golang.org/x/net v0.4.0 // indirect
+	golang.org/x/net v0.6.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/term v0.3.0
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/term v0.5.0
+	golang.org/x/text v0.7.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1

@@ -42,7 +42,7 @@ func Filetype() error {
 		return nil
 	}
 
-	// Get the list of directories to create from the remaining command line arguments
+	// Get the file path from the remaining command line arguments
 	files := flag.Args()
 	if len(files) != 1 {
 		flag.Usage()
