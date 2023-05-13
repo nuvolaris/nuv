@@ -30,7 +30,10 @@ import (
 // available in taskfiles
 // note some of them are implemented in main.go (config, retry)
 var tools = []string{
-	"awk", "die", "jq", "js", "envsubst", "wsk", "ht", "mkdir", "filetype", "random", "datefmt", "config", "retry",
+	"awk", "die", "jq", "js",
+	"envsubst", "wsk", "ht", "mkdir",
+	"filetype", "random", "datefmt",
+	"config", "retry", "urlenc",
 }
 
 // not available in taskfiles
@@ -124,7 +127,13 @@ func RunTool(name string, args []string) (int, error) {
 			fmt.Println(strings.Join(args, " "))
 		}
 		return 1, nil
+	case "urlenc":
+		os.Args = append([]string{"urlenc"}, args...)
+		if err := URLEncTool(); err != nil {
+			return 1, err
+		}
 	}
+
 	return 0, nil
 }
 
