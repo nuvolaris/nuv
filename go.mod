@@ -22,6 +22,7 @@ require (
 require (
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/pkg/sftp v1.13.5 // indirect
+	github.com/ryanuber/go-glob v1.0.0 // indirect
 )
 
 require (
@@ -61,6 +62,7 @@ require (
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/itchyny/timefmt-go v0.1.5 // indirect
+	github.com/jaytaylor/go-find v0.0.0-20230430153105-548b1a88d19c
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect

@@ -34,6 +34,7 @@ var tools = []string{
 	"envsubst", "wsk", "ht", "mkdir",
 	"filetype", "random", "datefmt",
 	"config", "retry", "urlenc", "ssh",
+	"find",
 }
 
 // not available in taskfiles
@@ -135,6 +136,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "urlenc":
 		os.Args = append([]string{"urlenc"}, args...)
 		if err := URLEncTool(); err != nil {
+			return 1, err
+		}
+	case "find":
+		os.Args = append([]string{"find"}, args...)
+		if err := FindTool(); err != nil {
 			return 1, err
 		}
 	}
