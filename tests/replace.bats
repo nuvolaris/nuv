@@ -29,14 +29,14 @@ setup() {
 }
 
 @test "nuv -replace" {
-    run nuv -replace testdata/_replace_test_ -s "foo" -r "bar" --dry-run
+    run nuv -replace testdata/testfiletype.txt -s "foo" -r "bar" --dry-run
     assert_success
 
-    run nuv -replace testdata/_replace_test_ -s "Test" -r "Replaced"
-    run cat testdata/_replace_test_
-    assert_line "Replaced"
+    run nuv -replace testdata/testfiletype.txt -s "text" -r "replaced"
+    run cat testdata/testfiletype.txt
+    assert_line "a sample replaced"
 
-    run nuv -replace testdata/_replace_test_ -s "Replaced" -r "Test" 
-    run cat testdata/_replace_test_
-    assert_line "Test"
+    run nuv -replace testdata/testfiletype.txt -s "replaced" -r "text" 
+    run cat testdata/testfiletype.txt
+    assert_line "a sample text"
 } 
