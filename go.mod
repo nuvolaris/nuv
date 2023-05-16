@@ -20,8 +20,13 @@ require (
 )
 
 require (
+	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
+	github.com/jessevdk/go-flags v1.5.0 // indirect
 	github.com/kr/fs v0.1.0 // indirect
+	github.com/mitchellh/copystructure v1.2.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pkg/sftp v1.13.5 // indirect
+	github.com/remeh/sizedwaitgroup v1.0.0 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 )
 
@@ -74,6 +79,7 @@ require (
 	github.com/mattn/go-zglob v0.0.4 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
+	github.com/nuvolaris/go-replace v0.0.0-20230515190028-12766da1824c
 	github.com/nuvolaris/goph v0.0.0-20230425125736-e7c6bed14c20
 	github.com/nuvolaris/sh/v3 v3.0.0-20230506145920-eb793bb1aedd // indirect
 	github.com/nuvolaris/task/v3 v3.9.3-0.20230506150239-88df5a81e409 // indirect

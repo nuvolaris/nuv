@@ -24,6 +24,7 @@ import (
 	gojq "github.com/itchyny/gojq/cli"
 	"github.com/nojima/httpie-go"
 	envsubst "github.com/nuvolaris/envsubst/cmd/envsubstmain"
+	replace "github.com/nuvolaris/go-replace"
 	"github.com/nuvolaris/goawk"
 )
 
@@ -34,7 +35,7 @@ var tools = []string{
 	"envsubst", "wsk", "ht", "mkdir",
 	"filetype", "random", "datefmt",
 	"config", "retry", "urlenc", "ssh",
-	"find",
+	"find", "replace",
 }
 
 // not available in taskfiles
@@ -143,6 +144,9 @@ func RunTool(name string, args []string) (int, error) {
 		if err := FindTool(); err != nil {
 			return 1, err
 		}
+	case "replace":
+		os.Args = append([]string{"replace"}, args...)
+		return replace.ReplaceMain()
 	}
 
 	return 0, nil
