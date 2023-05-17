@@ -161,9 +161,14 @@ func main() {
 			os.Exit(0)
 		}
 		if cmd == "login" {
-			loginResult, err := auth.LoginCmd(args[2:])
+			os.Args = args[1:]
+			loginResult, err := auth.LoginCmd()
 			if err != nil {
 				log.Fatalf("error: %s", err.Error())
+			}
+
+			if loginResult == nil {
+				os.Exit(1)
 			}
 
 			fmt.Println("Successfully logged in as " + loginResult.Login + ".")
