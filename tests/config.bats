@@ -186,4 +186,10 @@ setup() {
     run nuv -config NESTED_KEY
     assert_success
     assert_line 'new_value'
+
+    # read multiple values
+    run nuv -config KEY NESTED_KEY
+    assert_success
+    assert_line 'VALUE'
+    assert_line 'new_value'   
 }

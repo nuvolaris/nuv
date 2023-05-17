@@ -126,8 +126,8 @@ func runConfigTool(input []string, dir string, remove bool) error {
 
 	if remove {
 		configJSON, err = removeConfigValues(input, config)
-	} else if len(input) == 1 && !strings.Contains(input[0], "=") {
-		return readSingleValue(input, config)
+	} else if inputNotAssigns(input) {
+		return printValues(input, config)
 	} else {
 		configJSON, err = writeConfigValues(input, dir, config)
 	}
@@ -143,6 +143,15 @@ func runConfigTool(input []string, dir string, remove bool) error {
 		return err
 	}
 	return err
+}
+
+func inputNotAssigns(input []string) bool {
+	for _, arg := range input {
+		if strings.Contains(arg, "=") {
+			return false
+		}
+	}
+	return true
 }
 
 type configOperationFunc func(config map[string]interface{}, key string) bool
@@ -190,13 +199,8 @@ func removeConfigValues(input []string, config map[string]interface{}) ([]byte, 
 	return json.MarshalIndent(config, "", "  ")
 }
 
-func readSingleValue(input []string, config map[string]interface{}) error {
-	debug("reading config value of", input[0])
-	// If only one key is passed, read the value from the config file
-	keys, err := parseKey(strings.ToLower(input[0]))
-	if err != nil {
-		return err
-	}
+func printValues(input []string, config map[string]interface{}) error {
+	debug("reading config value for", input)
 
 	// use recursiveVisit to read the value
 	f := func(config map[string]interface{}, key string) bool {
@@ -208,8 +212,14 @@ func readSingleValue(input []string, config map[string]interface{}) error {
 		return true
 	}
 
-	if ok := recursiveVisit(config, 0, keys, f); !ok {
-		return fmt.Errorf("key not found: %s in config.json", input[0])
+	for _, key := range input {
+		keys, err := parseKey(strings.ToLower(key))
+		if err != nil {
+			return err
+		}
+		if ok := recursiveVisit(config, 0, keys, f); !ok {
+			return fmt.Errorf("key not found: %s in config.json", key)
+		}
 	}
 	return nil
 }
