@@ -169,3 +169,21 @@ setup() {
     run cat ~/.nuv/config.json
     assert_line '{}'
 }
+
+@test "read single value" {
+    run rm -f ~/.nuv/config.json
+    run nuv -config KEY=VALUE
+    assert_success
+
+    run nuv -config KEY
+    assert_success
+    assert_line 'VALUE'
+
+    # read nested value
+    run nuv -config NESTED_KEY=new_value
+    assert_success
+
+    run nuv -config NESTED_KEY
+    assert_success
+    assert_line 'new_value'
+}

@@ -55,12 +55,13 @@ func (kv *keyValues) Set(value string) error {
 
 func printConfigToolUsage() {
 	fmt.Print(`Usage:
-nuv -config [-h|--help] KEY=VALUE [KEY=VALUE ...]
+nuv -config [options] [KEY | KEY=VALUE [KEY=VALUE ...]]
 
-Set config values passed as key-value pairs.
+Set config values passed as key-value pairs. 
+If a single key is passed (without '='), its value is read from config.json, if it exists. 
 
 -h, --help    	show this help
--r, --remove    remove config values
+-r, --remove    remove config values by passing keys
 -d, --dump    	dump the configs
 `)
 }
@@ -125,6 +126,8 @@ func runConfigTool(input []string, dir string, remove bool) error {
 
 	if remove {
 		configJSON, err = removeConfigValues(input, config)
+	} else if len(input) == 1 && !strings.Contains(input[0], "=") {
+		return readSingleValue(input, config)
 	} else {
 		configJSON, err = writeConfigValues(input, dir, config)
 	}
@@ -142,41 +145,73 @@ func runConfigTool(input []string, dir string, remove bool) error {
 	return err
 }
 
+type configOperationFunc func(config map[string]interface{}, key string) bool
+
+func recursiveVisit(config map[string]interface{}, index int, keys []string, f configOperationFunc) bool {
+	// base case: if the key is the last key in the list, call the function f
+	if index == len(keys)-1 {
+		return f(config, keys[index])
+	}
+
+	// recursive case: if the key is not the last key in the list, call recursiveVisit on the next key (if cast ok)
+	conf, ok := config[keys[index]].(map[string]interface{})
+	if !ok {
+		return false
+	}
+	success := recursiveVisit(conf, index+1, keys, f)
+	// if the parent map is empty, clean up
+	if success && len(conf) == 0 {
+		delete(config, keys[index])
+	}
+	return success
+}
+
 func removeConfigValues(input []string, config map[string]interface{}) ([]byte, error) {
 	debug("removing config values", input)
+
+	f := func(config map[string]interface{}, key string) bool {
+		if _, ok := config[key]; !ok {
+			return false
+		}
+
+		delete(config, key)
+		return true
+	}
+
 	for _, key := range input {
 		keys, err := parseKey(strings.ToLower(key))
 		if err != nil {
 			return nil, err
 		}
-		if success := recursiveDelete(config, 0, keys); !success {
-			warn("key not found", key)
+		if ok := recursiveVisit(config, 0, keys, f); !ok {
+			return nil, fmt.Errorf("key not found: %s in config.json", key)
 		}
 	}
 	return json.MarshalIndent(config, "", "  ")
 }
 
-func recursiveDelete(config map[string]interface{}, index int, keys []string) bool {
-	if index == len(keys)-1 {
-		if _, ok := config[keys[index]]; !ok {
+func readSingleValue(input []string, config map[string]interface{}) error {
+	debug("reading config value of", input[0])
+	// If only one key is passed, read the value from the config file
+	keys, err := parseKey(strings.ToLower(input[0]))
+	if err != nil {
+		return err
+	}
+
+	// use recursiveVisit to read the value
+	f := func(config map[string]interface{}, key string) bool {
+		value, ok := config[key]
+		if !ok {
 			return false
 		}
-		delete(config, keys[index])
-
+		fmt.Println(value)
 		return true
 	}
 
-	conf, ok := config[keys[index]].(map[string]interface{})
-	if !ok {
-		return false
+	if ok := recursiveVisit(config, 0, keys, f); !ok {
+		return fmt.Errorf("key not found: %s in config.json", input[0])
 	}
-
-	success := recursiveDelete(conf, index+1, keys)
-	// if the parent map is empty, delete it
-	if success && len(conf) == 0 {
-		delete(config, keys[index])
-	}
-	return true
+	return nil
 }
 
 func writeConfigValues(input []string, dir string, config map[string]interface{}) ([]byte, error) {
