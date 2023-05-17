@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/zalando/go-keyring"
@@ -55,7 +56,8 @@ func setupMockServer(t *testing.T, expectedLogin, expectedPass, expectedRes stri
 	return server
 }
 func ExampleLoginCmd_noArgs() {
-	_, err := LoginCmd([]string{})
+	os.Args = []string{"login"}
+	_, err := LoginCmd()
 	fmt.Println(err)
 	// Output:
 	// Usage:
@@ -72,8 +74,8 @@ func TestLoginCmd(t *testing.T) {
 			Password:    "",
 			ReturnError: false,
 		}
-
-		res, err := LoginCmd([]string{"fakeApiHost", "fakeUser"})
+		os.Args = []string{"login", "fakeApiHost", "fakeUser"}
+		res, err := LoginCmd()
 		pwdReader = oldPwdReader
 		if err == nil {
 			t.Error("Expected error, got nil")
@@ -95,7 +97,9 @@ func TestLoginCmd(t *testing.T) {
 			Password:    "a password",
 			ReturnError: false,
 		}
-		loginResult, err := LoginCmd([]string{mockServer.URL})
+
+		os.Args = []string{"login", mockServer.URL}
+		loginResult, err := LoginCmd()
 		pwdReader = oldPwdReader
 
 		if err != nil {
@@ -125,7 +129,9 @@ func TestLoginCmd(t *testing.T) {
 			Password:    "a password",
 			ReturnError: false,
 		}
-		loginResult, err := LoginCmd([]string{mockServer.URL, "a user"})
+
+		os.Args = []string{"login", mockServer.URL, "a user"}
+		loginResult, err := LoginCmd()
 		pwdReader = oldPwdReader
 
 		if err != nil {
@@ -155,7 +161,8 @@ func TestLoginCmd(t *testing.T) {
 			Password:    "a password",
 			ReturnError: false,
 		}
-		loginResult, err := LoginCmd([]string{mockServer.URL, "a user"})
+		os.Args = []string{"login", mockServer.URL, "a user"}
+		loginResult, err := LoginCmd()
 		pwdReader = oldPwdReader
 
 		if err == nil {

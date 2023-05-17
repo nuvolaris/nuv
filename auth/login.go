@@ -38,20 +38,35 @@ type LoginResult struct {
 const usage = `Usage:
 nuv login <apihost> [<user>]
 
-Login to a Nuvolaris instance. If no user is specified, the default user "nuvolaris" is used.`
+Login to a Nuvolaris instance. If no user is specified, the default user "nuvolaris" is used.
+
+Options:
+  -h, --help   Show usage`
 
 const whiskLoginPath = "/api/v1/web/whisk-system/nuv/login"
 const defaultUser = "nuvolaris"
 const nuvSecretServiceName = "nuvolaris"
 
-func LoginCmd(args []string) (*LoginResult, error) {
+func LoginCmd() (*LoginResult, error) {
 	flag.Usage = func() {
 		fmt.Println(usage)
 	}
 
-	if len(args) == 0 {
+	var helpFlag bool
+	flag.BoolVar(&helpFlag, "h", false, "Show usage")
+	flag.BoolVar(&helpFlag, "help", false, "Show usage")
+	flag.Parse()
+
+	if helpFlag {
 		flag.Usage()
 		return nil, nil
+	}
+
+	args := flag.Args()
+
+	if len(args) == 0 {
+		flag.Usage()
+		return nil, errors.New("missing apihost")
 	}
 
 	fmt.Print("Enter Password: ")
