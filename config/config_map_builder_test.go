@@ -43,43 +43,56 @@ func TestConfigMapBuilder(t *testing.T) {
 			name:       "should return empty configmap when no files are added",
 			configJson: "",
 			nuvRoot:    "",
-			want:       ConfigMap{},
-			err:        nil,
+			want: ConfigMap{
+				config:        map[string]interface{}{},
+				nuvRootConfig: map[string]interface{}{},
+			},
+			err: nil,
 		},
 		{
-			name:       "should return configmap with values when a valid config.json is added",
+			name:       "should return with config when a valid config.json is added",
 			configJson: configJsonPath,
 			nuvRoot:    "",
 			want: ConfigMap{
-				"key": "value",
-				"nested": map[string]interface{}{
-					"key": 123.0,
+				nuvRootConfig: map[string]interface{}{},
+				config: map[string]interface{}{
+					"key": "value",
+					"nested": map[string]interface{}{
+						"key": 123.0,
+					},
 				},
 			},
 		},
 		{
-			name:       "should return configmap with values when a valid nuvroot.json is added",
+			name:       "should return with nuvroot when a valid nuvroot.json is added",
 			configJson: "",
 			nuvRoot:    nuvRootPath,
 			want: ConfigMap{
-				"nuvroot": "value",
-				"another": map[string]interface{}{
-					"key": 123.0,
+				nuvRootConfig: map[string]interface{}{
+					"nuvroot": "value",
+					"another": map[string]interface{}{
+						"key": 123.0,
+					},
 				},
+				config: map[string]interface{}{},
 			},
 		},
 		{
-			name:       "should return configmap with values when both config.json and nuvroot.json are added",
+			name:       "should return with both when both config.json and nuvroot.json are added",
 			configJson: configJsonPath,
 			nuvRoot:    nuvRootPath,
 			want: ConfigMap{
-				"key": "value",
-				"nested": map[string]interface{}{
-					"key": 123.0,
+				config: map[string]interface{}{
+					"key": "value",
+					"nested": map[string]interface{}{
+						"key": 123.0,
+					},
 				},
-				"nuvroot": "value",
-				"another": map[string]interface{}{
-					"key": 123.0,
+				nuvRootConfig: map[string]interface{}{
+					"nuvroot": "value",
+					"another": map[string]interface{}{
+						"key": 123.0,
+					},
 				},
 			},
 		},
@@ -120,87 +133,4 @@ func createFakeConfigFile(t *testing.T, name, dir, content string) string {
 	}
 
 	return path
-}
-
-func Test_mergeMaps(t *testing.T) {
-	testCases := []struct {
-		name     string
-		m1       map[string]interface{}
-		m2       map[string]interface{}
-		expected map[string]interface{}
-	}{
-		{
-			name: "m1 empty",
-			m1:   map[string]interface{}{},
-			m2: map[string]interface{}{
-				"test": "test",
-			},
-			expected: map[string]interface{}{
-				"test": "test",
-			},
-		},
-		{
-			name: "m2 empty",
-			m1: map[string]interface{}{
-				"test": "test",
-			},
-			m2: map[string]interface{}{},
-			expected: map[string]interface{}{
-				"test": "test",
-			},
-		},
-		{
-			name: "m1 and m2 not empty",
-			m1: map[string]interface{}{
-				"test": "test",
-			},
-			m2: map[string]interface{}{
-				"test2": "test2",
-			},
-			expected: map[string]interface{}{
-				"test":  "test",
-				"test2": "test2",
-			},
-		},
-		{
-			name: "m1 and m2 not empty with same key",
-			m1: map[string]interface{}{
-				"test": "test",
-			},
-			m2: map[string]interface{}{
-				"test": "test2",
-			},
-			expected: map[string]interface{}{
-				"test": "test2",
-			},
-		},
-		{
-			name: "m1 and m2 not empty with same key and nested map",
-			m1: map[string]interface{}{
-				"test": map[string]interface{}{
-					"test": "test",
-				},
-			},
-			m2: map[string]interface{}{
-				"test": map[string]interface{}{
-					"test2": "test2",
-				},
-			},
-			expected: map[string]interface{}{
-				"test": map[string]interface{}{
-					"test":  "test",
-					"test2": "test2",
-				},
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			result := mergeMaps(tc.m1, tc.m2)
-			if !reflect.DeepEqual(result, tc.expected) {
-				t.Errorf("expected: %v, got: %v", tc.expected, result)
-			}
-		})
-	}
 }

@@ -108,7 +108,6 @@ func readNuvRootFile(dir string) (NuvRootJSON, error) {
 	}
 	return data, nil
 }
-
 func readNuvConfigFile(dir string) (map[string]interface{}, error) {
 	data := make(map[string]interface{})
 	json_buf, err := os.ReadFile(joinpath(dir, CONFIGFILE))

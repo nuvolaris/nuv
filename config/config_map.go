@@ -1,7 +1,9 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -22,45 +24,124 @@ import (
 //
 // To interact with the ConfigMap, use the Insert, Get, Update, and Delete by passing
 // keys in the form above.
-type ConfigMap map[string]interface{}
+type ConfigMap struct {
+	nuvRootConfig map[string]interface{}
+	config        map[string]interface{}
+}
 
 // Insert inserts a key and value into the ConfigMap. If the key already exists,
 // the value is overwritten. The expected key format is A_KEY_WITH_UNDERSCORES.
-func (c *ConfigMap) Insert(key string, value interface{}) error {
-
-	_, err := parseKey(strings.ToLower(key))
+func (c *ConfigMap) Insert(key string, value string) error {
+	keys, err := parseKey(strings.ToLower(key))
 	if err != nil {
 		return err
+	}
+
+	currentMap := c.config
+	lastIndex := len(keys) - 1
+	for i, subKey := range keys {
+		// If we are at the last key, set the value
+		if i == lastIndex {
+			v, err := parseValue(value)
+			if err != nil {
+				return err
+			}
+
+			currentMap[subKey] = v
+		} else {
+			// If the sub-map doesn't exist, create it
+			if _, ok := currentMap[subKey]; !ok {
+				currentMap[subKey] = make(map[string]interface{})
+			}
+			// Update the current map to the sub-map
+			m, ok := currentMap[subKey].(map[string]interface{})
+			if !ok {
+				return fmt.Errorf("invalid key: '%s' - '%s' is already being used for a value", key, subKey)
+			}
+			currentMap = m
+		}
 	}
 
 	return nil
 }
 
-func (c *ConfigMap) Get(key string) interface{} {
+func (c *ConfigMap) Get(key string) (string, error) {
+	cmap := c.Flatten()
+
+	val, ok := cmap[key]
+	if !ok {
+		return "", fmt.Errorf("invalid key: '%s' - key does not exist", key)
+	}
+
+	return val, nil
+}
+
+func (c *ConfigMap) Delete(key string) error {
+	delFunc := func(config map[string]interface{}, key string) bool {
+		if _, ok := config[key]; !ok {
+			return false
+		}
+
+		delete(config, key)
+		return true
+	}
+	keys, err := parseKey(strings.ToLower(key))
+	if err != nil {
+		return err
+	}
+
+	ok := visit(c.config, 0, keys, delFunc)
+	if !ok {
+		return fmt.Errorf("invalid key: '%s' - key does not exist in config.json", key)
+	}
 	return nil
 }
 
-func (c *ConfigMap) Update(key string, value interface{}) bool {
-	return false
+func (c *ConfigMap) Flatten() map[string]string {
+	outputMap := make(map[string]string)
+
+	merged := mergeMaps(c.nuvRootConfig, c.config)
+	flatten("", merged, outputMap)
+
+	return outputMap
 }
 
-func (c *ConfigMap) Delete(key string) bool {
-	return false
+// ///
+func flatten(prefix string, inputMap map[string]interface{}, outputMap map[string]string) {
+	if len(prefix) > 0 {
+		prefix += "_"
+	}
+	for k, v := range inputMap {
+		key := strings.ToUpper(prefix + k)
+		switch child := v.(type) {
+		case map[string]interface{}:
+			flatten(key, child, outputMap)
+		default:
+			outputMap[key] = fmt.Sprintf("%v", v)
+		}
+	}
 }
 
-func (c *ConfigMap) DumpAll() {
+type configOperationFunc func(config map[string]interface{}, key string) bool
 
+func visit(config map[string]interface{}, index int, keys []string, f configOperationFunc) bool {
+	// base case: if the key is the last key in the list, call the function f
+	if index == len(keys)-1 {
+		return f(config, keys[index])
+	}
+
+	// recursive case: if the key is not the last key in the list, call visit on the next key (if cast ok)
+	conf, ok := config[keys[index]].(map[string]interface{})
+	if !ok {
+		return false
+	}
+	success := visit(conf, index+1, keys, f)
+	// if the parent map is empty, clean up
+	if success && len(conf) == 0 {
+		delete(config, keys[index])
+	}
+	return success
 }
-
-func (c *ConfigMap) Keys() []string {
-	return nil
-}
-
-func (c *ConfigMap) flatten() map[string]string {
-	return map[string]string{}
-}
-
-////
 
 func parseKey(key string) ([]string, error) {
 	parts := strings.Split(key, "_")
@@ -70,4 +151,86 @@ func parseKey(key string) ([]string, error) {
 		}
 	}
 	return parts, nil
+}
+
+/*
+VALUEs are parsed in the following way:
+
+  - try to parse as a jsos first, and if it is a json, store as a json
+  - then try to parse as a number, and if it is a (float) number store as a number
+  - then try to parse as true or false and store as a boolean
+  - then check if it's null and store as a null
+  - otherwise store as a string
+*/
+func parseValue(value string) (interface{}, error) {
+	// Try to parse as json
+	var jsonValue interface{}
+	if err := json.Unmarshal([]byte(value), &jsonValue); err == nil {
+		return jsonValue, nil
+	}
+
+	// Try to parse as a integer with strconv
+	if intValue, err := strconv.Atoi(value); err == nil {
+		return intValue, nil
+	}
+
+	// Try to parse as a float with strconv
+	if floatValue, err := strconv.ParseFloat(value, 64); err == nil {
+		return floatValue, nil
+	}
+
+	// Try to parse as a boolean
+	if value == "true" || value == "false" {
+		return value == "true", nil
+	}
+
+	// Try to parse as null
+	if value == "null" {
+		return nil, nil
+	}
+
+	// Otherwise, return the string
+	return value, nil
+}
+
+// mergeMaps merges map2 into map1 overwriting any values in map1 with values from map2
+// when there are conflicts. It returns the merged map.
+func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
+	mergedMap := make(map[string]interface{})
+
+	for key, value := range map1 {
+
+		map2Value, ok := map2[key]
+		// key doesn't exist in map2 so add it to the merged map
+		if !ok {
+			mergedMap[key] = value
+			continue
+		}
+
+		// key exists in map2 but map1 value is NOT a map, so add value from map2
+		mapFromMap1, ok := value.(map[string]interface{})
+		if !ok {
+			mergedMap[key] = map2Value
+			continue
+		}
+
+		mapFromMap2, ok := map2Value.(map[string]interface{})
+		// key exists in map2, map1 value IS a map but map2 value is not, so overwrite with map2
+		if !ok {
+			mergedMap[key] = mapFromMap2
+			continue
+		}
+
+		// key exists in map2, map1 value IS a map, map2 value IS a map, so merge recursively
+		mergedMap[key] = mergeMaps(mapFromMap1, mapFromMap2)
+	}
+
+	// add any keys that exist in map2 but not in map1
+	for key, value := range map2 {
+		if _, ok := mergedMap[key]; !ok {
+			mergedMap[key] = value
+		}
+	}
+
+	return mergedMap
 }

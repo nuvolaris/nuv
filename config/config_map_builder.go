@@ -37,25 +37,28 @@ func (b *configMapBuilder) WithNuvRoot(file string) *configMapBuilder {
 func (b *configMapBuilder) Build() (ConfigMap, error) {
 	configJsonMap, err := readConfig(b.configJsonPath, fromConfigJson)
 	if err != nil {
-		return nil, err
+		return ConfigMap{}, err
 	}
 
 	nuvRootMap, err := readConfig(b.nuvRootPath, fromNuvRoot)
 	if err != nil {
-		return nil, err
+		return ConfigMap{}, err
 	}
 
-	return mergeMaps(configJsonMap, nuvRootMap), nil
+	return ConfigMap{
+		nuvRootConfig: nuvRootMap,
+		config:        configJsonMap,
+	}, nil
 }
 
-func readConfig(path string, read func(string) (ConfigMap, error)) (ConfigMap, error) {
+func readConfig(path string, read func(string) (map[string]interface{}, error)) (map[string]interface{}, error) {
 	if path == "" {
-		return ConfigMap{}, nil
+		return make(map[string]interface{}), nil
 	}
 
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
-		return ConfigMap{}, nil
+		return make(map[string]interface{}), nil
 	}
 	if err != nil {
 		return nil, err
@@ -69,8 +72,8 @@ func readConfig(path string, read func(string) (ConfigMap, error)) (ConfigMap, e
 	return cMap, nil
 }
 
-func fromConfigJson(configPath string) (ConfigMap, error) {
-	data := ConfigMap{}
+func fromConfigJson(configPath string) (map[string]interface{}, error) {
+	data := make(map[string]interface{})
 	json_buf, err := os.ReadFile(configPath)
 	if err != nil {
 		return data, err
@@ -85,8 +88,8 @@ func fromConfigJson(configPath string) (ConfigMap, error) {
 	return data, nil
 }
 
-func fromNuvRoot(nuvRootPath string) (ConfigMap, error) {
-	data := map[string]interface{}{}
+func fromNuvRoot(nuvRootPath string) (map[string]interface{}, error) {
+	data := make(map[string]interface{})
 	json_buf, err := os.ReadFile(nuvRootPath)
 	if err != nil {
 		return data, err
@@ -104,46 +107,4 @@ func fromNuvRoot(nuvRootPath string) (ConfigMap, error) {
 		return nil, errors.New("config key not found in nuvroot.json")
 	}
 	return cm, nil
-}
-
-// mergeMaps merges map2 into map1 overwriting any values in map1 with values from map2
-// when there are conflicts. It returns the merged map.
-func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
-	mergedMap := make(map[string]interface{})
-
-	for key, value := range map1 {
-
-		map2Value, ok := map2[key]
-		// key doesn't exist in map2 so add it to the merged map
-		if !ok {
-			mergedMap[key] = value
-			continue
-		}
-
-		// key exists in map2 but map1 value is NOT a map, so add value from map2
-		mapFromMap1, ok := value.(map[string]interface{})
-		if !ok {
-			mergedMap[key] = map2Value
-			continue
-		}
-
-		mapFromMap2, ok := map2Value.(map[string]interface{})
-		// key exists in map2, map1 value IS a map but map2 value is not, so overwrite with map2
-		if !ok {
-			mergedMap[key] = mapFromMap2
-			continue
-		}
-
-		// key exists in map2, map1 value IS a map, map2 value IS a map, so merge recursively
-		mergedMap[key] = mergeMaps(mapFromMap1, mapFromMap2)
-	}
-
-	// add any keys that exist in map2 but not in map1
-	for key, value := range map2 {
-		if _, ok := mergedMap[key]; !ok {
-			mergedMap[key] = value
-		}
-	}
-
-	return mergedMap
 }
