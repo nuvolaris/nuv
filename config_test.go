@@ -26,6 +26,35 @@ import (
 	"testing"
 )
 
+func ExampleConfigTool_readValue() {
+	tmpDir, _ := os.MkdirTemp("", "nuv")
+	defer os.RemoveAll(tmpDir)
+
+	err := runConfigTool([]string{"foo=bar"}, tmpDir, false)
+	if err != nil {
+		pr("error:", err)
+	}
+
+	err = runConfigTool([]string{"foo"}, tmpDir, false)
+	if err != nil {
+		pr("error:", err)
+	}
+
+	// nested key
+	err = runConfigTool([]string{"nested_val=val"}, tmpDir, false)
+	if err != nil {
+		pr("error:", err)
+	}
+
+	err = runConfigTool([]string{"nested_val"}, tmpDir, false)
+	if err != nil {
+		pr("error:", err)
+	}
+	// Output:
+	// bar
+	// val
+}
+
 func Test_runConfigTool(t *testing.T) {
 	t.Run("new config.json", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
@@ -199,8 +228,8 @@ func Test_runConfigTool(t *testing.T) {
 		defer os.RemoveAll(tmpDir)
 
 		err := runConfigTool([]string{"foo"}, tmpDir, true)
-		if err != nil {
-			t.Errorf("error: %v", err)
+		if err == nil {
+			t.Errorf("expected error, got nil")
 		}
 
 		got, err := readNuvConfigFile(tmpDir)
@@ -214,7 +243,6 @@ func Test_runConfigTool(t *testing.T) {
 			t.Errorf("got %v, want %v", got, want)
 		}
 	})
-
 }
 
 func Test_buildConfigObject(t *testing.T) {
