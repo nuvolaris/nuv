@@ -65,6 +65,7 @@ func (b *configMapBuilder) Build() (ConfigMap, error) {
 	return ConfigMap{
 		nuvRootConfig: nuvRootMap,
 		config:        configJsonMap,
+		configPath:    b.configJsonPath,
 	}, nil
 }
 

@@ -78,6 +78,7 @@ func TestConfigMapBuilder(t *testing.T) {
 						"key": 123.0,
 					},
 				},
+				configPath: configJsonPath,
 			},
 		},
 		{
@@ -111,6 +112,7 @@ func TestConfigMapBuilder(t *testing.T) {
 						"key": 123.0,
 					},
 				},
+				configPath: configJsonPath,
 			},
 		},
 	}

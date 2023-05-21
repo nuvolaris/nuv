@@ -18,11 +18,45 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
 )
+
+func ExampleConfigTool_readValue() {
+	tmpDir, _ := os.MkdirTemp("", "nuv")
+	defer os.RemoveAll(tmpDir)
+
+	os.Args = []string{"config", "FOO=bar"}
+	err := ConfigTool(tmpDir, tmpDir)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	os.Args = []string{"config", "FOO"}
+	err = ConfigTool(tmpDir, tmpDir)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	// nested key
+	os.Args = []string{"config", "NESTED_VAL=val"}
+	err = ConfigTool(tmpDir, tmpDir)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	os.Args = []string{"config", "NESTED_VAL"}
+	err = ConfigTool(tmpDir, tmpDir)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	// Output:
+	// bar
+	// val
+}
 
 func TestConfigTool(t *testing.T) {
 	readConfigJson := func(path string) (map[string]interface{}, error) {
@@ -52,168 +86,266 @@ func TestConfigTool(t *testing.T) {
 		}
 	})
 
-	// t.Run("write values on existing config.json", func(t *testing.T) {
-	// 	tmpDir, _ := os.MkdirTemp("", "nuv")
-	// 	defer os.RemoveAll(tmpDir)
+	t.Run("write values on existing config.json", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
 
-	// 	err := runConfigTool([]string{"foo=bar"}, tmpDir, false)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "FOO=bar"}
+		err := ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	err = runConfigTool([]string{"bar=baz"}, tmpDir, false)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "BAR=baz"}
+		err = ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	got, err := readNuvConfigFile(tmpDir)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		got, err := readConfigJson(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	want := map[string]interface{}{
-	// 		"foo": "bar",
-	// 		"bar": "baz",
-	// 	}
+		want := map[string]interface{}{
+			"foo": "bar",
+			"bar": "baz",
+		}
 
-	// 	if !reflect.DeepEqual(got, want) {
-	// 		t.Errorf("got %v, want %v", got, want)
-	// 	}
-	// })
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
 
-	// t.Run("write existing value is overridden", func(t *testing.T) {
-	// 	tmpDir, _ := os.MkdirTemp("", "nuv")
-	// 	defer os.RemoveAll(tmpDir)
+	t.Run("write existing value is overridden", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
 
-	// 	err := runConfigTool([]string{"foo=bar"}, tmpDir, false)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "FOO=bar"}
+		err := ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	err = runConfigTool([]string{"foo=new"}, tmpDir, false)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "FOO=new"}
+		err = ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	got, err := readNuvConfigFile(tmpDir)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		got, err := readConfigJson(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	want := map[string]interface{}{
-	// 		"foo": "new",
-	// 	}
+		want := map[string]interface{}{
+			"foo": "new",
+		}
 
-	// 	if !reflect.DeepEqual(got, want) {
-	// 		t.Errorf("got %v, want %v", got, want)
-	// 	}
-	// })
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
 
-	// t.Run("write existing key object is merged", func(t *testing.T) {
-	// 	tmpDir, _ := os.MkdirTemp("", "nuv")
-	// 	defer os.RemoveAll(tmpDir)
+	t.Run("write existing key object is merged", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
 
-	// 	err := runConfigTool([]string{"foo_bar=bar"}, tmpDir, false)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "FOO_BAR=bar"}
+		err := ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	err = runConfigTool([]string{"foo_baz=baz"}, tmpDir, false)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "FOO_BAZ=baz"}
+		err = ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	got, err := readNuvConfigFile(tmpDir)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		got, err := readConfigJson(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	want := map[string]interface{}{
-	// 		"foo": map[string]interface{}{
-	// 			"bar": "bar",
-	// 			"baz": "baz",
-	// 		},
-	// 	}
+		want := map[string]interface{}{
+			"foo": map[string]interface{}{
+				"bar": "bar",
+				"baz": "baz",
+			},
+		}
 
-	// 	if !reflect.DeepEqual(got, want) {
-	// 		t.Errorf("got %v, want %v", got, want)
-	// 	}
-	// })
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
 
-	// t.Run("remove existing key", func(t *testing.T) {
-	// 	tmpDir, _ := os.MkdirTemp("", "nuv")
-	// 	defer os.RemoveAll(tmpDir)
+	t.Run("write empty string to disable key", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
 
-	// 	err := runConfigTool([]string{"FOO=bar"}, tmpDir, false)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "FOO_BAR=bar"}
+		err := ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	err = runConfigTool([]string{"FOO"}, tmpDir, true)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "FOO_BAR=\"\""}
+		err = ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	got, err := readNuvConfigFile(tmpDir)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		got, err := readConfigJson(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	want := map[string]interface{}{}
+		want := map[string]interface{}{
+			"foo": map[string]interface{}{
+				"bar": "",
+			},
+		}
 
-	// 	if !reflect.DeepEqual(got, want) {
-	// 		t.Errorf("got %v, want %v", got, want)
-	// 	}
-	// })
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
 
-	// t.Run("remove nested key object", func(t *testing.T) {
-	// 	tmpDir, _ := os.MkdirTemp("", "nuv")
-	// 	defer os.RemoveAll(tmpDir)
+	t.Run("remove existing key", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
 
-	// 	err := runConfigTool([]string{"FOO_BAR=bar", "FOO_BAZ=baz"}, tmpDir, false)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "FOO=bar"}
+		err := ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	err = runConfigTool([]string{"FOO_BAR"}, tmpDir, true)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "-r", "FOO"}
+		err = ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	got, err := readNuvConfigFile(tmpDir)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		got, err := readConfigJson(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	want := map[string]interface{}{
-	// 		"foo": map[string]interface{}{
-	// 			"baz": "baz",
-	// 		},
-	// 	}
+		want := map[string]interface{}{}
 
-	// 	if !reflect.DeepEqual(got, want) {
-	// 		t.Errorf("got %v, want %v", got, want)
-	// 	}
-	// })
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
 
-	// t.Run("remove non-existing key", func(t *testing.T) {
-	// 	tmpDir, _ := os.MkdirTemp("", "nuv")
-	// 	defer os.RemoveAll(tmpDir)
+	t.Run("remove nested key object", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
 
-	// 	err := runConfigTool([]string{"foo"}, tmpDir, true)
-	// 	if err == nil {
-	// 		t.Errorf("expected error, got nil")
-	// 	}
+		os.Args = []string{"config", "FOO_BAR=bar", "FOO_BAZ=baz"}
+		err := ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+		j, _ := readConfigJson(tmpDir)
+		t.Logf("config.json: %s", j)
 
-	// 	got, err := readNuvConfigFile(tmpDir)
-	// 	if err != nil {
-	// 		t.Errorf("error: %v", err)
-	// 	}
+		os.Args = []string{"config", "-r", "FOO_BAR"}
+		err = ConfigTool(tmpDir, tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	want := map[string]interface{}{}
+		got, err := readConfigJson(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
 
-	// 	if !reflect.DeepEqual(got, want) {
-	// 		t.Errorf("got %v, want %v", got, want)
-	// 	}
-	// })
+		want := map[string]interface{}{
+			"foo": map[string]interface{}{
+				"baz": "baz",
+			},
+		}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("remove non-existing key", func(t *testing.T) {
+		tmpDir, _ := os.MkdirTemp("", "nuv")
+		defer os.RemoveAll(tmpDir)
+
+		os.Args = []string{"config", "-r", "FOO"}
+		err := ConfigTool(tmpDir, tmpDir)
+		if err == nil {
+			t.Errorf("expected error, got nil")
+		}
+
+		got, err := readConfigJson(tmpDir)
+		if err != nil {
+			t.Errorf("error: %v", err)
+		}
+
+		want := map[string]interface{}{}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+}
+
+func Test_buildKeyValueMap(t *testing.T) {
+	testCases := []struct {
+		name  string
+		input []string
+		want  keyValues
+		err   error
+	}{
+		{
+			name:  "Empty string",
+			input: []string{},
+			want:  nil,
+			err:   fmt.Errorf("no key-value pairs provided"),
+		},
+		{
+			name:  "Single key-value pair",
+			input: []string{"foo=bar"},
+			want:  keyValues{"foo": "bar"},
+			err:   nil,
+		},
+		{
+			name:  "Multiple key-value pairs",
+			input: []string{"foo=bar", "baz=qux"},
+			want:  keyValues{"foo": "bar", "baz": "qux"},
+			err:   nil,
+		},
+		{
+			name:  "Invalid key-value pair",
+			input: []string{"foo"},
+			want:  nil,
+			err:   fmt.Errorf("invalid key-value pair: %q", "foo"),
+		},
+		{
+			name:  "Invalid key-value pair",
+			input: []string{"foo="},
+			want:  nil,
+			err:   fmt.Errorf("invalid key-value pair: %q", "foo="),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := buildInputKVMap(tc.input)
+
+			if tc.err != nil && (err == nil || err.Error() != tc.err.Error()) {
+				t.Errorf("Expected error %v, got %v", tc.err, err)
+			}
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("Expected %v, got %v", tc.want, got)
+			}
+		})
+	}
 }

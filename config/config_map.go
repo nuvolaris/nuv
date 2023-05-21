@@ -44,6 +44,7 @@ import (
 type ConfigMap struct {
 	nuvRootConfig map[string]interface{}
 	config        map[string]interface{}
+	configPath    string
 }
 
 // Insert inserts a key and value into the ConfigMap. If the key already exists,

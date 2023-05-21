@@ -18,12 +18,32 @@
 package config
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 )
 
+func printConfigToolUsage() {
+	fmt.Print(`Usage:
+nuv -config [options] [KEY | KEY=VALUE [KEY=VALUE ...]]
+
+Set config values passed as key-value pairs. 
+If the keys are passed (without '='), their values are printed, if they exists.
+
+If you want to override a value, pass KEY="". This can be used to disable values in nuvroot.json.
+Removing values from nuvroot.json is not supported, disable them instead.
+
+-h, --help    	show this help
+-r, --remove    remove config values by passing keys
+-d, --dump    	dump the configs
+`)
+}
+
 func ConfigTool(nuvRootDir string, configDir string) error {
+	flag := flag.NewFlagSet("config", flag.ExitOnError)
 	var helpFlag bool
 	var dumpFlag bool
 	var removeFlag bool
@@ -37,7 +57,7 @@ func ConfigTool(nuvRootDir string, configDir string) error {
 	flag.BoolVar(&removeFlag, "remove", false, "remove config values")
 	flag.BoolVar(&removeFlag, "r", false, "remove config values")
 
-	flag.Parse()
+	flag.Parse(os.Args[1:])
 
 	if helpFlag {
 		flag.Usage()
@@ -69,25 +89,104 @@ func ConfigTool(nuvRootDir string, configDir string) error {
 		return nil
 	}
 
-	return runConfigTool(input, configMap, removeFlag)
+	var configJSON []byte
+	var cErr error
+
+	if removeFlag {
+		configJSON, cErr = removeInConfigJSON(configMap, input)
+	} else if inputWithoutAssigns(input) {
+		return printValues(configMap, input)
+
+	} else {
+		configJSON, cErr = insertInConfigJSON(configMap, input)
+	}
+	if cErr != nil {
+		return cErr
+	}
+
+	return os.WriteFile(configMap.configPath, configJSON, 0644)
 }
 
-func runConfigTool(input []string, configMap ConfigMap, removeFlag bool) error {
+func insertInConfigJSON(configMap ConfigMap, input []string) ([]byte, error) {
+	// Parse the input string into key-value pairs
+	pairs, err := buildInputKVMap(input)
+	if err != nil {
+		return nil, err
+	}
+	for k, v := range pairs {
+		if err := configMap.Insert(k, v); err != nil {
+			return nil, err
+		}
+	}
+
+	return json.MarshalIndent(configMap.config, "", "  ")
+}
+
+func removeInConfigJSON(configMap ConfigMap, input []string) ([]byte, error) {
+	for _, k := range input {
+		if err := configMap.Delete(k); err != nil {
+			return nil, err
+		}
+	}
+	return json.MarshalIndent(configMap.config, "", "  ")
+}
+
+func inputWithoutAssigns(input []string) bool {
+	for _, arg := range input {
+		if strings.Contains(arg, "=") {
+			return false
+		}
+	}
+	return true
+}
+
+func printValues(configMap ConfigMap, keys []string) error {
+	for _, k := range keys {
+		val, err := configMap.Get(k)
+		if err != nil {
+			return err
+		}
+		fmt.Println(val)
+	}
 	return nil
 }
 
-func printConfigToolUsage() {
-	fmt.Print(`Usage:
-nuv -config [options] [KEY | KEY=VALUE [KEY=VALUE ...]]
+type keyValues map[string]string
 
-Set config values passed as key-value pairs. 
-If a single key is passed (without '='), its value is read from config.json, if it exists.
+func (kv *keyValues) String() string {
+	return fmt.Sprintf("%v", *kv)
+}
 
-If you want to override a value, pass KEY="". This can be used to disable values in nuvroot.json.
-Removing values from nuvroot.json is not supported, disable them instead.
+func (kv *keyValues) Set(value string) error {
+	parts := strings.SplitN(value, "=", 2)
+	if len(parts) != 2 {
+		return fmt.Errorf("invalid key-value pair: %q", value)
+	}
+	key := parts[0]
+	val := parts[1]
 
--h, --help    	show this help
--r, --remove    remove config values by passing keys
--d, --dump    	dump the configs
-`)
+	if key == "" || val == "" {
+		return fmt.Errorf("invalid key-value pair: %q", value)
+	}
+
+	if *kv == nil {
+		*kv = make(keyValues)
+	}
+	(*kv)[key] = val
+	return nil
+}
+
+func buildInputKVMap(pairs []string) (keyValues, error) {
+	var kv keyValues
+
+	if len(pairs) == 0 {
+		return nil, fmt.Errorf("no key-value pairs provided")
+	}
+
+	for _, pair := range pairs {
+		if err := kv.Set(pair); err != nil {
+			return nil, err
+		}
+	}
+	return kv, nil
 }
