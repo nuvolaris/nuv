@@ -26,8 +26,6 @@ import (
 	"strings"
 )
 
-// default port for nuv server
-
 // default files
 const NUVFILE = "nuvfile.yml"
 const NUVROOT = "nuvroot.json"
@@ -48,6 +46,7 @@ type NuvRootJSON struct {
 	Config  map[string]interface{} `json:"config"`
 }
 
+// default port for nuv server
 const DefaultNuvPort = 9768
 
 func getNuvPort() string {
@@ -105,24 +104,6 @@ func readNuvRootFile(dir string) (NuvRootJSON, error) {
 	}
 	if err := json.Unmarshal(json_buf, &data); err != nil {
 		warn("nuvroot.json parsed with an error", err)
-	}
-	return data, nil
-}
-func readNuvConfigFile(dir string) (map[string]interface{}, error) {
-	data := make(map[string]interface{})
-	json_buf, err := os.ReadFile(joinpath(dir, CONFIGFILE))
-	if os.IsNotExist(err) {
-		debug("config.json file not found")
-		return data, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(json_buf, &data); err != nil {
-		if data == nil {
-			return nil, err
-		}
-		warn("config.json parsed with an error", err)
 	}
 	return data, nil
 }

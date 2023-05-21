@@ -29,27 +29,30 @@ func ExampleConfigTool_readValue() {
 	tmpDir, _ := os.MkdirTemp("", "nuv")
 	defer os.RemoveAll(tmpDir)
 
+	nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+	configPath := filepath.Join(tmpDir, "config.json")
+
 	os.Args = []string{"config", "FOO=bar"}
-	err := ConfigTool(tmpDir, tmpDir)
+	err := ConfigTool(nuvRootPath, configPath)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
 
 	os.Args = []string{"config", "FOO"}
-	err = ConfigTool(tmpDir, tmpDir)
+	err = ConfigTool(nuvRootPath, configPath)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
 
 	// nested key
 	os.Args = []string{"config", "NESTED_VAL=val"}
-	err = ConfigTool(tmpDir, tmpDir)
+	err = ConfigTool(nuvRootPath, configPath)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
 
 	os.Args = []string{"config", "NESTED_VAL"}
-	err = ConfigTool(tmpDir, tmpDir)
+	err = ConfigTool(nuvRootPath, configPath)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
@@ -65,9 +68,11 @@ func TestConfigTool(t *testing.T) {
 	t.Run("new config.json", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
+		nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+		configPath := filepath.Join(tmpDir, "config.json")
 
 		os.Args = []string{"config", "FOO=bar"}
-		err := ConfigTool(tmpDir, tmpDir)
+		err := ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -89,15 +94,17 @@ func TestConfigTool(t *testing.T) {
 	t.Run("write values on existing config.json", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
+		nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+		configPath := filepath.Join(tmpDir, "config.json")
 
 		os.Args = []string{"config", "FOO=bar"}
-		err := ConfigTool(tmpDir, tmpDir)
+		err := ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
 
 		os.Args = []string{"config", "BAR=baz"}
-		err = ConfigTool(tmpDir, tmpDir)
+		err = ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -120,15 +127,17 @@ func TestConfigTool(t *testing.T) {
 	t.Run("write existing value is overridden", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
+		nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+		configPath := filepath.Join(tmpDir, "config.json")
 
 		os.Args = []string{"config", "FOO=bar"}
-		err := ConfigTool(tmpDir, tmpDir)
+		err := ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
 
 		os.Args = []string{"config", "FOO=new"}
-		err = ConfigTool(tmpDir, tmpDir)
+		err = ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -150,15 +159,17 @@ func TestConfigTool(t *testing.T) {
 	t.Run("write existing key object is merged", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
+		nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+		configPath := filepath.Join(tmpDir, "config.json")
 
 		os.Args = []string{"config", "FOO_BAR=bar"}
-		err := ConfigTool(tmpDir, tmpDir)
+		err := ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
 
 		os.Args = []string{"config", "FOO_BAZ=baz"}
-		err = ConfigTool(tmpDir, tmpDir)
+		err = ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -183,15 +194,17 @@ func TestConfigTool(t *testing.T) {
 	t.Run("write empty string to disable key", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
+		nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+		configPath := filepath.Join(tmpDir, "config.json")
 
 		os.Args = []string{"config", "FOO_BAR=bar"}
-		err := ConfigTool(tmpDir, tmpDir)
+		err := ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
 
 		os.Args = []string{"config", "FOO_BAR=\"\""}
-		err = ConfigTool(tmpDir, tmpDir)
+		err = ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -215,15 +228,17 @@ func TestConfigTool(t *testing.T) {
 	t.Run("remove existing key", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
+		nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+		configPath := filepath.Join(tmpDir, "config.json")
 
 		os.Args = []string{"config", "FOO=bar"}
-		err := ConfigTool(tmpDir, tmpDir)
+		err := ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
 
 		os.Args = []string{"config", "-r", "FOO"}
-		err = ConfigTool(tmpDir, tmpDir)
+		err = ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -243,9 +258,11 @@ func TestConfigTool(t *testing.T) {
 	t.Run("remove nested key object", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
+		nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+		configPath := filepath.Join(tmpDir, "config.json")
 
 		os.Args = []string{"config", "FOO_BAR=bar", "FOO_BAZ=baz"}
-		err := ConfigTool(tmpDir, tmpDir)
+		err := ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -253,7 +270,7 @@ func TestConfigTool(t *testing.T) {
 		t.Logf("config.json: %s", j)
 
 		os.Args = []string{"config", "-r", "FOO_BAR"}
-		err = ConfigTool(tmpDir, tmpDir)
+		err = ConfigTool(nuvRootPath, configPath)
 		if err != nil {
 			t.Errorf("error: %v", err)
 		}
@@ -277,9 +294,11 @@ func TestConfigTool(t *testing.T) {
 	t.Run("remove non-existing key", func(t *testing.T) {
 		tmpDir, _ := os.MkdirTemp("", "nuv")
 		defer os.RemoveAll(tmpDir)
+		nuvRootPath := filepath.Join(tmpDir, "nuvroot.json")
+		configPath := filepath.Join(tmpDir, "config.json")
 
 		os.Args = []string{"config", "-r", "FOO"}
-		err := ConfigTool(tmpDir, tmpDir)
+		err := ConfigTool(nuvRootPath, configPath)
 		if err == nil {
 			t.Errorf("expected error, got nil")
 		}

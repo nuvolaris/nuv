@@ -19,8 +19,6 @@ package config
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"log"
 	"os"
 )
@@ -119,10 +117,9 @@ func fromNuvRoot(nuvRootPath string) (map[string]interface{}, error) {
 		log.Println("nuvroot.json parsed with an error", err)
 	}
 
-	fmt.Printf("data: %v\n", data)
 	cm, ok := data["config"].(map[string]interface{})
 	if !ok {
-		return nil, errors.New("config key not found in nuvroot.json")
+		return nil, nil
 	}
 	return cm, nil
 }

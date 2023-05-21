@@ -22,7 +22,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -42,7 +41,7 @@ Removing values from nuvroot.json is not supported, disable them instead.
 `)
 }
 
-func ConfigTool(nuvRootDir string, configDir string) error {
+func ConfigTool(nuvRootPath string, configPath string) error {
 	flag := flag.NewFlagSet("config", flag.ExitOnError)
 	var helpFlag bool
 	var dumpFlag bool
@@ -57,7 +56,10 @@ func ConfigTool(nuvRootDir string, configDir string) error {
 	flag.BoolVar(&removeFlag, "remove", false, "remove config values")
 	flag.BoolVar(&removeFlag, "r", false, "remove config values")
 
-	flag.Parse(os.Args[1:])
+	err := flag.Parse(os.Args[1:])
+	if err != nil {
+		return err
+	}
 
 	if helpFlag {
 		flag.Usage()
@@ -65,8 +67,8 @@ func ConfigTool(nuvRootDir string, configDir string) error {
 	}
 
 	configMap, err := NewConfigMapBuilder().
-		WithConfigJson(filepath.Join(configDir, "config.json")).
-		WithNuvRoot(filepath.Join(nuvRootDir, "nuvroot.json")).
+		WithConfigJson(configPath).
+		WithNuvRoot(nuvRootPath).
 		Build()
 
 	if err != nil {

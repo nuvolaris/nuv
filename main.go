@@ -26,6 +26,7 @@ import (
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/nuvolaris/nuv/auth"
+	"github.com/nuvolaris/nuv/config"
 	"github.com/nuvolaris/nuv/tools"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
 )
@@ -111,6 +112,12 @@ func main() {
 		setupBinPath(tools.NuvCmd)
 	}
 
+	nuvHome, err := homedir.Expand("~/.nuv")
+	if err != nil {
+		warn("cannot expand home dir", err)
+		os.Exit(1)
+	}
+
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
 	args := os.Args
@@ -180,7 +187,9 @@ func main() {
 		}
 		if cmd == "config" {
 			os.Args = args[1:]
-			if err := ConfigTool(); err != nil {
+			nuvRootPath := joinpath(retrieveRootDir(), NUVROOT)
+			configPath := joinpath(nuvHome, CONFIGFILE)
+			if err := config.ConfigTool(nuvRootPath, configPath); err != nil {
 				log.Fatalf("error: %s", err.Error())
 			}
 			os.Exit(0)
@@ -202,9 +211,9 @@ func main() {
 
 	setupTmp()
 
-	err = setAllConfigEnvVars(nuvRootDir)
+	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
 	if err != nil {
-		warn("cannot apply env vars from config", err)
+		warn("cannot apply env vars from configs", err)
 		os.Exit(1)
 	}
 
@@ -225,17 +234,26 @@ func retrieveRootDir() string {
 	return dir
 }
 
-func setAllConfigEnvVars(nuvRootDir string) error {
+func setAllConfigEnvVars(nuvRootDir string, configDir string) error {
 	trace("setting all config env vars")
-	nuvHome, err := homedir.Expand("~/.nuv")
+	configMap, err := config.NewConfigMapBuilder().
+		WithNuvRoot(joinpath(nuvRootDir, NUVROOT)).
+		WithConfigJson(joinpath(configDir, CONFIGFILE)).
+		Build()
 
 	if err != nil {
-		warn("unable to read config.json")
 		return err
 	}
 
-	debug(nuvHome)
-	return applyAllConfigEnvVars(nuvRootDir, nuvHome)
+	kv := configMap.Flatten()
+	for k, v := range kv {
+		if err := os.Setenv(k, v); err != nil {
+			return err
+		}
+		debug("env var set", k, v)
+	}
+
+	return nil
 }
 
 func wskPropertySet(apihost, auth string) error {
