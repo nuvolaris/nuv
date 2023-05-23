@@ -35,7 +35,7 @@ var tools = []string{
 	"envsubst", "wsk", "ht", "mkdir",
 	"filetype", "random", "datefmt",
 	"config", "retry", "urlenc", "ssh",
-	"find", "replace", "base64",
+	"find", "replace", "base64", "validate",
 }
 
 // not available in taskfiles
@@ -150,6 +150,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "base64":
 		os.Args = append([]string{"base64"}, args...)
 		if err := base64Tool(); err != nil {
+			return 1, err
+		}
+	case "validate":
+		os.Args = append([]string{"validate"}, args...)
+		if err := validateTool(); err != nil {
 			return 1, err
 		}
 	}
