@@ -12,7 +12,7 @@ require (
 	github.com/nojima/httpie-go v0.7.0
 	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675
 	github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c
-	github.com/nuvolaris/goja/gojamain v0.0.0-20230504161530-a973bab4a652
+	github.com/nuvolaris/goja/gojamain v0.0.0-20230525121905-6e242f4c37dc
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae
@@ -49,7 +49,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/dop251/goja v0.0.0-20230304130813-e2f543bf4b4c // indirect
-	github.com/dop251/goja_nodejs v0.0.0-20230226152057-060fa99b809f // indirect
+	github.com/dop251/goja_nodejs v0.0.0-20230322100729-2550c7b6c124 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/color v1.14.1 // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect

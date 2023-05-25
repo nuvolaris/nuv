@@ -53,7 +53,10 @@ func jsToolMain() error {
 }
 
 func printJSHelp() {
-	fmt.Println("Usage: nuv -js FILE.js")
-	fmt.Print("Flags: -h  Print help message\n\n")
-	fmt.Println("Interpret and run Javascript code.")
+	fmt.Println(`Usage: nuv -js FILE.js
+Interpret and run Javascript code.
+
+Options: 
+
+-h  Print help message`)
 }
