@@ -94,8 +94,8 @@ github.com/dop251/goja v0.0.0-20230304130813-e2f543bf4b4c h1:/utv6nmTctV6OVgfk5+
 github.com/dop251/goja v0.0.0-20230304130813-e2f543bf4b4c/go.mod h1:QMWlm50DNe14hD7t24KEqZuUdC9sOTy8W6XbCU1mlw4=
 github.com/dop251/goja_nodejs v0.0.0-20210225215109-d91c329300e7/go.mod h1:hn7BA7c8pLvoGndExHudxTDKZ84Pyvv+90pbBjbTz0Y=
 github.com/dop251/goja_nodejs v0.0.0-20211022123610-8dd9abb0616d/go.mod h1:DngW8aVqWbuLRMHItjPUyqdj+HWPvnQe8V8y1nDpIbM=
-github.com/dop251/goja_nodejs v0.0.0-20230226152057-060fa99b809f h1:mmnNidRg3cMfcgyeNtIBSDZgjf/85lA/2pplccwSxYg=
-github.com/dop251/goja_nodejs v0.0.0-20230226152057-060fa99b809f/go.mod h1:0tlktQL7yHfYEtjcRGi/eiOkbDR5XF7gyFFvbC5//E0=
+github.com/dop251/goja_nodejs v0.0.0-20230322100729-2550c7b6c124 h1:QDuDMgEkC/lnmvk0d/fZfcUUml18uUbS9TY5QtbdFhs=
+github.com/dop251/goja_nodejs v0.0.0-20230322100729-2550c7b6c124/go.mod h1:0tlktQL7yHfYEtjcRGi/eiOkbDR5XF7gyFFvbC5//E0=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
 github.com/emirpasic/gods v1.18.1/go.mod h1:8tpGGwCnJ5H4r6BWwaV6OrWmMoPhUl5jm/FMNAnJvWQ=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
@@ -295,8 +295,8 @@ github.com/nuvolaris/go-replace v0.0.0-20230515190028-12766da1824c h1:t8yjSIjJBa
 github.com/nuvolaris/go-replace v0.0.0-20230515190028-12766da1824c/go.mod h1:kFS/W+mpp+bqCLVdldEq2EMZa0YttGz+QEHE+0HXags=
 github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c h1:L9HLHEk9rLllwSYyzg8fu7ScPfCX773sWu55TzavywQ=
 github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c/go.mod h1:/9Rq7gSfPOW2G7aq2Rii4kbNl9o3GJSGvBjikGMs74I=
-github.com/nuvolaris/goja/gojamain v0.0.0-20230504161530-a973bab4a652 h1:IS0KdICIqEyjosSc7uwEtpAXP9Iv8O0ISW81+3EmYx4=
-github.com/nuvolaris/goja/gojamain v0.0.0-20230504161530-a973bab4a652/go.mod h1:rQ9eKxdnf+QLnA8nuHk9nPiW051abtrynmImsADKv4E=
+github.com/nuvolaris/goja/gojamain v0.0.0-20230525121905-6e242f4c37dc h1:ukouq6ezX3/sQHOmf5GHfrlfolDlplmaI2cNpdjuD9o=
+github.com/nuvolaris/goja/gojamain v0.0.0-20230525121905-6e242f4c37dc/go.mod h1:jJZ/+x4yJF6JcVfWasDRS++EZudC66n/cUj8Dhd1Ybo=
 github.com/nuvolaris/goph v0.0.0-20230425125736-e7c6bed14c20 h1:9WlykXplJZVlTpdqcbv89AVEHBEw1ty6M3KO8ID8pHk=
 github.com/nuvolaris/goph v0.0.0-20230425125736-e7c6bed14c20/go.mod h1:9KM5Nbr7bIM0rI4m1U2M4SW35/mfLqOATvO9QOUFvsk=
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e h1:2h78o6j0FsvMBQwMoma6H1Q+sKxFLaykPn1TbyTHhFk=
