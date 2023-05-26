@@ -19,6 +19,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/Masterminds/semver"
@@ -121,10 +122,11 @@ func pullTasks(force, silent bool) error {
 		return nil
 	}
 
-	// check if the version is up to date, if not warn the user but continue
+	// check if the version is up to date, if not warn the user
 	if nuvVersion.LessThan(nuvRootVersion) {
-		fmt.Printf("Your nuv version %v is older than the required version in nuvroot.json.\n", nuvVersion)
-		fmt.Println("Please update nuv to the latest version.")
+		fmt.Printf("Your nuv version (%v) is older than the required version in nuvroot.json (%v).\n", nuvVersion, nuvRootVersion)
+		fmt.Println("Attempting to update nuv...")
+		autoCLIUpdate()
 	}
 
 	return nil
@@ -189,4 +191,12 @@ func locateNuvRootSearch(cur string) string {
 		return ""
 	}
 	return locateNuvRootSearch(parent)
+}
+
+func autoCLIUpdate() {
+	cmd := exec.Command("nuv", "update", "cli")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	// we don't care about the error, the subcommand in olaris shows it
 }
