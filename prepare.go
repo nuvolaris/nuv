@@ -126,7 +126,9 @@ func pullTasks(force, silent bool) error {
 	if nuvVersion.LessThan(nuvRootVersion) {
 		fmt.Printf("Your nuv version (%v) is older than the required version in nuvroot.json (%v).\n", nuvVersion, nuvRootVersion)
 		fmt.Println("Attempting to update nuv...")
-		autoCLIUpdate()
+		if err := autoCLIUpdate(); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -193,10 +195,9 @@ func locateNuvRootSearch(cur string) string {
 	return locateNuvRootSearch(parent)
 }
 
-func autoCLIUpdate() {
+func autoCLIUpdate() error {
 	cmd := exec.Command("nuv", "update", "cli")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Run()
-	// we don't care about the error, the subcommand in olaris shows it
+	return cmd.Run()
 }
