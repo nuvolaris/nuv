@@ -38,3 +38,8 @@ setup() {
     assert_line "3"
     assert_success
 }
+
+@test "-js argv" {
+    run nuv -js testdata/js_test_argv.js a b c
+    assert_line "goja,testdata/js_test_argv.js,a,b,c"
+}
