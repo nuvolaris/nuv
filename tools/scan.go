@@ -23,8 +23,11 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
+
+const actionsFolder = "actions"
 
 // The scan tool visits a folder and creates an action plan to execute the given cmd (called cmdPlan).
 // The cmd is the given nuv command to run, and the args is an array of arrays.
@@ -32,31 +35,57 @@ import (
 // The plan is then executed by running the cmd once for each entry of args (so args.length times)
 // in the form of `cmd args[i][0] args[i][1] ... args[i][n]` for each i in args.
 type cmdPlan struct {
-	cmd  string
+	cmd  []string
 	args [][]string
 }
 
-func (a *cmdPlan) setCmd(cmd string) {
-	a.cmd = cmd
-}
-func (a *cmdPlan) appendArg(args []string) {
-	a.args = append(a.args, args)
+func (p *cmdPlan) apply() error {
+	var ars []string
+	if len(p.cmd) > 1 {
+		ars = append(ars, p.cmd[1:]...)
+	}
+
+	for _, args := range p.args {
+		ars = append(ars, args...)
+		cmd := exec.Command(p.cmd[0], ars...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
-const actionsFolder = "actions"
+func (p *cmdPlan) setCmd(cmd []string) {
+	p.cmd = cmd
+}
+func (p *cmdPlan) appendArg(args []string) {
+	p.args = append(p.args, args)
+}
 
 func scanTool() error {
 	flag := flag.NewFlagSet("scan", flag.ExitOnError)
 	flag.Usage = printScanUsage
 
-	helpFlag := flag.Bool("h", false, "show help")
-	dirFlag := flag.String("d", getCurrentDir(), "directory to scan")
+	var (
+		helpFlag bool
+		dirFlag  string
+		// globFlag string
+		// parallelFlag bool
+		// dryRunFlag bool
+	)
+
+	flag.BoolVar(&helpFlag, "h", false, "show help")
+	flag.BoolVar(&helpFlag, "help", false, "show help")
+	flag.StringVar(&dirFlag, "d", getCurrentDir(), "directory to scan")
+	flag.StringVar(&dirFlag, "dir", getCurrentDir(), "directory to scan")
 
 	if err := flag.Parse(os.Args[1:]); err != nil {
 		return err
 	}
 
-	if *helpFlag {
+	if helpFlag {
 		flag.Usage()
 		return nil
 	}
@@ -67,42 +96,43 @@ func scanTool() error {
 		return errors.New("missing required nuv command")
 	}
 
-	p, err := filepath.Abs(*dirFlag)
+	p, err := filepath.Abs(dirFlag)
 	if err != nil {
 		return err
 	}
 
-	_, err = buildActionPlan(p, args)
+	plan, err := buildCmdPlan(p, args)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return plan.apply()
 }
 
-func buildActionPlan(scanPath string, cmd []string) (*cmdPlan, error) {
+func buildCmdPlan(scanPath string, cmd []string) (*cmdPlan, error) {
 	// check if actions folder exists
-	if err := checkActionsFolder(scanPath); err != nil {
+	if err := checkActionsFolderExists(scanPath); err != nil {
 		return nil, err
 	}
 
-	_, err := getAllDirs(scanPath)
+	dirs, err := getAllDirs(filepath.Join(scanPath, actionsFolder))
 	if err != nil {
 		return nil, err
 	}
 
-	// res, err := visitScanDir(fsys, "", actionsFolder)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	plan := &cmdPlan{}
+	plan.setCmd(cmd)
 
-	// plan := &cmdPlan{}
-	// plan.setCmd(cmd[0])
-	// for _, r := range res {
-	// 	plan.appendArg(r)
-	// }
+	for _, dir := range dirs {
+		files, err := getAllFiles(dir)
+		if err != nil {
+			return nil, err
+		}
 
-	return nil, nil
+		plan.appendArg(append([]string{dir}, files...))
+	}
+
+	return plan, nil
 }
 
 func getAllDirs(rootDir string) ([]string, error) {
@@ -140,43 +170,7 @@ func getAllFiles(dir string) ([]string, error) {
 	return files, err
 }
 
-func visitScanDir(fsys fs.FS, parentPath string, childPath string) ([][]string, error) {
-	var result [][]string
-
-	// fs.WalkDir()
-	dirPath, err := filepath.Abs(filepath.Join(parentPath, childPath))
-	if err != nil {
-		return nil, err
-	}
-	children, err := fs.ReadDir(fsys, dirPath)
-	if err != nil {
-		return nil, err
-	}
-
-	var dirList []string
-	var fileList []string
-	for _, child := range children {
-		if child.IsDir() {
-			dirList = append(dirList, child.Name())
-		} else {
-			fileList = append(fileList, child.Name())
-		}
-	}
-	result = append(result, []string{dirPath}, fileList)
-
-	for _, subDir := range dirList {
-		subResult, err := visitScanDir(fsys, dirPath, subDir)
-		if err != nil {
-			return nil, err
-		}
-
-		result = append(result, subResult...)
-	}
-
-	return result, nil
-}
-
-func checkActionsFolder(path string) error {
+func checkActionsFolderExists(path string) error {
 	info, err := os.Stat(filepath.Join(path, actionsFolder))
 	if os.IsNotExist(err) {
 		return fmt.Errorf("%s folder not found in %s", actionsFolder, path)
@@ -224,7 +218,10 @@ the following commands are executed:
 	- nuv -js script.js $NUV_DIR/actions/subfolder bar.js
 
 Options:
-  -h		    show help
-  -g <pattern>	glob pattern to filter files (default: none, no files are passed to the nuv command)
-  -d <dir>      directory to scan (default: $NUV_DIR=PWD)`)
+  -h, help		    show help
+  -g, glob <pattern>	glob pattern to filter files (default: none, no files are passed to the nuv command)
+  -d, dir <dir>      directory to scan (default: $NUV_DIR=PWD)
+  -p, --parallel     run the nuv command in parallel for each folder (default: false)
+  --dry-run          print the commands that would be executed without actually running them (default: false)
+  `)
 }

@@ -15,32 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
-setup() {
-    load 'test_helper/bats-support/load'
-    load 'test_helper/bats-assert/load'
-    export NO_COLOR=1
-}
-
-@test "-scan -h" {
-    run nuv -scan -h
-    assert_line "Usage:"
-
-    run nuv -scan
-    assert_line "Usage:"
-    assert_failure
-}
-
-@test "-scan stops if actions folder not present" {
-    NUV_DIR="./olaris" run  nuv -scan nuv -js
-    assert_line --partial "actions folder not found"
-    assert_failure
-}
-
-@test "-scan -js argv.js" {
-    NUV_DIR="./testdata" run  nuv -scan nuv -js testdata/js_test_argv.js
-    assert_line --partial "/testdata/actions"
-    assert_line --partial "/testdata/actions/subfolder"
-    assert_line --partial "/testdata/actions/subfolder/subsub,hello.js,hello.py"
-    assert_success
-}
-
+def main(args):
+    name = args.get("name", "stranger")
+    greeting = "Hello " + name + "!"
+    print(greeting)
+    return {"greeting": greeting}
