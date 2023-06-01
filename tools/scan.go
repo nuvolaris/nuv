@@ -26,6 +26,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 const actionsFolder = "actions"
@@ -36,29 +37,10 @@ const actionsFolder = "actions"
 // The plan is then executed by running the cmd once for each entry of args (so args.length times)
 // in the form of `cmd args[i][0] args[i][1] ... args[i][n]` for each i in args.
 type cmdPlan struct {
-	cmd  []string
-	args [][]string
-}
-
-func (p *cmdPlan) toString() string {
-	var sb strings.Builder
-	for _, c := range p.cmd {
-		sb.WriteString(c)
-		sb.WriteString(" ")
-	}
-
-	cmdStr := sb.String()
-	sb.Reset()
-
-	for _, args := range p.args {
-		sb.WriteString(cmdStr)
-		for _, a := range args {
-			sb.WriteString(a)
-			sb.WriteString(" ")
-		}
-		sb.WriteString("\n")
-	}
-	return sb.String()
+	par    bool
+	dryRun bool
+	cmd    []string
+	args   [][]string
 }
 
 func (p *cmdPlan) apply() error {
@@ -67,9 +49,35 @@ func (p *cmdPlan) apply() error {
 		ars = append(ars, p.cmd[1:]...)
 	}
 
+	if p.par {
+		var wg sync.WaitGroup
+		for _, args := range p.args {
+			wg.Add(1)
+			go func(args []string) {
+				if p.dryRun {
+					fmt.Println(strings.Join(append(p.cmd, args...), " "))
+				} else {
+					cmd := exec.Command(p.cmd[0], append(ars, args...)...)
+					cmd.Stdout = os.Stdout
+					cmd.Stderr = os.Stderr
+					if err := cmd.Run(); err != nil {
+						fmt.Println(err)
+					}
+				}
+				wg.Done()
+			}(args)
+		}
+		wg.Wait()
+		return nil
+	}
+
+	// run sequentially
 	for _, args := range p.args {
-		ars = append(ars, args...)
-		cmd := exec.Command(p.cmd[0], ars...)
+		if p.dryRun {
+			fmt.Println(strings.Join(append(p.cmd, args...), " "))
+			continue
+		}
+		cmd := exec.Command(p.cmd[0], append(ars, args...)...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
@@ -91,11 +99,11 @@ func scanTool() error {
 	flag.Usage = printScanUsage
 
 	var (
-		helpFlag bool
-		dirFlag  string
-		globFlag string
-		// parallelFlag bool
-		dryRunFlag bool
+		helpFlag     bool
+		dirFlag      string
+		globFlag     string
+		parallelFlag bool
+		dryRunFlag   bool
 	)
 
 	flag.BoolVar(&helpFlag, "h", false, "show help")
@@ -105,11 +113,12 @@ func scanTool() error {
 	flag.StringVar(&globFlag, "g", "", "glob pattern to filter files")
 	flag.StringVar(&globFlag, "glob", "", "glob pattern to filter files")
 	flag.BoolVar(&dryRunFlag, "dry-run", false, "print the plan without executing it")
+	flag.BoolVar(&parallelFlag, "p", false, "run in parallel")
+	flag.BoolVar(&parallelFlag, "parallel", false, "run in parallel")
 
 	if err := flag.Parse(os.Args[1:]); err != nil {
 		return err
 	}
-	fmt.Println(globFlag)
 
 	if helpFlag {
 		flag.Usage()
@@ -132,10 +141,8 @@ func scanTool() error {
 		return err
 	}
 
-	if dryRunFlag {
-		fmt.Print(plan.toString())
-		return nil
-	}
+	plan.par = parallelFlag
+	plan.dryRun = dryRunFlag
 
 	return plan.apply()
 }

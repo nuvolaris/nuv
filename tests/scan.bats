@@ -38,26 +38,28 @@ setup() {
 
 @test "-scan -js argv.js without -g" {
     NUV_DIR="./testdata" run nuv -scan nuv -js testdata/js_test_argv.js
-    assert_line --partial "/testdata/actions"
-    assert_line --partial "/testdata/actions/subfolder"
-    assert_line --partial "/testdata/actions/subfolder/subsub"
+    WD=$(pwd)
+    assert_line --partial "goja,testdata/js_test_argv.js,$WD/testdata/actions"
+    assert_line --partial "goja,testdata/js_test_argv.js,$WD/testdata/actions/subfolder"
+    assert_line --partial "goja,testdata/js_test_argv.js,$WD/testdata/actions/subfolder/subsub"
     assert_success
 }
 
 @test "-scan -js argv.js with -g *" {
     NUV_DIR="./testdata" run nuv -scan -g "*" nuv -js testdata/js_test_argv.js
-    assert_line --partial "/testdata/actions"
-    assert_line --partial "/testdata/actions/subfolder"
-    assert_line --partial "/testdata/actions/subfolder/subsub,hello.js,hello.py"
+    WD=$(pwd)
+    assert_line --partial "goja,testdata/js_test_argv.js,$WD/testdata/actions"
+    assert_line --partial "goja,testdata/js_test_argv.js,$WD/testdata/actions/subfolder"
+    assert_line --partial "goja,testdata/js_test_argv.js,$WD/testdata/actions/subfolder/subsub,hello.js,hello.py"
     assert_success
 }
 
 @test "-scan --dry-run" {
-    NUV_DIR="./testdata" run nuv -scan -g "*" --dry-run nuv -scan -js somescript.js
+    NUV_DIR="./testdata" run nuv -scan -g "*" --dry-run nuv -scan -js testdata/js_test_argv.js
     WD=$(pwd)
-    assert_line --partial "nuv -scan -js somescript.js $WD/testdata/actions"
-    assert_line --partial "nuv -scan -js somescript.js $WD/testdata/actions/subfolder"
-    assert_line --partial "nuv -scan -js somescript.js $WD/testdata/actions/subfolder/subsub hello.js hello.py"
+    assert_line --partial "nuv -scan -js testdata/js_test_argv.js $WD/testdata/actions"
+    assert_line --partial "nuv -scan -js testdata/js_test_argv.js $WD/testdata/actions/subfolder"
+    assert_line --partial "nuv -scan -js testdata/js_test_argv.js $WD/testdata/actions/subfolder/subsub hello.js hello.py"
     assert_success
 }
 
