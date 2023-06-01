@@ -25,6 +25,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 const actionsFolder = "actions"
@@ -37,6 +38,27 @@ const actionsFolder = "actions"
 type cmdPlan struct {
 	cmd  []string
 	args [][]string
+}
+
+func (p *cmdPlan) toString() string {
+	var sb strings.Builder
+	for _, c := range p.cmd {
+		sb.WriteString(c)
+		sb.WriteString(" ")
+	}
+
+	cmdStr := sb.String()
+	sb.Reset()
+
+	for _, args := range p.args {
+		sb.WriteString(cmdStr)
+		for _, a := range args {
+			sb.WriteString(a)
+			sb.WriteString(" ")
+		}
+		sb.WriteString("\n")
+	}
+	return sb.String()
 }
 
 func (p *cmdPlan) apply() error {
@@ -71,19 +93,23 @@ func scanTool() error {
 	var (
 		helpFlag bool
 		dirFlag  string
-		// globFlag string
+		globFlag string
 		// parallelFlag bool
-		// dryRunFlag bool
+		dryRunFlag bool
 	)
 
 	flag.BoolVar(&helpFlag, "h", false, "show help")
 	flag.BoolVar(&helpFlag, "help", false, "show help")
 	flag.StringVar(&dirFlag, "d", getCurrentDir(), "directory to scan")
 	flag.StringVar(&dirFlag, "dir", getCurrentDir(), "directory to scan")
+	flag.StringVar(&globFlag, "g", "", "glob pattern to filter files")
+	flag.StringVar(&globFlag, "glob", "", "glob pattern to filter files")
+	flag.BoolVar(&dryRunFlag, "dry-run", false, "print the plan without executing it")
 
 	if err := flag.Parse(os.Args[1:]); err != nil {
 		return err
 	}
+	fmt.Println(globFlag)
 
 	if helpFlag {
 		flag.Usage()
@@ -101,15 +127,20 @@ func scanTool() error {
 		return err
 	}
 
-	plan, err := buildCmdPlan(p, args)
+	plan, err := buildCmdPlan(p, args, globFlag)
 	if err != nil {
 		return err
+	}
+
+	if dryRunFlag {
+		fmt.Print(plan.toString())
+		return nil
 	}
 
 	return plan.apply()
 }
 
-func buildCmdPlan(scanPath string, cmd []string) (*cmdPlan, error) {
+func buildCmdPlan(scanPath string, cmd []string, glob string) (*cmdPlan, error) {
 	// check if actions folder exists
 	if err := checkActionsFolderExists(scanPath); err != nil {
 		return nil, err
@@ -124,15 +155,47 @@ func buildCmdPlan(scanPath string, cmd []string) (*cmdPlan, error) {
 	plan.setCmd(cmd)
 
 	for _, dir := range dirs {
-		files, err := getAllFiles(dir)
-		if err != nil {
-			return nil, err
+		files := make([]string, 0)
+
+		if len(glob) > 0 {
+			fls, err := getAllFiles(dir)
+			if err != nil {
+				return nil, err
+			}
+
+			if len(fls) > 0 {
+				files, err = filterFiles(fls, glob)
+				if err != nil {
+					return nil, err
+				}
+			}
 		}
 
 		plan.appendArg(append([]string{dir}, files...))
 	}
 
 	return plan, nil
+}
+
+func filterFiles(files []string, glob string) ([]string, error) {
+	filtered := make([]string, 0)
+
+	if len(glob) == 0 {
+		return filtered, nil
+	}
+
+	for _, file := range files {
+		matched, err := filepath.Match(glob, file)
+		if err != nil {
+			return filtered, err
+		}
+
+		if matched {
+			filtered = append(filtered, file)
+		}
+	}
+
+	return filtered, nil
 }
 
 func getAllDirs(rootDir string) ([]string, error) {
@@ -208,7 +271,7 @@ Then it invokes the given nuv command with the following arguments:
 You can pass a glob pattern with the -g flag to filter the files used as input.
 
 Example:
-nuv -scan -g * nuv -js script.js
+nuv -scan -g "*" nuv -js script.js
 
 This results in running the script.js file on the $NUV_DIR/actions folder and all subdirectories. 
 For example, if $NUV_DIR/actions contains a subfolder called 'subfolder' with a file called 'bar.js',
@@ -218,10 +281,10 @@ the following commands are executed:
 	- nuv -js script.js $NUV_DIR/actions/subfolder bar.js
 
 Options:
-  -h, help		    show help
-  -g, glob <pattern>	glob pattern to filter files (default: none, no files are passed to the nuv command)
-  -d, dir <dir>      directory to scan (default: $NUV_DIR=PWD)
-  -p, --parallel     run the nuv command in parallel for each folder (default: false)
-  --dry-run          print the commands that would be executed without actually running them (default: false)
+  -h, help		    	show help
+  -g, glob "<pattern>"	glob pattern to filter files (default: no files are passed to the nuv command)
+  -d, dir <dir>     	directory to scan (default: $NUV_DIR=PWD)
+  -p, --parallel    	run the nuv command in parallel for each folder (default: false)
+  --dry-run         	print the commands that would be executed without running them (default: false)
   `)
 }

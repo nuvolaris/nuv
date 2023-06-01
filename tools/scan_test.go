@@ -30,7 +30,7 @@ func Test_buildActionPlan(t *testing.T) {
 
 	t.Run("returns error if no actions folder", func(t *testing.T) {
 		tempDir := t.TempDir()
-		_, err := buildCmdPlan(tempDir, cmd)
+		_, err := buildCmdPlan(tempDir, cmd, "")
 		if err == nil {
 			t.Error("expected error, got nil")
 		}
@@ -42,7 +42,7 @@ func Test_buildActionPlan(t *testing.T) {
 
 		expectedPath := filepath.Join(tempDir, actionsFolder)
 
-		plan, err := buildCmdPlan(tempDir, cmd)
+		plan, err := buildCmdPlan(tempDir, cmd, "")
 		require.NoError(t, err)
 		require.Len(t, plan.args, 1)
 		require.Len(t, plan.args[0], 1)
@@ -57,7 +57,7 @@ func Test_buildActionPlan(t *testing.T) {
 
 		expectedPath := filepath.Join(tempDir, actionsFolder)
 
-		plan, err := buildCmdPlan(tempDir, cmd)
+		plan, err := buildCmdPlan(tempDir, cmd, "*")
 		require.NoError(t, err)
 		require.Len(t, plan.args, 1)
 		require.Len(t, plan.args[0], 2)
@@ -82,7 +82,7 @@ func Test_buildActionPlan(t *testing.T) {
 		// /actions/subdir2 file2.js
 		// /actions/subdir3
 
-		plan, err := buildCmdPlan(tempDir, cmd)
+		plan, err := buildCmdPlan(tempDir, cmd, "*")
 
 		require.NoError(t, err)
 		require.Len(t, plan.args, 4)
@@ -99,6 +99,83 @@ func Test_buildActionPlan(t *testing.T) {
 		require.Equal(t, filepath.Join(tempDir, actionsFolder, "subdir3"), plan.args[3][0])
 	})
 
+	t.Run("returns plan if folder with multiple subfolders and files and pattern", func(t *testing.T) {
+		tempDir := t.TempDir()
+		actionsDir := filepath.Join(tempDir, actionsFolder)
+		_ = os.Mkdir(actionsDir, 0755)
+		_ = os.WriteFile(filepath.Join(actionsDir, "file.js"), []byte("test"), 0644)
+		_ = os.Mkdir(filepath.Join(actionsDir, "subdir1"), 0755)
+		_ = os.WriteFile(filepath.Join(actionsDir, "subdir1", "file1.js"), []byte("test"), 0644)
+		_ = os.Mkdir(filepath.Join(actionsDir, "subdir2"), 0755)
+		_ = os.WriteFile(filepath.Join(actionsDir, "subdir2", "file2.py"), []byte("test"), 0644)
+		_ = os.Mkdir(filepath.Join(actionsDir, "subdir3"), 0755)
+
+		// Expected args:
+		// /actions file.js
+		// /actions/subdir1 file1.js
+		// /actions/subdir2
+		// /actions/subdir3
+
+		plan, err := buildCmdPlan(tempDir, cmd, "*.js")
+
+		require.NoError(t, err)
+		require.Len(t, plan.args, 4)
+		require.Len(t, plan.args[0], 2)
+		require.Len(t, plan.args[1], 2)
+		require.Len(t, plan.args[2], 1)
+		require.Len(t, plan.args[3], 1)
+		require.Equal(t, filepath.Join(tempDir, actionsFolder), plan.args[0][0])
+		require.Equal(t, "file.js", plan.args[0][1])
+		require.Equal(t, filepath.Join(tempDir, actionsFolder, "subdir1"), plan.args[1][0])
+		require.Equal(t, "file1.js", plan.args[1][1])
+		require.Equal(t, filepath.Join(tempDir, actionsFolder, "subdir2"), plan.args[2][0])
+		require.Equal(t, filepath.Join(tempDir, actionsFolder, "subdir3"), plan.args[3][0])
+	})
+}
+
+func Test_filterFiles(t *testing.T) {
+
+	testCases := []struct {
+		name     string
+		pattern  string
+		expected []string
+	}{
+		{
+			name:    "returns all files if pattern is *",
+			pattern: "*",
+			expected: []string{
+				"file1.js",
+				"file2.py",
+				"file3.go",
+			},
+		},
+		{
+			name:     "returns no files if pattern is empty",
+			pattern:  "",
+			expected: []string{},
+		},
+		{
+			name:    "returns all .js files if pattern is *.js",
+			pattern: "*.js",
+			expected: []string{
+				"file1.js",
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			files := []string{
+				"file1.js",
+				"file2.py",
+				"file3.go",
+			}
+
+			filtered, err := filterFiles(files, tc.pattern)
+			require.NoError(t, err)
+			require.Equal(t, tc.expected, filtered)
+		})
+	}
 }
 
 func Test_checkActionsFolder(t *testing.T) {
