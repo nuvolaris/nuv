@@ -28,21 +28,23 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
+
+	envsubst "github.com/nuvolaris/envsubst/cmd/envsubstmain"
 )
 
 func help() error {
 	if os.Getenv("NUV_NO_NUVOPTS") == "" && exists(".", NUVOPTS) {
-		fmt.Println(readfile(NUVOPTS))
-	} else {
-		// In case of syntax error, Task will return an error
-		list := "-l"
-		if os.Getenv("NUV_NO_NUVOPTS") != "" {
-			list = "--list-all"
-		}
-		_, err := Task("-t", NUVFILE, list)
-		return err
+		os.Args = []string{"envsubst", "-no-unset", "-i", NUVOPTS}
+		return envsubst.EnvsubstMain()
 	}
-	return nil
+	// In case of syntax error, Task will return an error
+	list := "-l"
+	if os.Getenv("NUV_NO_NUVOPTS") != "" {
+		list = "--list-all"
+	}
+	_, err := Task("-t", NUVFILE, list)
+	return err
+
 }
 
 // parseArgs parse the arguments acording the docopt
