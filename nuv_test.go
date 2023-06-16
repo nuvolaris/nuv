@@ -53,6 +53,7 @@ func Example_nuvArg() {
 func ExampleNuv() {
 	// test
 	_ = os.Chdir(workDir)
+	os.Setenv("TEST_VAR", "evar")
 	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
 	err := Nuv(olaris, split(""))
 	pr(1, err)
@@ -63,19 +64,19 @@ func ExampleNuv() {
 	err = Nuv(olaris, split("sub opts ciao 1"))
 	pr(6, err)
 	// Output:
-	// (olaris) task [-t nuvfile.yml -l]
+	// 	(olaris) task [-t nuvfile.yml -l]
 	// 1 <nil>
 	// (sub) task [-t nuvfile.yml -l]
 	// 4 <nil>
 	// Usage:
 	//   opts hello
-	//   opts ciao <name>... [-c]
+	//   opts ciao <name>... [-c] [-e evar]
 	//   opts salve <name> hi <x> <y> [--fl=<flag>]
 	//   opts sayonara (opt1|opt2) <x> <y> [--fa|--fb]
 	//   opts -h | --help | --version
 	//
 	// 5 <nil>
-	// (opts) task [-t nuvfile.yml ciao __fa=false __fb=false __fl= __help=false __version=false _c=false _h=false _name_=('1') _x_= _y_= ciao=true hello=false hi=false opt1=false opt2=false salve=false sayonara=false]
+	// (opts) task [-t nuvfile.yml ciao $TEST_VAR= __fa=false __fb=false __fl= __help=false __version=false _c=false _e=false _h=false _name_=('1') _x_= _y_= ciao=true hello=false hi=false opt1=false opt2=false salve=false sayonara=false]
 	// 6 <nil>
 }
 
@@ -91,10 +92,10 @@ func ExampleParseArgs() {
 	args = parseArgs(usage, split("sayonara opt2 4 5 --fb"))
 	pr(4, args)
 	// Output:
-	// 1 [__fa=false __fb=false __fl= __help=false __version=false _c=false _h=false _name_=('mike' 'miri' 'max') _x_= _y_= ciao=true hello=false hi=false opt1=false opt2=false salve=false sayonara=false]
-	// 2 [__fa=false __fb=false __fl= __help=false __version=false _c=true _h=false _name_=('mike') _x_= _y_= ciao=true hello=false hi=false opt1=false opt2=false salve=false sayonara=false]
-	// 3 [__fa=false __fb=false __fl=3 __help=false __version=false _c=false _h=false _name_=('max') _x_=1 _y_=2 ciao=false hello=false hi=true opt1=false opt2=false salve=true sayonara=false]
-	// 4 [__fa=false __fb=true __fl= __help=false __version=false _c=false _h=false _name_=() _x_=4 _y_=5 ciao=false hello=false hi=false opt1=false opt2=true salve=false sayonara=true]
+	// 1 [$TEST_VAR= __fa=false __fb=false __fl= __help=false __version=false _c=false _e=false _h=false _name_=('mike' 'miri' 'max') _x_= _y_= ciao=true hello=false hi=false opt1=false opt2=false salve=false sayonara=false]
+	// 2 [$TEST_VAR= __fa=false __fb=false __fl= __help=false __version=false _c=true _e=false _h=false _name_=('mike') _x_= _y_= ciao=true hello=false hi=false opt1=false opt2=false salve=false sayonara=false]
+	// 3 [$TEST_VAR= __fa=false __fb=false __fl=3 __help=false __version=false _c=false _e=false _h=false _name_=('max') _x_=1 _y_=2 ciao=false hello=false hi=true opt1=false opt2=false salve=true sayonara=false]
+	// 4 [$TEST_VAR= __fa=false __fb=true __fl= __help=false __version=false _c=false _e=false _h=false _name_=() _x_=4 _y_=5 ciao=false hello=false hi=false opt1=false opt2=true salve=false sayonara=true]
 }
 
 func Test_validateTaskName(t *testing.T) {

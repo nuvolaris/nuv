@@ -10,7 +10,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/nicksnyder/go-i18n v1.10.1
 	github.com/nojima/httpie-go v0.7.0
-	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675
+	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230603163828-10ca029cdb58
 	github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c
 	github.com/nuvolaris/goja/gojamain v0.0.0-20230527135333-d302d90d3283
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e

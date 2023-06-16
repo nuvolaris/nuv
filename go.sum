@@ -282,6 +282,8 @@ github.com/nojima/httpie-go v0.7.0 h1:lmDVJ1i9/Qk3YbJuABjH5lk8oqk3BtpJv32fQ0mo6/
 github.com/nojima/httpie-go v0.7.0/go.mod h1:47dAVOiAcG0ZETwg+P42Kj+3JrSEC9kWm8f+hirX2Mw=
 github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675 h1:C4LgC+o+zpRlpblKvhHA/O7p8ej8SriAC2AkgYjfxBo=
 github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230316170831-d78a244e9675/go.mod h1:scN6eGT0YjABIs2bLh+CfWdOFZgmkefhv0pA9RBCEaM=
+github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230603163828-10ca029cdb58 h1:/6bwyZSQx3Q+Gl/02wTw6tonDzQRXOSeQSyzjrM8/VY=
+github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230603163828-10ca029cdb58/go.mod h1:scN6eGT0YjABIs2bLh+CfWdOFZgmkefhv0pA9RBCEaM=
 github.com/nuvolaris/go-replace v0.0.0-20230515190028-12766da1824c h1:t8yjSIjJBa2EX6DHOnwzf0fBycFNXYyy4H44zvdAXtc=
 github.com/nuvolaris/go-replace v0.0.0-20230515190028-12766da1824c/go.mod h1:kFS/W+mpp+bqCLVdldEq2EMZa0YttGz+QEHE+0HXags=
 github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c h1:L9HLHEk9rLllwSYyzg8fu7ScPfCX773sWu55TzavywQ=

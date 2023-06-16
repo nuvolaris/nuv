@@ -22,9 +22,11 @@ setup() {
 }
 
 @test "help" {
+    export TEST_VAR="envvar"
     run nuv sub opts
     # just one as it is a cat of a message
     assert_line "Usage:"
+    assert_line "  opts ciao <name>... [-c] [-e envvar]"
     run nuv sub opts -h
     assert_line "Usage:"
     run nuv sub opts --help
@@ -58,6 +60,7 @@ setup() {
 }
 
 @test "errors" {
+    export TEST_VAR
     run nuv sub opts salve
     assert_line "Usage:"
     assert_failure
