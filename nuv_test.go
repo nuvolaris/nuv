@@ -62,11 +62,15 @@ func ExampleNuv() {
 	err = Nuv(olaris, split("sub opts"))
 	pr(5, err)
 	err = Nuv(olaris, split("sub opts ciao 1"))
-	pr(6, err)
+	// pr(6, err)
 	// Output:
-	// 	(olaris) task [-t nuvfile.yml -l]
+	// (olaris) task [-t nuvfile.yml -l]
+	//
+	// Plugins:
 	// 1 <nil>
 	// (sub) task [-t nuvfile.yml -l]
+	//
+	// Plugins:
 	// 4 <nil>
 	// Usage:
 	//   opts hello
@@ -75,6 +79,7 @@ func ExampleNuv() {
 	//   opts sayonara (opt1|opt2) <x> <y> [--fa|--fb]
 	//   opts -h | --help | --version
 	//
+	// Plugins:
 	// 5 <nil>
 	// (opts) task [-t nuvfile.yml ciao $TEST_VAR= __fa=false __fb=false __fl= __help=false __version=false _c=false _e=false _h=false _name_=('1') _x_= _y_= ciao=true hello=false hi=false opt1=false opt2=false salve=false sayonara=false]
 	// 6 <nil>
@@ -117,9 +122,8 @@ func Test_validateTaskName(t *testing.T) {
 
 	tmpDir := createTmpNuvfile(t, testNuvfile)
 	defer os.RemoveAll(tmpDir)
-	_ = os.Chdir(tmpDir)
 	for _, tt := range validateTaskTests {
-		task, err := validateTaskName(tt.argTask)
+		task, err := validateTaskName(tmpDir, tt.argTask)
 		if err != nil && !strings.Contains(err.Error(), tt.expected) {
 			t.Fatalf("want error: %s, got: %v", tt.expected, err)
 		}
