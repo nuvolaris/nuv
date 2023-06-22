@@ -61,7 +61,7 @@ func ExampleNuv() {
 	pr(4, err)
 	err = Nuv(olaris, split("sub opts"))
 	pr(5, err)
-	err = Nuv(olaris, split("sub opts ciao 1"))
+	_ = Nuv(olaris, split("sub opts ciao 1"))
 	// pr(6, err)
 	// Output:
 	// (olaris) task [-t nuvfile.yml -l]

@@ -15,15 +15,27 @@
 # specific language governing permissions and limitations
 # under the License.
 
-setup() {
-    load 'test_helper/bats-support/load'
-    load 'test_helper/bats-assert/load'
-    export NO_COLOR=1
-}
+version: '3'
 
-@test "nuv prints 'Plugins:'" {
-    run nuv
-    assert_line 'Plugins:'
-    assert_line "[LOCAL] olaris-test:"
-    assert_line "grep-plg"
-}
+tasks:
+  ciao:
+    silent: true
+    cmds: 
+    - |-
+      echo "ciao:"
+      names={{._name_}}
+      for i in "${names[@]}"
+      do echo name: $i
+      done
+      if {{._c}}
+      then echo "-c: yes"
+      else echo "-c: no"
+      fi
+
+  salve: |-
+    echo "salve name={{._name_}} hi x={{._x_}} y={{._y_}} --fl={{.__fl}}"
+  
+  sayonara: |-
+    echo "sayonara={{.sayonara}} opt1={{.opt1}} opt2={{.opt2}} x={{._x_}} y={{._y_}} --fa={{.__fa}} --fb={{.__fb}}"
+
+  hello: echo "hello!"

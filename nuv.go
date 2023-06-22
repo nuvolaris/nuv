@@ -164,6 +164,8 @@ func loadSavedArgs() []string {
 func Nuv(base string, args []string) error {
 	// go down using args as subcommands
 	err := os.Chdir(base)
+	debug("Nuv chdir", base)
+
 	if err != nil {
 		return err
 	}
@@ -202,8 +204,11 @@ func Nuv(base string, args []string) error {
 
 	if len(rest) == 0 || rest[0] == "help" {
 		err := help()
-		helpPlugins()
-		return err
+		if err != nil {
+			return err
+		}
+		fmt.Println()
+		return printInstalledPluginsMessage(parent(base))
 	}
 
 	// load saved args

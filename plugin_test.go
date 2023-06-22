@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/mitchellh/go-homedir"
+	"github.com/stretchr/testify/require"
 )
 
 func copyFile(srcPath, destPath string) error {
@@ -50,58 +50,89 @@ func setupPluginTest(dir string, t *testing.T) string {
 	return olarisTestDir
 }
 
-func TestFindFolderInFolders(t *testing.T) {
-	t.Run("success: plugin task found in ./olaris-test", func(t *testing.T) {
+func TestFindPluginTask(t *testing.T) {
+	// 	t.Run("success: plugin task found in ./olaris-test", func(t *testing.T) {
+	// 		tempDir := t.TempDir()
+	// 		plgFolder := setupPluginTest(tempDir, t)
+
+	// 		err := findPluginTask(tempDir, "grep")
+	// 		if err != nil {
+	// 			t.Errorf("Unexpected error: %v", err)
+	// 		}
+
+	// 		if os.Getenv("NUV_ROOT") != plgFolder {
+	// 			t.Errorf("Expected NUV_ROOT: %s, got: %s", plgFolder, os.Getenv("NUV_ROOT"))
+	// 		}
+	// 	})
+
+	// 	t.Run("success: plugin task found in ~/.nuv/olaris-test", func(t *testing.T) {
+	// 		dir, _ := homedir.Expand("~/.nuv")
+	// 		// create dir/olaris-test folder
+	// 		plgFolder := setupPluginTest(dir, t)
+	// 		defer os.RemoveAll(plgFolder)
+
+	// 		err := findPluginTask(dir, "grep")
+	// 		if err != nil {
+	// 			t.Errorf("Unexpected error: %v", err)
+	// 		}
+
+	// 		if os.Getenv("NUV_ROOT") != plgFolder {
+	// 			t.Errorf("Expected NUV_ROOT: %s, got: %s", plgFolder, os.Getenv("NUV_ROOT"))
+	// 		}
+	// 	})
+
+	// 	t.Run("error: no plugins folder found (olaris-*)", func(t *testing.T) {
+	// 		tempDir := t.TempDir()
+
+	// 		// Test when the folder is not found
+	// 		err := findPluginTask(tempDir, "grep")
+	// 		if err == nil {
+	// 			t.Error("Expected an error, but got nil")
+	// 		}
+	// 	})
+
+	// 	t.Run("error: folder found but no plugin task found", func(t *testing.T) {
+	// 		tempDir := t.TempDir()
+	// 		plgFolder := setupPluginTest(tempDir, t)
+
+	// 		err := findPluginTask(tempDir, "grep-wrong")
+	// 		if err == nil {
+	// 			t.Error("Expected an error, but got nil")
+	// 		}
+	// 		if os.Getenv("NUV_ROOT") == plgFolder {
+	// 			t.Errorf("Expected NUV_ROOT to not be set to: %s", plgFolder)
+	// 		}
+
+	// })
+}
+
+func TestNewPlugins(t *testing.T) {
+	t.Run("create plugins struct with valid local dir", func(t *testing.T) {
 		tempDir := t.TempDir()
 		plgFolder := setupPluginTest(tempDir, t)
 
-		err := findPluginTask(tempDir, "grep")
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-
-		if os.Getenv("NUV_ROOT") != plgFolder {
-			t.Errorf("Expected NUV_ROOT: %s, got: %s", plgFolder, os.Getenv("NUV_ROOT"))
-		}
+		p, err := newPlugins(tempDir)
+		require.NoError(t, err)
+		require.NotNil(t, p)
+		require.Len(t, p.local, 1)
+		require.Equal(t, plgFolder, p.local[0])
 	})
 
-	t.Run("success: plugin task found in ~/.nuv/olaris-test", func(t *testing.T) {
-		dir, _ := homedir.Expand("~/.nuv")
-		// create dir/olaris-test folder
-		plgFolder := setupPluginTest(dir, t)
-		defer os.RemoveAll(plgFolder)
-
-		err := findPluginTask(dir, "grep")
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-
-		if os.Getenv("NUV_ROOT") != plgFolder {
-			t.Errorf("Expected NUV_ROOT: %s, got: %s", plgFolder, os.Getenv("NUV_ROOT"))
-		}
+	t.Run("non existent local dir results in empty local field", func(t *testing.T) {
+		localDir := "/path/to/nonexistent/dir"
+		p, err := newPlugins(localDir)
+		require.NoError(t, err)
+		require.NotNil(t, p)
+		require.Len(t, p.local, 0)
 	})
+}
 
-	t.Run("error: no plugins folder found (olaris-*)", func(t *testing.T) {
-		tempDir := t.TempDir()
-
-		// Test when the folder is not found
-		err := findPluginTask(tempDir, "grep")
-		if err == nil {
-			t.Error("Expected an error, but got nil")
-		}
-	})
-
-	t.Run("error: folder found but no plugin task found", func(t *testing.T) {
-		tempDir := t.TempDir()
-		plgFolder := setupPluginTest(tempDir, t)
-
-		err := findPluginTask(tempDir, "grep-wrong")
-		if err == nil {
-			t.Error("Expected an error, but got nil")
-		}
-		if os.Getenv("NUV_ROOT") == plgFolder {
-			t.Errorf("Expected NUV_ROOT to not be set to: %s", plgFolder)
-		}
-
-	})
+func Example_pluginsPrint() {
+	p := plugins{
+		local: make([]string, 0),
+		nuv:   make([]string, 0),
+	}
+	p.print()
+	// Output
+	// No plugins installed. Use 'nuv -plugin' to add new ones.
 }

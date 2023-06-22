@@ -14,16 +14,17 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+#
+version: '3'
 
-setup() {
-    load 'test_helper/bats-support/load'
-    load 'test_helper/bats-assert/load'
-    export NO_COLOR=1
-}
+tasks:
+  opts:
+    desc: opts test
+  
+  vars:
+    desc: vars test
 
-@test "nuv prints 'Plugins:'" {
-    run nuv
-    assert_line 'Plugins:'
-    assert_line "[LOCAL] olaris-test:"
-    assert_line "grep-plg"
-}
+  simple:
+   desc: simple
+   cmds:
+   - echo simple
