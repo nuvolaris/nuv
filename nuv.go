@@ -162,6 +162,7 @@ func loadSavedArgs() []string {
 // Nuv parses args moving into the folder corresponding to args
 // then parses them with docopts and invokes the task
 func Nuv(base string, args []string) error {
+	trace("Nuv run with", args)
 	// go down using args as subcommands
 	err := os.Chdir(base)
 	debug("Nuv chdir", base)
@@ -205,6 +206,7 @@ func Nuv(base string, args []string) error {
 	}
 
 	if len(rest) == 0 || rest[0] == "help" {
+		debug("print help")
 		err := help()
 		if !isSubCmd {
 			fmt.Println()

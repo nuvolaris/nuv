@@ -28,10 +28,21 @@ setup() {
     assert_line "grep-plg"
 }
 
-@test "nuv with plugin command" {
+@test "nuv with grep plugin command" {
     run nuv grep-plg
     assert_line KO
     run nuv grep-plg GREP=first
     assert_line grep.txt:first
     assert_line OK
+}
+
+@test "nuv help on sub cmds plugin" {
+    run nuv sub-plg
+    assert_line '* opts:         opts test'
+    assert_line '* simple:       simple'
+}
+
+@test "nuv exec sub simple plugin cmd" {
+    run nuv sub-plg simple
+    assert_line 'simple'
 }

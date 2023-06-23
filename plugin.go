@@ -36,7 +36,7 @@ func printInstalledPluginsMessage(localDir string) error {
 }
 
 func findTaskInPlugins(localDir string, plg string) (string, error) {
-	trace("findTaskInPlugins", localDir, plg)
+	trace("findTaskInPlugins", plg)
 
 	plgs, err := newPlugins(localDir)
 	if err != nil {

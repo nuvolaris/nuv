@@ -275,12 +275,14 @@ func runNuv(baseDir string, args []string) error {
 	var taskNotFoundErr *TaskNotFoundErr
 	if errors.As(err, &taskNotFoundErr) {
 		// Hook plugins here
+		trace("task not found, looking for plugins")
 		plgDir, err := findTaskInPlugins(parent(baseDir), args[1])
 		if err != nil {
 			return err
 		}
 
 		os.Setenv("NUV_ROOT", plgDir)
+		debug("Found plugin in", plgDir)
 		if err := Nuv(plgDir, args[1:]); err != nil {
 			log.Fatalf("error: %s", err.Error())
 		}
