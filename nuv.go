@@ -37,7 +37,7 @@ type TaskNotFoundErr struct {
 }
 
 func (e *TaskNotFoundErr) Error() string {
-	return fmt.Sprintf("no task named %s found", e.input)
+	return fmt.Sprintf("no command named %s found", e.input)
 }
 
 func help() error {
@@ -171,6 +171,7 @@ func Nuv(base string, args []string) error {
 	}
 	rest := args
 
+	isSubCmd := false
 	for _, task := range args {
 		trace("task name", task)
 
@@ -192,6 +193,7 @@ func Nuv(base string, args []string) error {
 			}
 			//remove it from the args
 			rest = rest[1:]
+			isSubCmd = true
 		} else {
 			// stop when non folder reached
 			//substitute it with the validated task name
@@ -204,11 +206,11 @@ func Nuv(base string, args []string) error {
 
 	if len(rest) == 0 || rest[0] == "help" {
 		err := help()
-		if err != nil {
-			return err
+		if !isSubCmd {
+			fmt.Println()
+			return printInstalledPluginsMessage(parent(base))
 		}
-		fmt.Println()
-		return printInstalledPluginsMessage(parent(base))
+		return err
 	}
 
 	// load saved args
@@ -268,7 +270,7 @@ func Nuv(base string, args []string) error {
 // 4. If the prefix is not valid for any task, return an error
 func validateTaskName(dir string, name string) (string, error) {
 	if name == "" {
-		return "", fmt.Errorf("task name is empty")
+		return "", fmt.Errorf("command name is empty")
 	}
 
 	candidates := []string{}
@@ -286,14 +288,14 @@ func validateTaskName(dir string, name string) (string, error) {
 	}
 
 	if len(candidates) == 0 {
-		return "", fmt.Errorf("no task named %s found", name)
+		return "", &TaskNotFoundErr{input: name}
 	}
 
 	if len(candidates) == 1 {
 		return candidates[0], nil
 	}
 
-	return "", fmt.Errorf("ambiguous task: %s. Possible tasks: %v", name, candidates)
+	return "", fmt.Errorf("ambiguous command: %s. Possible tasks: %v", name, candidates)
 }
 
 // obtains the task names from the nuvfile.yaml inside the given directory

@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/mitchellh/go-homedir"
 	"github.com/stretchr/testify/require"
 )
 
@@ -68,59 +69,51 @@ func setupPluginTest(dir string, t *testing.T) string {
 }
 
 func TestFindPluginTask(t *testing.T) {
-	// 	t.Run("success: plugin task found in ./olaris-test", func(t *testing.T) {
-	// 		tempDir := t.TempDir()
-	// 		plgFolder := setupPluginTest(tempDir, t)
+	t.Run("success: plugin task found in ./olaris-test", func(t *testing.T) {
+		tempDir := t.TempDir()
+		plgFolder := setupPluginTest(tempDir, t)
 
-	// 		err := findPluginTask(tempDir, "grep")
-	// 		if err != nil {
-	// 			t.Errorf("Unexpected error: %v", err)
-	// 		}
+		fld, err := findTaskInPlugins(tempDir, "grep")
+		require.NoError(t, err)
+		require.Equal(t, plgFolder, fld)
 
-	// 		if os.Getenv("NUV_ROOT") != plgFolder {
-	// 			t.Errorf("Expected NUV_ROOT: %s, got: %s", plgFolder, os.Getenv("NUV_ROOT"))
-	// 		}
-	// 	})
+		// if os.Getenv("NUV_ROOT") != plgFolder {
+		// 	t.Errorf("Expected NUV_ROOT: %s, got: %s", plgFolder, os.Getenv("NUV_ROOT"))
+		// }
+	})
 
-	// 	t.Run("success: plugin task found in ~/.nuv/olaris-test", func(t *testing.T) {
-	// 		dir, _ := homedir.Expand("~/.nuv")
-	// 		// create dir/olaris-test folder
-	// 		plgFolder := setupPluginTest(dir, t)
-	// 		defer os.RemoveAll(plgFolder)
+	t.Run("success: plugin task found in ~/.nuv/olaris-test", func(t *testing.T) {
+		dir, _ := homedir.Expand("~/.nuv")
+		// create dir/olaris-test folder
+		plgFolder := setupPluginTest(dir, t)
+		defer os.RemoveAll(plgFolder)
 
-	// 		err := findPluginTask(dir, "grep")
-	// 		if err != nil {
-	// 			t.Errorf("Unexpected error: %v", err)
-	// 		}
+		fld, err := findTaskInPlugins(dir, "grep")
+		require.NoError(t, err)
+		require.Equal(t, plgFolder, fld)
 
-	// 		if os.Getenv("NUV_ROOT") != plgFolder {
-	// 			t.Errorf("Expected NUV_ROOT: %s, got: %s", plgFolder, os.Getenv("NUV_ROOT"))
-	// 		}
-	// 	})
+		// if os.Getenv("NUV_ROOT") != plgFolder {
+		// 	t.Errorf("Expected NUV_ROOT: %s, got: %s", plgFolder, os.Getenv("NUV_ROOT"))
+		// }
+	})
 
-	// 	t.Run("error: no plugins folder found (olaris-*)", func(t *testing.T) {
-	// 		tempDir := t.TempDir()
+	t.Run("error: no plugins folder found (olaris-*)", func(t *testing.T) {
+		tempDir := t.TempDir()
 
-	// 		// Test when the folder is not found
-	// 		err := findPluginTask(tempDir, "grep")
-	// 		if err == nil {
-	// 			t.Error("Expected an error, but got nil")
-	// 		}
-	// 	})
+		// Test when the folder is not found
+		fld, err := findTaskInPlugins(tempDir, "grep")
+		require.Error(t, err)
+		require.Empty(t, fld)
+	})
 
-	// 	t.Run("error: folder found but no plugin task found", func(t *testing.T) {
-	// 		tempDir := t.TempDir()
-	// 		plgFolder := setupPluginTest(tempDir, t)
+	t.Run("error: existing plugin folder but no plugin task found", func(t *testing.T) {
+		tempDir := t.TempDir()
+		_ = setupPluginTest(tempDir, t)
 
-	// 		err := findPluginTask(tempDir, "grep-wrong")
-	// 		if err == nil {
-	// 			t.Error("Expected an error, but got nil")
-	// 		}
-	// 		if os.Getenv("NUV_ROOT") == plgFolder {
-	// 			t.Errorf("Expected NUV_ROOT to not be set to: %s", plgFolder)
-	// 		}
-
-	// })
+		fld, err := findTaskInPlugins(tempDir, "grep-wrong")
+		require.Error(t, err)
+		require.Empty(t, fld)
+	})
 }
 
 func TestNewPlugins(t *testing.T) {

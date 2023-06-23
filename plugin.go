@@ -35,23 +35,22 @@ func printInstalledPluginsMessage(localDir string) error {
 	return nil
 }
 
-func findPluginTask(startDir string, plg string) error {
-	trace("findPluginTask", startDir, plg)
-	// findTaskFunc := func(folder string) bool {
-	// 	_, err := validateTaskName(folder, plg)
-	// 	return err == nil
-	// }
+func findTaskInPlugins(localDir string, plg string) (string, error) {
+	trace("findTaskInPlugins", localDir, plg)
 
-	// pluginFolder, found, err := visitPluginsFolders(startDir, findTaskFunc)
-	// if err != nil {
-	// 	return err
-	// }
-	// if !found {
-	// 	return fmt.Errorf("plugin task '%s' not found", plg)
-	// }
+	plgs, err := newPlugins(localDir)
+	if err != nil {
+		return "", err
+	}
 
-	// return os.Setenv("NUV_ROOT", pluginFolder)
-	return nil
+	for _, folder := range plgs.local {
+		_, err := validateTaskName(folder, plg)
+		if err == nil {
+			return folder, nil
+		}
+	}
+
+	return "", &TaskNotFoundErr{input: plg}
 }
 
 type plugins struct {
@@ -94,6 +93,7 @@ func newPlugins(localDir string) (*plugins, error) {
 func (p *plugins) print() {
 	if len(p.local) == 0 && len(p.nuv) == 0 {
 		fmt.Println("No plugins installed. Use 'nuv -plugin' to add new ones.")
+		return
 	}
 
 	fmt.Println("Plugins:")
@@ -106,7 +106,7 @@ func (p *plugins) print() {
 
 	if len(p.nuv) > 0 {
 		for _, plg := range p.nuv {
-			fmt.Printf("  %s:\n", filepath.Base(plg))
+			fmt.Printf("[NUV]  %s:\n", filepath.Base(plg))
 			printTaskHelp(plg)
 		}
 	}

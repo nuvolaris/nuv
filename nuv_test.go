@@ -115,9 +115,9 @@ func Test_validateTaskName(t *testing.T) {
 		{"help", "help"},
 		{"task1", "task1"},
 		{"te", "test"},
-		{"t", "ambiguous task: t."},
-		{"no-task", "no task named no-task found"},
-		{"", "task name is empty"},
+		{"t", "ambiguous command: t."},
+		{"no-task", "no command named no-task found"},
+		{"", "command name is empty"},
 	}
 
 	tmpDir := createTmpNuvfile(t, testNuvfile)
@@ -128,7 +128,7 @@ func Test_validateTaskName(t *testing.T) {
 			t.Fatalf("want error: %s, got: %v", tt.expected, err)
 		}
 		if err == nil && task != tt.expected {
-			t.Fatalf("want task: %s, got: %s", tt.argTask, task)
+			t.Fatalf("want command: %s, got: %s", tt.argTask, task)
 		}
 
 	}

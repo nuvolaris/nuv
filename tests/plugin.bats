@@ -27,3 +27,11 @@ setup() {
     assert_line "[LOCAL] olaris-test:"
     assert_line "grep-plg"
 }
+
+@test "nuv with plugin command" {
+    run nuv grep-plg
+    assert_line KO
+    run nuv grep-plg GREP=first
+    assert_line grep.txt:first
+    assert_line OK
+}
