@@ -52,11 +52,6 @@ func (r fakeRandomGenerator) GenerateUUID() error {
 }
 
 func TestRandom(t *testing.T) {
-	oldRandomGen := randomGen
-	defer func() {
-		randomGen = oldRandomGen
-	}()
-
 	var output bytes.Buffer
 	randomGen = fakeRandomGenerator{
 		w:          &output,

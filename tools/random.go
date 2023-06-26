@@ -37,19 +37,23 @@ type randomGenerator interface {
 	GenerateUUID() error
 }
 
-type randomGeneratorImpl struct{}
+type randomGeneratorImpl struct {
+	rand *rand.Rand
+}
 
-var randomGen randomGenerator = randomGeneratorImpl{}
+var randomGen randomGenerator = randomGeneratorImpl{
+	rand: rand.New(rand.NewSource(time.Now().UnixNano())),
+}
 
 func (r randomGeneratorImpl) GenerateFloat01() {
-	fmt.Println(rand.Float64())
+	fmt.Println(r.rand.Float64())
 }
 
 func (r randomGeneratorImpl) GenerateString(length int, chars string) {
 	var buf bytes.Buffer
 
 	for i := 0; i < length; i++ {
-		randIndex := rand.Intn(len(chars))
+		randIndex := r.rand.Intn(len(chars))
 		randChar := chars[randIndex]
 		buf.WriteByte(randChar)
 	}
@@ -58,7 +62,7 @@ func (r randomGeneratorImpl) GenerateString(length int, chars string) {
 }
 
 func (r randomGeneratorImpl) GenerateInteger(min, max int) {
-	fmt.Println(rand.Intn(max-min) + min)
+	fmt.Println(r.rand.Intn(max-min) + min)
 }
 
 func (r randomGeneratorImpl) GenerateUUID() error {
@@ -95,8 +99,6 @@ func RandTool() error {
 		flag.Usage()
 		return nil
 	}
-
-	rand.Seed(time.Now().UnixNano()) // Seed the random number generator with the current time
 
 	if uuidFlag {
 		return randomGen.GenerateUUID()

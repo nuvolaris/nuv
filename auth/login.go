@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/zalando/go-keyring"
 )
@@ -48,6 +49,7 @@ const defaultUser = "nuvolaris"
 const nuvSecretServiceName = "nuvolaris"
 
 func LoginCmd() (*LoginResult, error) {
+	flag := flag.NewFlagSet("login", flag.ExitOnError)
 	flag.Usage = func() {
 		fmt.Println(usage)
 	}
@@ -55,7 +57,10 @@ func LoginCmd() (*LoginResult, error) {
 	var helpFlag bool
 	flag.BoolVar(&helpFlag, "h", false, "Show usage")
 	flag.BoolVar(&helpFlag, "help", false, "Show usage")
-	flag.Parse()
+	err := flag.Parse(os.Args[1:])
+	if err != nil {
+		return nil, err
+	}
 
 	if helpFlag {
 		flag.Usage()
@@ -85,6 +90,10 @@ func LoginCmd() (*LoginResult, error) {
 	creds, err := doLogin(url, user, pwd)
 	if err != nil {
 		return nil, err
+	}
+
+	if _, ok := creds["AUTH"]; !ok {
+		return nil, errors.New("missing AUTH token from login response")
 	}
 
 	if err := storeCredentials(creds); err != nil {
