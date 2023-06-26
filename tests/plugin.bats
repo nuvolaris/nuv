@@ -19,6 +19,7 @@ setup() {
     load 'test_helper/bats-support/load'
     load 'test_helper/bats-assert/load'
     export NO_COLOR=1
+    export NUV_NO_LOG_PREFIX=1
 }
 
 @test "nuv prints 'Plugins:'" {
@@ -46,3 +47,16 @@ setup() {
     run nuv sub-plg simple
     assert_line 'simple'
 }
+
+@test "nuv -plugin with wrong name" {
+    run nuv -plugin https://github.com/giusdp/olari
+    assert_line "error: plugin repository names must start with 'olaris-'"
+    assert_failure
+}
+
+# @test "nuv -plugin with correct plugin repo" {
+#     run nuv -plugin https://github.com/giusdp/olaris-test.git
+#     assert_line "Plugins:"
+#     assert_line "[LOCAL] olaris-test:"
+#     assert_line "grep-plg"
+# }

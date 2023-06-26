@@ -146,3 +146,53 @@ func Example_pluginsPrint() {
 	// Output
 	// No plugins installed. Use 'nuv -plugin' to add new ones.
 }
+
+func TestCheckGitRepo(t *testing.T) {
+	tests := []struct {
+		url          string
+		expectedRepo bool
+		expectedName string
+	}{
+		{
+			url:          "https://github.com/giusdp/olaris-test",
+			expectedRepo: true,
+			expectedName: "olaris-test",
+		},
+		{
+			url:          "https://github.com/giusdp/olaris-test.git",
+			expectedRepo: true,
+			expectedName: "olaris-test",
+		},
+		{
+			url:          "git@github.com:giusdp/olaris-test.git",
+			expectedRepo: true,
+			expectedName: "olaris-test",
+		},
+		{
+			url:          "https://github.com/giusdp/some-repo",
+			expectedRepo: false,
+			expectedName: "",
+		},
+		{
+			url:          "https://github.com/giusdp/olaris-repo.git",
+			expectedRepo: true,
+			expectedName: "olaris-repo",
+		},
+		{
+			url:          "https://github.com/olaris-1234/repo",
+			expectedRepo: false,
+			expectedName: "",
+		},
+		{
+			url:          "https://github.com/giusdp/another-repo.git",
+			expectedRepo: false,
+			expectedName: "",
+		},
+	}
+
+	for _, test := range tests {
+		isOlarisRepo, repoName := checkGitRepo(test.url)
+		require.Equal(t, test.expectedRepo, isOlarisRepo)
+		require.Equal(t, test.expectedName, repoName)
+	}
+}

@@ -18,13 +18,96 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 
+	git "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/mitchellh/go-homedir"
 	"github.com/nuvolaris/task/v3"
 )
+
+func pluginTool() error {
+	flag := flag.NewFlagSet("plugin", flag.ExitOnError)
+	flag.Usage = printPluginUsage
+
+	err := flag.Parse(os.Args[1:])
+	if err != nil {
+		return err
+	}
+
+	args := flag.Args()
+	if len(args) != 1 {
+		flag.Usage()
+		return nil
+	}
+
+	return downloadPluginTasksFromRepo(args[0])
+}
+
+func printPluginUsage() {
+	fmt.Println(`Usage: nuv -plugin <repo>
+
+Install/update plugins from a repository.
+The name of the repository must start with 'olaris-'.`)
+}
+
+func downloadPluginTasksFromRepo(repo string) error {
+	isNameValid, repoName := checkGitRepo(repo)
+	if !isNameValid {
+		return fmt.Errorf("plugin repository names must start with 'olaris-'")
+	}
+
+	pluginDir, err := homedir.Expand("~/.nuv/" + repoName)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(pluginDir, 0755); err != nil {
+		return err
+	}
+
+	// TODO if already exists, update
+	if _, err := os.Stat(pluginDir); !os.IsNotExist(err) {
+		fmt.Println("Plugin already installed:", repoName)
+		return nil
+	}
+
+	// if not, clone
+	cloneOpts := &git.CloneOptions{
+		URL:           repo,
+		Progress:      os.Stderr,
+		ReferenceName: plumbing.NewBranchReferenceName("main"),
+	}
+
+	fmt.Println("Downloading plugins:", repoName)
+	_, err = git.PlainClone(pluginDir, false, cloneOpts)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkGitRepo(url string) (bool, string) {
+	// Remove the ".git" extension if present
+	url = strings.TrimSuffix(url, ".git")
+
+	// Extract the repository name from the URL
+	parts := strings.Split(url, "/")
+	repoName := parts[len(parts)-1]
+
+	// Check if the repository name matches the pattern "olaris-*"
+	match, _ := regexp.MatchString("^olaris-.*$", repoName)
+
+	if match {
+		return true, repoName
+	}
+	return false, ""
+}
 
 func printInstalledPluginsMessage(localDir string) error {
 	plgs, err := newPlugins(localDir)

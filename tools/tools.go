@@ -36,12 +36,12 @@ var tools = []string{
 	"filetype", "random", "datefmt",
 	"config", "retry", "urlenc", "ssh",
 	"find", "replace", "base64", "validate",
-	"scan", "plugin",
+	"scan",
 }
 
 // not available in taskfiles
 var extraTools = []string{
-	"update", "serve", "help", "info", "version", "task",
+	"update", "serve", "help", "info", "version", "task", "plugin",
 }
 
 func IsTool(name string) bool {
@@ -163,14 +163,7 @@ func RunTool(name string, args []string) (int, error) {
 		if err := scanTool(); err != nil {
 			return 1, err
 		}
-
-	case "plugin":
-		os.Args = append([]string{"plugin"}, args...)
-		if err := pluginTool(); err != nil {
-			return 1, err
-		}
 	}
-
 	return 0, nil
 }
 

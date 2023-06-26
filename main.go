@@ -195,6 +195,13 @@ func main() {
 			}
 			os.Exit(0)
 		}
+		if cmd == "plugin" {
+			os.Args = args[1:]
+			if err := pluginTool(); err != nil {
+				log.Fatalf("error: %s", err.Error())
+			}
+			os.Exit(0)
+		}
 		// check if it is an embedded to and invoke it
 		if tools.IsTool(cmd) {
 			code, err := tools.RunTool(cmd, args[2:])
@@ -281,8 +288,8 @@ func runNuv(baseDir string, args []string) error {
 			return err
 		}
 
-		os.Setenv("NUV_ROOT", plgDir)
 		debug("Found plugin in", plgDir)
+		os.Setenv("NUV_ROOT", plgDir)
 		if err := Nuv(plgDir, args[1:]); err != nil {
 			log.Fatalf("error: %s", err.Error())
 		}
