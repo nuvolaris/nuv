@@ -29,6 +29,13 @@ setup() {
     assert_line "grep-plg"
 }
 
+@test "nuv skips invalid plugin folders (without nuvfile.yaml)" {
+    run mkdir olaris-test2
+    run nuv
+    refute_line "[LOCAL] olaris-test2:"
+    run rm -rf olaris-test2
+}
+
 @test "nuv with grep plugin command" {
     run nuv grep-plg
     assert_line KO
@@ -54,9 +61,16 @@ setup() {
     assert_failure
 }
 
-# @test "nuv -plugin with correct plugin repo" {
-#     run nuv -plugin https://github.com/giusdp/olaris-test.git
-#     assert_line "Plugins:"
-#     assert_line "[LOCAL] olaris-test:"
-#     assert_line "grep-plg"
-# }
+@test "nuv -plugin with correct plugin repo" {
+    run nuv -plugin https://github.com/giusdp/olaris-test.git
+    assert_success
+
+    run nuv
+    assert_line 'Plugins:'
+    assert_line "[LOCAL] olaris-test:"
+    assert_line "grep-plg"
+    assert_line "[NUV] olaris-test:"
+    assert_line "sub-plg"
+
+    run rm -rf ~/.nuv/olaris-test
+}

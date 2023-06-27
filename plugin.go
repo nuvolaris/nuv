@@ -66,14 +66,15 @@ func downloadPluginTasksFromRepo(repo string) error {
 	if err != nil {
 		return err
 	}
-	if err := os.MkdirAll(pluginDir, 0755); err != nil {
-		return err
-	}
 
 	// TODO if already exists, update
 	if _, err := os.Stat(pluginDir); !os.IsNotExist(err) {
 		fmt.Println("Plugin already installed:", repoName)
 		return nil
+	}
+
+	if err := os.MkdirAll(pluginDir, 0755); err != nil {
+		return err
 	}
 
 	// if not, clone
@@ -152,7 +153,13 @@ func newPlugins(localDir string) (*plugins, error) {
 		return nil, err
 	}
 
-	localOlarisFolders = append(localOlarisFolders, olarisFolders...)
+	// filter all folders that are do not contain nuvfile.yaml
+	for _, folder := range olarisFolders {
+		if !exists(folder, NUVFILE) {
+			continue
+		}
+		localOlarisFolders = append(localOlarisFolders, folder)
+	}
 
 	// Search in ~/.nuv/olaris-*
 	nuvHome, err := homedir.Expand("~/.nuv")
@@ -164,8 +171,12 @@ func newPlugins(localDir string) (*plugins, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	nuvOlarisFolders = append(nuvOlarisFolders, olarisNuvFolders...)
+	for _, folder := range olarisNuvFolders {
+		if !exists(folder, NUVFILE) {
+			continue
+		}
+		nuvOlarisFolders = append(nuvOlarisFolders, folder)
+	}
 
 	return &plugins{
 		local: localOlarisFolders,
@@ -189,7 +200,7 @@ func (p *plugins) print() {
 
 	if len(p.nuv) > 0 {
 		for _, plg := range p.nuv {
-			fmt.Printf("[NUV]  %s:\n", filepath.Base(plg))
+			fmt.Printf("[NUV] %s:\n", filepath.Base(plg))
 			printTaskHelp(plg)
 		}
 	}
