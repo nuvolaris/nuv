@@ -17,6 +17,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -194,6 +195,13 @@ func main() {
 			}
 			os.Exit(0)
 		}
+		if cmd == "plugin" {
+			os.Args = args[1:]
+			if err := pluginTool(); err != nil {
+				log.Fatalf("error: %s", err.Error())
+			}
+			os.Exit(0)
+		}
 		// check if it is an embedded to and invoke it
 		if tools.IsTool(cmd) {
 			code, err := tools.RunTool(cmd, args[2:])
@@ -221,7 +229,7 @@ func main() {
 	// we pass parent(dir) because we use the olaris parent folder
 	checkUpdated(parent(nuvRootDir), 24*time.Hour)
 
-	if err := Nuv(nuvRootDir, args[1:]); err != nil {
+	if err := runNuv(nuvRootDir, args); err != nil {
 		log.Fatalf("error: %s", err.Error())
 	}
 }
@@ -263,4 +271,30 @@ func wskPropertySet(apihost, auth string) error {
 		return err
 	}
 	return nil
+}
+
+func runNuv(baseDir string, args []string) error {
+	err := Nuv(baseDir, args[1:])
+	if err == nil {
+		return nil
+	}
+
+	var taskNotFoundErr *TaskNotFoundErr
+	if errors.As(err, &taskNotFoundErr) {
+		// Hook plugins here
+		trace("task not found, looking for plugins")
+		plgDir, err := findTaskInPlugins(parent(baseDir), args[1])
+		if err != nil {
+			return err
+		}
+
+		debug("Found plugin in", plgDir)
+		os.Setenv("NUV_ROOT", plgDir)
+		if err := Nuv(plgDir, args[1:]); err != nil {
+			log.Fatalf("error: %s", err.Error())
+		}
+		return nil
+	}
+
+	return err
 }

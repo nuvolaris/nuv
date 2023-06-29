@@ -1,6 +1,6 @@
 module github.com/nuvolaris/nuv
 
-go 1.19
+go 1.20
 
 require (
 	github.com/apache/openwhisk-client-go v0.0.0-20221221220036-71124f15c938
@@ -13,10 +13,11 @@ require (
 	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230603163828-10ca029cdb58
 	github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c
 	github.com/nuvolaris/goja/gojamain v0.0.0-20230527135333-d302d90d3283
-	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20221227222349-fba31e174b7e
+	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230615104118-d593f7d6576f
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae
-	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230402183349-40db8d138726
+	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230622105149-f79e6416ff6e
+	github.com/nuvolaris/task/v3 v3.9.3-0.20230622101932-af3535e30027
 	github.com/stretchr/testify v1.8.1
 )
 
@@ -28,6 +29,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/nuvolaris/goja v0.0.0-20230527133949-2939724446aa // indirect
 	github.com/nuvolaris/goja_nodejs v0.0.0-20230527135110-3aa37178bb6c // indirect
+	github.com/nuvolaris/sh/v3 v3.0.0-20230506145920-eb793bb1aedd // indirect
 	github.com/pkg/sftp v1.13.5 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/remeh/sizedwaitgroup v1.0.0 // indirect
@@ -83,8 +85,6 @@ require (
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
 	github.com/nuvolaris/go-replace v0.0.0-20230515190028-12766da1824c
 	github.com/nuvolaris/goph v0.0.0-20230425125736-e7c6bed14c20
-	github.com/nuvolaris/sh/v3 v3.0.0-20230506145920-eb793bb1aedd // indirect
-	github.com/nuvolaris/task/v3 v3.9.3-0.20230506150239-88df5a81e409 // indirect
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pjbgf/sha1cd v0.2.3 // indirect

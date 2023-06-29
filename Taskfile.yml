@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-version: '3'
+version: "3"
 vars:
   BRANCH: 0.3.0
   BASEVER: "{{.BRANCH}}-dev"
@@ -25,16 +25,15 @@ vars:
   DEBUG: ""
 
 tasks:
-
   default:
-  - task: build
+    - task: build
 
   cli-ver:
-    - git tag -d $(git tag) 
+    - git tag -d $(git tag)
     - git tag -f {{.BASEVER}}.$(date +%y%m%d%H%M){{.S}}
     - git tag
 
-  setup: {silent:true} 
+  setup: { silent:true }
   origin:
     - git fetch --all
     - git checkout origin/main -B main
@@ -44,49 +43,48 @@ tasks:
     cmds:
       - go build {{.DEBUG}} -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"  -o bin/nuv
     sources:
-      - '*.go'
-      - 'tools/*.go'
+      - "*.go"
+      - "tools/*.go"
     generates:
       - bin/nuv
 
   debug:
     cmds:
-    - task: build
-      vars:
-        DEBUG: "-gcflags '-l -N'"
-    - dlv exec ./bin/nuv -- {{.CLI_ARGS}}
-
+      - task: build
+        vars:
+          DEBUG: "-gcflags '-l -N'"
+      - dlv exec ./bin/nuv -- {{.CLI_ARGS}}
 
   install:
     desc: install nuv using a local folder for binaries
     deps:
-    - build
+      - build
     dir: bin
     cmds:
-    - ./nuv getall
-    - sudo rm -f /usr/bin/nuv /usr/local/bin/nuv
-    - sudo ln -sf $PWD/{{OS}}/{{ARCH}}/nuv /usr/local/bin/nuv
-    - sudo ln -sf $PWD/{{OS}}/{{ARCH}}/nuv /usr/bin/nuv
+      - ./nuv getall
+      - sudo rm -f /usr/bin/nuv /usr/local/bin/nuv
+      - sudo ln -sf $PWD/{{OS}}/{{ARCH}}/nuv /usr/local/bin/nuv
+      - sudo ln -sf $PWD/{{OS}}/{{ARCH}}/nuv /usr/bin/nuv
 
   test:
     desc: tests all
     cmds:
-    - task: install
-    - task: utest
-    - task: itest
+      - task: install
+      - task: utest
+      - task: itest
 
   utest:
     desc: unit test nuv
     cmds:
-    - rm -Rf ~/.nuv/olaris
-    - go test
+      - rm -Rf ~/.nuv/olaris
+      - go test ./...
 
   itest:
     desc: integration tests nuv
     dir: tests
     cmds:
-    - rm -Rf ~/.nuv/olaris
-    - bats/bin/bats .
+      - rm -Rf ~/.nuv/olaris
+      - bats/bin/bats .
 
   clean:
     - rm -f bin/nuv
@@ -96,9 +94,9 @@ tasks:
     - rm -f bin/nuv
     - task: build
 
-  utestdiff: 
+  utestdiff:
     cmds:
-    - |-
+      - |-
         if test -z '{{.N}}'
         then  go test -v | tee _difftest
               python3 difftest.py
@@ -123,4 +121,3 @@ tasks:
       go get github.com/nuvolaris/task/v3@nuvolaris
       git commit -m "updated go mod" -a
       git push origin main
-      

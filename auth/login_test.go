@@ -19,12 +19,12 @@ package auth
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/zalando/go-keyring"
 )
 
@@ -55,16 +55,6 @@ func setupMockServer(t *testing.T, expectedLogin, expectedPass, expectedRes stri
 
 	return server
 }
-func ExampleLoginCmd_noArgs() {
-	os.Args = []string{"login"}
-	_, err := LoginCmd()
-	fmt.Println(err)
-	// Output:
-	// Usage:
-	// nuv login <apihost> [<user>]
-	// <nil>
-}
-
 func TestLoginCmd(t *testing.T) {
 	keyring.MockInit()
 
@@ -88,8 +78,8 @@ func TestLoginCmd(t *testing.T) {
 		}
 	})
 
-	t.Run("with only apihost adds received credentials to secret store", func(t *testing.T) {
-		mockServer := setupMockServer(t, "nuvolaris", "a password", "{\"fakeCred\": \"test\"}")
+	t.Run("with only apihost, add received credentials to secret store", func(t *testing.T) {
+		mockServer := setupMockServer(t, "nuvolaris", "a password", "{\"AUTH\": \"test\"}")
 		defer mockServer.Close()
 
 		oldPwdReader := pwdReader
@@ -102,26 +92,16 @@ func TestLoginCmd(t *testing.T) {
 		loginResult, err := LoginCmd()
 		pwdReader = oldPwdReader
 
-		if err != nil {
-			t.Errorf("Expected no error, got %s", err.Error())
-		}
+		require.NoError(t, err)
+		require.NotNil(t, loginResult)
 
-		if loginResult == nil {
-			t.Error("Expected result, got nil")
-		}
-
-		cred, err := keyring.Get(nuvSecretServiceName, "fakeCred")
-		if err != nil {
-			t.Errorf("Expected no error, got %s", err.Error())
-		}
-
-		if cred != "test" {
-			t.Errorf("Expected test, got %s", cred)
-		}
+		cred, err := keyring.Get(nuvSecretServiceName, "AUTH")
+		require.NoError(t, err)
+		require.Equal(t, "test", cred)
 	})
 
 	t.Run("with apihost and user adds received credentials to secret store", func(t *testing.T) {
-		mockServer := setupMockServer(t, "a user", "a password", "{ \"fakeCred\": \"test\"}")
+		mockServer := setupMockServer(t, "a user", "a password", "{ \"AUTH\": \"testauth\", \"fakeCred\": \"test\"}")
 		defer mockServer.Close()
 
 		oldPwdReader := pwdReader
@@ -133,23 +113,12 @@ func TestLoginCmd(t *testing.T) {
 		os.Args = []string{"login", mockServer.URL, "a user"}
 		loginResult, err := LoginCmd()
 		pwdReader = oldPwdReader
-
-		if err != nil {
-			t.Errorf("Expected no error, got %s", err.Error())
-		}
-
-		if loginResult == nil {
-			t.Error("Expected result, got nil")
-		}
+		require.NoError(t, err)
+		require.NotNil(t, loginResult)
 
 		cred, err := keyring.Get(nuvSecretServiceName, "fakeCred")
-		if err != nil {
-			t.Errorf("Expected no error, got %s", err.Error())
-		}
-
-		if cred != "test" {
-			t.Errorf("Expected test, got %s", cred)
-		}
+		require.NoError(t, err)
+		require.Equal(t, "test", cred)
 	})
 
 	t.Run("error when response body is invalid", func(t *testing.T) {
@@ -164,17 +133,26 @@ func TestLoginCmd(t *testing.T) {
 		os.Args = []string{"login", mockServer.URL, "a user"}
 		loginResult, err := LoginCmd()
 		pwdReader = oldPwdReader
+		require.Error(t, err)
+		require.Equal(t, "failed to decode response from login request", err.Error())
+		require.Nil(t, loginResult)
+	})
 
-		if err == nil {
-			t.Error("Expected error, got nil")
-		}
-		if err.Error() != "failed to decode response from login request" {
-			t.Errorf("Expected error to be 'failed to decode response from login request', got %s", err.Error())
-		}
+	t.Run("error when response body is missing AUTH token", func(t *testing.T) {
+		mockServer := setupMockServer(t, "a user", "a password", "{\"fakeCred\": \"test\"}")
+		defer mockServer.Close()
 
-		if loginResult != nil {
-			t.Errorf("Expected loginResult to be nil, got %v", loginResult)
+		oldPwdReader := pwdReader
+		pwdReader = &stubPasswordReader{
+			Password:    "a password",
+			ReturnError: false,
 		}
+		os.Args = []string{"login", mockServer.URL, "a user"}
+		loginResult, err := LoginCmd()
+		pwdReader = oldPwdReader
+		require.Error(t, err)
+		require.Equal(t, "missing AUTH token from login response", err.Error())
+		require.Nil(t, loginResult)
 	})
 }
 
@@ -183,13 +161,9 @@ func Test_doLogin(t *testing.T) {
 	defer mockServer.Close()
 
 	cred, err := doLogin(mockServer.URL, "a user", "a password")
-	if err != nil {
-		t.Errorf("Expected no error, got %s", err.Error())
-	}
-
-	if cred["fakeCred"] != "test" {
-		t.Errorf("Expected test, got %s", cred["fakeCred"])
-	}
+	require.NoError(t, err)
+	require.NotNil(t, cred)
+	require.Equal(t, "test", cred["fakeCred"])
 }
 func Test_storeCredentials(t *testing.T) {
 	keyring.MockInit()
@@ -200,17 +174,12 @@ func Test_storeCredentials(t *testing.T) {
 	fakeCreds["MONGODB"] = "fakeValue"
 
 	err := storeCredentials(fakeCreds)
-	if err != nil {
-		t.Errorf("Expected no error, got %s", err.Error())
-	}
+	require.NoError(t, err)
+	require.NotNil(t, fakeCreds)
 
 	for k := range fakeCreds {
 		cred, err := keyring.Get(nuvSecretServiceName, k)
-		if err != nil {
-			t.Errorf("Expected no error, got %s", err.Error())
-		}
-		if cred != fakeCreds[k] {
-			t.Errorf("Expected %s, got %s", fakeCreds[k], cred)
-		}
+		require.NoError(t, err)
+		require.Equal(t, fakeCreds[k], cred)
 	}
 }

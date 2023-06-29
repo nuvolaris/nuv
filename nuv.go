@@ -32,6 +32,14 @@ import (
 	envsubst "github.com/nuvolaris/envsubst/cmd/envsubstmain"
 )
 
+type TaskNotFoundErr struct {
+	input string
+}
+
+func (e *TaskNotFoundErr) Error() string {
+	return fmt.Sprintf("no command named %s found", e.input)
+}
+
 func help() error {
 	if os.Getenv("NUV_NO_NUVOPTS") == "" && exists(".", NUVOPTS) {
 		os.Args = []string{"envsubst", "-no-unset", "-i", NUVOPTS}
@@ -43,8 +51,8 @@ func help() error {
 		list = "--list-all"
 	}
 	_, err := Task("-t", NUVFILE, list)
-	return err
 
+	return err
 }
 
 // parseArgs parse the arguments acording the docopt
@@ -151,17 +159,20 @@ func loadSavedArgs() []string {
 	return res
 }
 
-// Nuv parse args moving
-// into the folder corresponding to args
-// then parse them with docopts and invokes task
+// Nuv parses args moving into the folder corresponding to args
+// then parses them with docopts and invokes the task
 func Nuv(base string, args []string) error {
+	trace("Nuv run with", args)
 	// go down using args as subcommands
 	err := os.Chdir(base)
+	debug("Nuv chdir", base)
+
 	if err != nil {
 		return err
 	}
 	rest := args
 
+	isSubCmd := false
 	for _, task := range args {
 		trace("task name", task)
 
@@ -171,7 +182,8 @@ func Nuv(base string, args []string) error {
 		}
 
 		// try to correct name if it's not a flag
-		taskName, err := validateTaskName(task)
+		pwd, _ := os.Getwd()
+		taskName, err := validateTaskName(pwd, task)
 		if err != nil {
 			return err
 		}
@@ -182,6 +194,7 @@ func Nuv(base string, args []string) error {
 			}
 			//remove it from the args
 			rest = rest[1:]
+			isSubCmd = true
 		} else {
 			// stop when non folder reached
 			//substitute it with the validated task name
@@ -193,7 +206,13 @@ func Nuv(base string, args []string) error {
 	}
 
 	if len(rest) == 0 || rest[0] == "help" {
-		return help()
+		debug("print help")
+		err := help()
+		if !isSubCmd {
+			fmt.Println()
+			return printInstalledPluginsMessage(parent(base))
+		}
+		return err
 	}
 
 	// load saved args
@@ -251,14 +270,13 @@ func Nuv(base string, args []string) error {
 // 2. If not found, check if the input is a prefix of any task name, if it is for only one return the proper task name
 // 3. If the prefix is valid for more than one task, return an error
 // 4. If the prefix is not valid for any task, return an error
-func validateTaskName(name string) (string, error) {
+func validateTaskName(dir string, name string) (string, error) {
 	if name == "" {
-		return "", fmt.Errorf("task name is empty")
+		return "", fmt.Errorf("command name is empty")
 	}
-	pwd, _ := os.Getwd()
 
 	candidates := []string{}
-	tasks := getTaskNamesList(pwd)
+	tasks := getTaskNamesList(dir)
 	if !slices.Contains(tasks, "help") {
 		tasks = append(tasks, "help")
 	}
@@ -272,14 +290,14 @@ func validateTaskName(name string) (string, error) {
 	}
 
 	if len(candidates) == 0 {
-		return "", fmt.Errorf("no task named %s found", name)
+		return "", &TaskNotFoundErr{input: name}
 	}
 
 	if len(candidates) == 1 {
 		return candidates[0], nil
 	}
 
-	return "", fmt.Errorf("ambiguous task: %s. Possible tasks: %v", name, candidates)
+	return "", fmt.Errorf("ambiguous command: %s. Possible tasks: %v", name, candidates)
 }
 
 // obtains the task names from the nuvfile.yaml inside the given directory
