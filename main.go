@@ -285,7 +285,7 @@ func runNuv(baseDir string, args []string) error {
 		trace("task not found, looking for plugins")
 		plgDir, err := findTaskInPlugins(parent(baseDir), args[1])
 		if err != nil {
-			return err
+			return taskNotFoundErr
 		}
 
 		debug("Found plugin in", plgDir)

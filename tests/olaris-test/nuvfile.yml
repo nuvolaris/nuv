@@ -18,7 +18,7 @@
 
 version: "3"
 tasks:
-  sub-plg:
+  plg:
     desc: sub command
 
   grep-plg:
