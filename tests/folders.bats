@@ -19,6 +19,7 @@ setup() {
     load 'test_helper/bats-support/load'
     load 'test_helper/bats-assert/load'
     export NO_COLOR=1
+    export NUV_NO_LOG_PREFIX=1
 }
 
 @test "welcome" {
@@ -51,4 +52,10 @@ setup() {
 
     run nuv o s
     assert_line "hidden"
+}
+
+@test "sub command not found" {
+    run nuv sub notfound
+    assert_line "error: no command named notfound found"
+    assert_failure
 }
