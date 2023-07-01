@@ -67,9 +67,29 @@ func downloadPluginTasksFromRepo(repo string) error {
 		return err
 	}
 
-	// TODO if already exists, update
 	if _, err := os.Stat(pluginDir); !os.IsNotExist(err) {
-		fmt.Println("Plugin already installed:", repoName)
+		fmt.Println("Updating plugin", repoName)
+
+		r, err := git.PlainOpen(pluginDir)
+		if err != nil {
+			return err
+		}
+		// Get the working directory for the repository
+		w, err := r.Worktree()
+		if err != nil {
+			return err
+		}
+
+		// Pull the latest changes from the origin remote and merge into the current branch
+		err = w.Pull(&git.PullOptions{RemoteName: "origin"})
+		if err != nil {
+			if err.Error() == "already up-to-date" {
+				fmt.Println("The plugin repo is already up to date!")
+				return nil
+			}
+			return err
+		}
+
 		return nil
 	}
 
