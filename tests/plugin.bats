@@ -74,3 +74,13 @@ setup() {
 
     run rm -rf ~/.nuv/olaris-test
 }
+
+@test "nuv -plugin on existing plugin will update it" {
+    run nuv -plugin https://github.com/giusdp/olaris-test.git
+    assert_success
+
+    run nuv -plugin https://github.com/giusdp/olaris-test.git
+    assert_success
+    assert_line "Updating plugin olaris-test"
+    assert_line "The plugin repo is already up to date!"
+}
