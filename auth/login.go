@@ -24,9 +24,13 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
+	"github.com/mitchellh/go-homedir"
+	"github.com/nuvolaris/nuv/config"
 	"github.com/zalando/go-keyring"
 )
 
@@ -96,18 +100,44 @@ func LoginCmd() (*LoginResult, error) {
 		return nil, errors.New("missing AUTH token from login response")
 	}
 
-	if err := storeCredentials(creds); err != nil {
-		return nil, err
-	}
+	log.Println("Login successful")
 
-	auth, err := keyring.Get(nuvSecretServiceName, "AUTH")
+	nuvHome, err := homedir.Expand("~/.nuv")
 	if err != nil {
 		return nil, err
 	}
 
+	configMap, err := config.NewConfigMapBuilder().
+		WithConfigJson(filepath.Join(nuvHome, "config.json")).
+		Build()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range creds {
+		if err := configMap.Insert(k, v); err != nil {
+			return nil, err
+		}
+	}
+
+	err = configMap.SaveConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	// if err := storeCredentials(creds); err != nil {
+	// 	return nil, err
+	// }
+
+	// auth, err := keyring.Get(nuvSecretServiceName, "AUTH")
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	return &LoginResult{
 		Login:   user,
-		Auth:    auth,
+		Auth:    creds["AUTH"],
 		ApiHost: apihost,
 	}, nil
 }

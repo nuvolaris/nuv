@@ -18,10 +18,41 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
+
+func TestSaveConfig(t *testing.T) {
+	// Create a temporary directory for testing
+	tempDir := t.TempDir()
+
+	configMap, err := NewConfigMapBuilder().WithConfigJson(filepath.Join(tempDir, "config.json")).Build()
+	require.NoError(t, err)
+
+	err = configMap.Insert("key", "value")
+	require.NoError(t, err)
+
+	err = configMap.SaveConfig()
+	require.NoError(t, err)
+
+	// Read the saved file
+	savedJSON, err := os.ReadFile(configMap.configPath)
+	require.NoError(t, err)
+
+	// Unmarshal the JSON
+	var savedConfig map[string]interface{}
+	err = json.Unmarshal(savedJSON, &savedConfig)
+	require.NoError(t, err)
+
+	// Verify the saved config matches the original config
+	require.Equal(t, configMap.config, savedConfig)
+}
 
 func TestInsert(t *testing.T) {
 
