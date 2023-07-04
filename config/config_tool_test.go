@@ -21,8 +21,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func ExampleConfigTool_readValue() {
@@ -73,22 +74,16 @@ func TestConfigTool(t *testing.T) {
 
 		os.Args = []string{"config", "FOO=bar"}
 		err := ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		got, err := readConfigJson(tmpDir)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		want := map[string]interface{}{
 			"foo": "bar",
 		}
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, want, got)
 	})
 
 	t.Run("write values on existing config.json", func(t *testing.T) {
@@ -99,29 +94,21 @@ func TestConfigTool(t *testing.T) {
 
 		os.Args = []string{"config", "FOO=bar"}
 		err := ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		os.Args = []string{"config", "BAR=baz"}
 		err = ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		got, err := readConfigJson(tmpDir)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		want := map[string]interface{}{
 			"foo": "bar",
 			"bar": "baz",
 		}
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, want, got)
 	})
 
 	t.Run("write existing value is overridden", func(t *testing.T) {
@@ -132,28 +119,20 @@ func TestConfigTool(t *testing.T) {
 
 		os.Args = []string{"config", "FOO=bar"}
 		err := ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		os.Args = []string{"config", "FOO=new"}
 		err = ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		got, err := readConfigJson(tmpDir)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		want := map[string]interface{}{
 			"foo": "new",
 		}
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, want, got)
 	})
 
 	t.Run("write existing key object is merged", func(t *testing.T) {
@@ -164,20 +143,14 @@ func TestConfigTool(t *testing.T) {
 
 		os.Args = []string{"config", "FOO_BAR=bar"}
 		err := ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		os.Args = []string{"config", "FOO_BAZ=baz"}
 		err = ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		got, err := readConfigJson(tmpDir)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		want := map[string]interface{}{
 			"foo": map[string]interface{}{
@@ -186,9 +159,7 @@ func TestConfigTool(t *testing.T) {
 			},
 		}
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, want, got)
 	})
 
 	t.Run("write empty string to disable key", func(t *testing.T) {
@@ -199,20 +170,14 @@ func TestConfigTool(t *testing.T) {
 
 		os.Args = []string{"config", "FOO_BAR=bar"}
 		err := ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		os.Args = []string{"config", "FOO_BAR=\"\""}
 		err = ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		got, err := readConfigJson(tmpDir)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		want := map[string]interface{}{
 			"foo": map[string]interface{}{
@@ -220,9 +185,7 @@ func TestConfigTool(t *testing.T) {
 			},
 		}
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, want, got)
 	})
 
 	t.Run("remove existing key", func(t *testing.T) {
@@ -233,26 +196,18 @@ func TestConfigTool(t *testing.T) {
 
 		os.Args = []string{"config", "FOO=bar"}
 		err := ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		os.Args = []string{"config", "-r", "FOO"}
 		err = ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		got, err := readConfigJson(tmpDir)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		want := map[string]interface{}{}
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, want, got)
 	})
 
 	t.Run("remove nested key object", func(t *testing.T) {
@@ -263,32 +218,32 @@ func TestConfigTool(t *testing.T) {
 
 		os.Args = []string{"config", "FOO_BAR=bar", "FOO_BAZ=baz"}
 		err := ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
+		require.NoError(t, err)
+
+		got, err := readConfigJson(tmpDir)
+		require.NoError(t, err)
+		want := map[string]interface{}{
+			"foo": map[string]interface{}{
+				"bar": "bar",
+				"baz": "baz",
+			},
 		}
-		j, _ := readConfigJson(tmpDir)
-		t.Logf("config.json: %s", j)
+		require.Equal(t, want, got)
 
 		os.Args = []string{"config", "-r", "FOO_BAR"}
 		err = ConfigTool(nuvRootPath, configPath)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
-		got, err := readConfigJson(tmpDir)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		got, err = readConfigJson(tmpDir)
+		require.NoError(t, err)
 
-		want := map[string]interface{}{
+		want = map[string]interface{}{
 			"foo": map[string]interface{}{
 				"baz": "baz",
 			},
 		}
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, want, got)
 	})
 
 	t.Run("remove non-existing key", func(t *testing.T) {
@@ -299,20 +254,14 @@ func TestConfigTool(t *testing.T) {
 
 		os.Args = []string{"config", "-r", "FOO"}
 		err := ConfigTool(nuvRootPath, configPath)
-		if err == nil {
-			t.Errorf("expected error, got nil")
-		}
+		require.Error(t, err)
 
 		got, err := readConfigJson(tmpDir)
-		if err != nil {
-			t.Errorf("error: %v", err)
-		}
+		require.NoError(t, err)
 
 		want := map[string]interface{}{}
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, want, got)
 	})
 }
 
@@ -359,12 +308,8 @@ func Test_buildKeyValueMap(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			got, err := buildInputKVMap(tc.input)
 
-			if tc.err != nil && (err == nil || err.Error() != tc.err.Error()) {
-				t.Errorf("Expected error %v, got %v", tc.err, err)
-			}
-			if !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("Expected %v, got %v", tc.want, got)
-			}
+			require.Equal(t, tc.err, err)
+			require.Equal(t, tc.want, got)
 		})
 	}
 }

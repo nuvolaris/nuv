@@ -18,7 +18,6 @@
 package config
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -91,46 +90,47 @@ func ConfigTool(nuvRootPath string, configPath string) error {
 		return nil
 	}
 
-	var configJSON []byte
 	var cErr error
+	noAssigns := inputWithoutAssigns(input)
 
 	if removeFlag {
-		configJSON, cErr = removeInConfigJSON(configMap, input)
-	} else if inputWithoutAssigns(input) {
+		cErr = removeInConfigJSON(configMap, input)
+	} else if noAssigns {
+		// print the values and return
 		return printValues(configMap, input)
-
 	} else {
-		configJSON, cErr = insertInConfigJSON(configMap, input)
+		cErr = insertInConfigJSON(configMap, input)
 	}
+
 	if cErr != nil {
 		return cErr
 	}
 
-	return os.WriteFile(configMap.configPath, configJSON, 0644)
+	return configMap.SaveConfig()
 }
 
-func insertInConfigJSON(configMap ConfigMap, input []string) ([]byte, error) {
+func insertInConfigJSON(configMap ConfigMap, input []string) error {
 	// Parse the input string into key-value pairs
 	pairs, err := buildInputKVMap(input)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	for k, v := range pairs {
 		if err := configMap.Insert(k, v); err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return json.MarshalIndent(configMap.config, "", "  ")
+	return nil
 }
 
-func removeInConfigJSON(configMap ConfigMap, input []string) ([]byte, error) {
+func removeInConfigJSON(configMap ConfigMap, input []string) error {
 	for _, k := range input {
 		if err := configMap.Delete(k); err != nil {
-			return nil, err
+			return err
 		}
 	}
-	return json.MarshalIndent(configMap.config, "", "  ")
+	return nil
 }
 
 func inputWithoutAssigns(input []string) bool {

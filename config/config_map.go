@@ -20,6 +20,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -39,8 +40,9 @@ import (
 //		},
 //	}
 //
-// To interact with the ConfigMap, use the Insert, Get, Update, and Delete by passing
-// keys in the form above.
+// To interact with the ConfigMap, use the Insert, Get, and Delete by passing
+// keys in the form above. Only the config map is modified by these functions.
+// The nuvRootConfig map is only used to read the config keys in nuvroot.json.
 type ConfigMap struct {
 	nuvRootConfig map[string]interface{}
 	config        map[string]interface{}
@@ -122,6 +124,15 @@ func (c *ConfigMap) Flatten() map[string]string {
 	flatten("", merged, outputMap)
 
 	return outputMap
+}
+
+func (c *ConfigMap) SaveConfig() error {
+	var configJSON, err = json.MarshalIndent(c.config, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(c.configPath, configJSON, 0644)
 }
 
 // ///
