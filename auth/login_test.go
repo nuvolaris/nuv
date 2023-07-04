@@ -22,8 +22,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/mitchellh/go-homedir"
+	"github.com/nuvolaris/nuv/config"
 	"github.com/stretchr/testify/require"
 	"github.com/zalando/go-keyring"
 )
@@ -78,7 +81,7 @@ func TestLoginCmd(t *testing.T) {
 		}
 	})
 
-	t.Run("with only apihost, add received credentials to secret store", func(t *testing.T) {
+	t.Run("with only apihost, add received credentials", func(t *testing.T) {
 		mockServer := setupMockServer(t, "nuvolaris", "a password", "{\"AUTH\": \"test\"}")
 		defer mockServer.Close()
 
@@ -95,9 +98,18 @@ func TestLoginCmd(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, loginResult)
 
-		cred, err := keyring.Get(nuvSecretServiceName, "AUTH")
+		// cred, err := keyring.Get(nuvSecretServiceName, "AUTH")
+		nuvHome, err := homedir.Expand("~/.nuv")
 		require.NoError(t, err)
-		require.Equal(t, "test", cred)
+
+		configMap, err := config.NewConfigMapBuilder().
+			WithConfigJson(filepath.Join(nuvHome, "config.json")).
+			Build()
+		require.NoError(t, err)
+
+		v, err := configMap.Get("AUTH")
+		require.NoError(t, err)
+		require.Equal(t, "test", v)
 	})
 
 	t.Run("with apihost and user adds received credentials to secret store", func(t *testing.T) {
@@ -116,9 +128,25 @@ func TestLoginCmd(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, loginResult)
 
-		cred, err := keyring.Get(nuvSecretServiceName, "fakeCred")
+		// cred, err := keyring.Get(nuvSecretServiceName, "fakeCred")
+		// require.NoError(t, err)
+		// require.Equal(t, "test", cred)
+
+		nuvHome, err := homedir.Expand("~/.nuv")
 		require.NoError(t, err)
-		require.Equal(t, "test", cred)
+
+		configMap, err := config.NewConfigMapBuilder().
+			WithConfigJson(filepath.Join(nuvHome, "config.json")).
+			Build()
+		require.NoError(t, err)
+
+		v, err := configMap.Get("AUTH")
+		require.NoError(t, err)
+		require.Equal(t, "testauth", v)
+
+		v, err = configMap.Get("FAKECRED")
+		require.NoError(t, err)
+		require.Equal(t, "test", v)
 	})
 
 	t.Run("error when response body is invalid", func(t *testing.T) {
@@ -165,6 +193,7 @@ func Test_doLogin(t *testing.T) {
 	require.NotNil(t, cred)
 	require.Equal(t, "test", cred["fakeCred"])
 }
+
 func Test_storeCredentials(t *testing.T) {
 	keyring.MockInit()
 
