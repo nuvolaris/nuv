@@ -24,7 +24,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -99,8 +98,6 @@ func LoginCmd() (*LoginResult, error) {
 	if _, ok := creds["AUTH"]; !ok {
 		return nil, errors.New("missing AUTH token from login response")
 	}
-
-	log.Println("Login successful")
 
 	nuvHome, err := homedir.Expand("~/.nuv")
 	if err != nil {
