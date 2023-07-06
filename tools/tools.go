@@ -36,7 +36,7 @@ var tools = []string{
 	"filetype", "random", "datefmt",
 	"config", "retry", "urlenc", "ssh",
 	"find", "replace", "base64", "validate",
-	"scan",
+	"scan", "echoif", "echoifempty", "echoifexists",
 }
 
 // not available in taskfiles
@@ -161,6 +161,21 @@ func RunTool(name string, args []string) (int, error) {
 	case "scan":
 		os.Args = append([]string{"scan"}, args...)
 		if err := scanTool(); err != nil {
+			return 1, err
+		}
+	case "echoif":
+		os.Args = append([]string{"echoif"}, args...)
+		if err := echoIfTool(); err != nil {
+			return 1, err
+		}
+	case "echoifempty":
+		os.Args = append([]string{"echoifempty"}, args...)
+		if err := echoIfEmptyTool(); err != nil {
+			return 1, err
+		}
+	case "echoifexists":
+		os.Args = append([]string{"echoifexists"}, args...)
+		if err := echoIfExistsTool(); err != nil {
 			return 1, err
 		}
 	}
