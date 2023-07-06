@@ -32,3 +32,16 @@ setup() {
     assert_line "Usage:"
     assert_line "nuv login <apihost> [<user>]"
 }
+
+@test "nuv -login with NUV_PASSWORD env does not prompt for password" {
+    export NUV_PASSWORD=1234
+    run nuv -login localhost
+    refute_line "Enter Password:"
+}
+
+@test "nuv -login with NUV_LOGIN env defines username" {
+    export NUV_PASSWORD=1234
+    export NUV_LOGIN=foo
+    run nuv -login localhost
+    assert_line "Logging in as foo to localhost"
+}

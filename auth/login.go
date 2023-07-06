@@ -78,20 +78,29 @@ func LoginCmd() (*LoginResult, error) {
 		return nil, errors.New("missing apihost")
 	}
 
-	fmt.Print("Enter Password: ")
-	pwd, err := AskPassword()
-	if err != nil {
-		return nil, err
+	password := os.Getenv("NUV_PASSWORD")
+	if password == "" {
+		fmt.Print("Enter Password: ")
+		pwd, err := AskPassword()
+		if err != nil {
+			return nil, err
+		}
+		password = pwd
+		fmt.Println()
 	}
-	fmt.Println()
+
 	apihost := args[0]
 	url := apihost + whiskLoginPath
-	user := defaultUser
+	user := os.Getenv("NUV_LOGIN")
+	if user == "" {
+		user = defaultUser
+	}
 	if len(args) > 1 {
 		user = args[1]
 	}
+	log.Println("Logging in as", user, "to", apihost)
 
-	creds, err := doLogin(url, user, pwd)
+	creds, err := doLogin(url, user, password)
 	if err != nil {
 		return nil, err
 	}
@@ -99,8 +108,6 @@ func LoginCmd() (*LoginResult, error) {
 	if _, ok := creds["AUTH"]; !ok {
 		return nil, errors.New("missing AUTH token from login response")
 	}
-
-	log.Println("Login successful")
 
 	nuvHome, err := homedir.Expand("~/.nuv")
 	if err != nil {
