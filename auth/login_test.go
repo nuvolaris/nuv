@@ -42,16 +42,13 @@ func setupMockServer(t *testing.T, expectedLogin, expectedPass, expectedRes stri
 			return
 		}
 
-		if login, ok := requestBody["login"]; !ok {
-			t.Error("expected login field in request body")
-		} else if login != expectedLogin {
-			t.Errorf("expected login %s, got %s", expectedLogin, login)
-		}
-		if password, ok := requestBody["password"]; !ok {
-			t.Error("expected password field in request body")
-		} else if password != expectedPass {
-			t.Errorf("expected password %s, got %s", expectedPass, password)
-		}
+		login, ok := requestBody["login"]
+		require.True(t, ok, "expected login field in request body")
+		require.Equal(t, expectedLogin, login, "expected login %s, got %s", expectedLogin, login)
+
+		password, ok := requestBody["password"]
+		require.True(t, ok, "expected password field in request body")
+		require.Equal(t, expectedPass, password, "expected password %s, got %s", expectedPass, password)
 
 		_, _ = w.Write([]byte(expectedRes))
 	}))
