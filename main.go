@@ -126,6 +126,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	nuvRootDir := retrieveRootDir()
+
+	setupTmp()
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
 	args := os.Args
@@ -221,10 +224,6 @@ func main() {
 		warn("unknown tool", "-"+cmd)
 		os.Exit(0)
 	}
-
-	nuvRootDir := retrieveRootDir()
-
-	setupTmp()
 
 	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
 	if err != nil {
