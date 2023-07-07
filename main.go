@@ -89,6 +89,7 @@ func info() {
 	fmt.Println("TMP:", os.Getenv("NUV_TMP"))
 	root, _ := getNuvRoot()
 	fmt.Println("ROOT:", root)
+	fmt.Println("NUV_PWD:", os.Getenv("NUV_PWD"))
 }
 
 func main() {
@@ -100,6 +101,12 @@ func main() {
 	// disable log
 	if os.Getenv("NUV_NO_LOG_PREFIX") != "" {
 		log.SetFlags(0)
+	}
+
+	if pwd, err := os.Getwd(); err != nil {
+		warn("unable to set NUV_PWD to working directory", err)
+	} else {
+		os.Setenv("NUV_PWD", pwd)
 	}
 
 	var err error
