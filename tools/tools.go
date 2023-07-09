@@ -26,6 +26,7 @@ import (
 	envsubst "github.com/nuvolaris/envsubst/cmd/envsubstmain"
 	replace "github.com/nuvolaris/go-replace"
 	"github.com/nuvolaris/goawk"
+	"golang.org/x/exp/slices"
 )
 
 // available in taskfiles
@@ -37,6 +38,7 @@ var tools = []string{
 	"config", "retry", "urlenc", "ssh",
 	"find", "replace", "base64", "validate",
 	"scan", "echoif", "echoifempty", "echoifexists",
+	"realpath",
 }
 
 // not available in taskfiles
@@ -178,6 +180,11 @@ func RunTool(name string, args []string) (int, error) {
 		if err := echoIfExistsTool(); err != nil {
 			return 1, err
 		}
+	case "realpath":
+		os.Args = append([]string{"realpath"}, args...)
+		if err := realpathTool(); err != nil {
+			return 1, err
+		}
 	}
 	return 0, nil
 }
@@ -186,6 +193,7 @@ func Help() {
 	fmt.Println("Available tools:")
 	availableTools := append(tools, extraTools...)
 	availableTools = append(availableTools, Utils...)
+	slices.Sort(availableTools)
 	for _, x := range availableTools {
 		fmt.Printf("-%s\n", x)
 	}
