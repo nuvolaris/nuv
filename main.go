@@ -126,8 +126,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	nuvRootDir := retrieveRootDir()
-
 	setupTmp()
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
@@ -145,40 +143,38 @@ func main() {
 			}
 			os.Exit(exitCode)
 		}
-		if cmd == "version" || cmd == "v" {
+
+		switch cmd {
+		case "version":
 			fmt.Println(NuvVersion)
-			os.Exit(0)
-		}
-		if cmd == "info" {
+		case "v":
+			fmt.Println(NuvVersion)
+
+		case "info":
 			info()
-			os.Exit(0)
-		}
-		if cmd == "help" {
+
+		case "help":
 			tools.Help()
-			os.Exit(0)
-		}
-		if cmd == "serve" {
-			if err := Serve(retrieveRootDir(), args[1:]); err != nil {
+
+		case "serve":
+			nuvRootDir := retrieveRootDir()
+			if err := Serve(nuvRootDir, args[1:]); err != nil {
 				log.Fatalf("error: %v", err)
 			}
-			os.Exit(0)
-		}
-		if cmd == "update" {
+
+		case "update":
 			// ok no up, nor down, let's download it
 			err := pullTasks(true, true)
 			if err != nil {
-				log.Println(err)
-				os.Exit(1)
+				log.Fatalf("error: %v", err)
 			}
-			os.Exit(0)
-		}
-		if cmd == "retry" {
+
+		case "retry":
 			if err := tools.ExpBackoffRetry(args[1:]); err != nil {
 				log.Fatalf("error: %s", err.Error())
 			}
-			os.Exit(0)
-		}
-		if cmd == "login" {
+
+		case "login":
 			os.Args = args[1:]
 			loginResult, err := auth.LoginCmd()
 			if err != nil {
@@ -194,37 +190,37 @@ func main() {
 				log.Fatalf("error: %s", err.Error())
 			}
 			fmt.Println("Nuvolaris host and auth set successfully. You are now ready to use nuv -wsk!")
-			os.Exit(0)
-		}
-		if cmd == "config" {
+
+		case "config":
 			os.Args = args[1:]
 			nuvRootPath := joinpath(retrieveRootDir(), NUVROOT)
 			configPath := joinpath(nuvHome, CONFIGFILE)
 			if err := config.ConfigTool(nuvRootPath, configPath); err != nil {
 				log.Fatalf("error: %s", err.Error())
 			}
-			os.Exit(0)
-		}
-		if cmd == "plugin" {
+
+		case "plugin":
 			os.Args = args[1:]
 			if err := pluginTool(); err != nil {
 				log.Fatalf("error: %s", err.Error())
 			}
-			os.Exit(0)
-		}
-		// check if it is an embedded to and invoke it
-		if tools.IsTool(cmd) {
-			code, err := tools.RunTool(cmd, args[2:])
-			if err != nil {
-				log.Print(err.Error())
+
+		default:
+			// check if it is an embedded to and invoke it
+			if tools.IsTool(cmd) {
+				code, err := tools.RunTool(cmd, args[2:])
+				if err != nil {
+					log.Print(err.Error())
+				}
+				os.Exit(code)
 			}
-			os.Exit(code)
+			// no embeded tool found
+			warn("unknown tool", "-"+cmd)
 		}
-		// no embeded tool found
-		warn("unknown tool", "-"+cmd)
 		os.Exit(0)
 	}
 
+	nuvRootDir := retrieveRootDir()
 	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
 	if err != nil {
 		warn("cannot apply env vars from configs", err)
