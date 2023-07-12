@@ -34,9 +34,6 @@ tasks:
     - git tag
 
   setup: { silent:true }
-  origin:
-    - git fetch --all
-    - git checkout origin/main -B main
 
   build:
     desc: build nuv
