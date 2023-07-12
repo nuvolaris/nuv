@@ -157,7 +157,7 @@ func main() {
 			tools.Help()
 
 		case "serve":
-			nuvRootDir := retrieveRootDir()
+			nuvRootDir := getRootDirOrExit()
 			if err := Serve(nuvRootDir, args[1:]); err != nil {
 				log.Fatalf("error: %v", err)
 			}
@@ -193,7 +193,7 @@ func main() {
 
 		case "config":
 			os.Args = args[1:]
-			nuvRootPath := joinpath(retrieveRootDir(), NUVROOT)
+			nuvRootPath := joinpath(getRootDirOrExit(), NUVROOT)
 			configPath := joinpath(nuvHome, CONFIGFILE)
 			if err := config.ConfigTool(nuvRootPath, configPath); err != nil {
 				log.Fatalf("error: %s", err.Error())
@@ -220,7 +220,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	nuvRootDir := retrieveRootDir()
+	nuvRootDir := getRootDirOrExit()
 	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
 	if err != nil {
 		warn("cannot apply env vars from configs", err)
@@ -236,7 +236,7 @@ func main() {
 	}
 }
 
-func retrieveRootDir() string {
+func getRootDirOrExit() string {
 	dir, err := getNuvRoot()
 	if err != nil {
 		log.Fatalf("error: %s", err.Error())
