@@ -84,11 +84,11 @@ func info() {
 	fmt.Println("VERSION:", NuvVersion)
 	fmt.Println("BRANCH:", NuvBranch)
 	fmt.Println("CMD:", tools.GetNuvCmd())
-	fmt.Println("BIN:", os.Getenv("NUV_BIN"))
 	fmt.Println("REPO:", getNuvRepo())
-	fmt.Println("TMP:", os.Getenv("NUV_TMP"))
+	fmt.Println("NUV_BIN:", os.Getenv("NUV_BIN"))
+	fmt.Println("NUV_TMP:", os.Getenv("NUV_TMP"))
 	root, _ := getNuvRoot()
-	fmt.Println("ROOT:", root)
+	fmt.Println("NUV_ROOT:", root)
 	fmt.Println("NUV_PWD:", os.Getenv("NUV_PWD"))
 }
 
@@ -157,7 +157,7 @@ func main() {
 			tools.Help()
 
 		case "serve":
-			nuvRootDir := retrieveRootDir()
+			nuvRootDir := getRootDirOrExit()
 			if err := Serve(nuvRootDir, args[1:]); err != nil {
 				log.Fatalf("error: %v", err)
 			}
@@ -193,7 +193,7 @@ func main() {
 
 		case "config":
 			os.Args = args[1:]
-			nuvRootPath := joinpath(retrieveRootDir(), NUVROOT)
+			nuvRootPath := joinpath(getRootDirOrExit(), NUVROOT)
 			configPath := joinpath(nuvHome, CONFIGFILE)
 			if err := config.ConfigTool(nuvRootPath, configPath); err != nil {
 				log.Fatalf("error: %s", err.Error())
@@ -220,7 +220,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	nuvRootDir := retrieveRootDir()
+	nuvRootDir := getRootDirOrExit()
 	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
 	if err != nil {
 		warn("cannot apply env vars from configs", err)
@@ -236,7 +236,7 @@ func main() {
 	}
 }
 
-func retrieveRootDir() string {
+func getRootDirOrExit() string {
 	dir, err := getNuvRoot()
 	if err != nil {
 		log.Fatalf("error: %s", err.Error())
@@ -281,18 +281,19 @@ func runNuv(baseDir string, args []string) error {
 		return nil
 	}
 
+	// If the task is not found,
+	// fallback to plugins
 	var taskNotFoundErr *TaskNotFoundErr
 	if errors.As(err, &taskNotFoundErr) {
-		// Hook plugins here
-		trace("task not found, looking for plugins")
+		trace("task not found, looking for plugin:", args[1])
 		plgDir, err := findTaskInPlugins(parent(baseDir), args[1])
 		if err != nil {
 			return taskNotFoundErr
 		}
 
-		debug("Found plugin in", plgDir)
+		debug("Found plugin", plgDir)
 		os.Setenv("NUV_ROOT", plgDir)
-		if err := Nuv(plgDir, args[1:]); err != nil {
+		if err := Nuv(plgDir, args[2:]); err != nil {
 			log.Fatalf("error: %s", err.Error())
 		}
 		return nil

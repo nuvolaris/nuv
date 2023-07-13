@@ -206,11 +206,11 @@ func Nuv(base string, args []string) error {
 	}
 
 	if len(rest) == 0 || rest[0] == "help" {
-		debug("print help")
+		trace("print help")
 		err := help()
 		if !isSubCmd {
 			fmt.Println()
-			return printInstalledPluginsMessage(parent(base))
+			return printPluginsHelp(parent(base))
 		}
 		return err
 	}
@@ -297,7 +297,7 @@ func validateTaskName(dir string, name string) (string, error) {
 		return candidates[0], nil
 	}
 
-	return "", fmt.Errorf("ambiguous command: %s. Possible tasks: %v", name, candidates)
+	return "", fmt.Errorf("ambiguous command: %s. Possible matches: %v", name, candidates)
 }
 
 // obtains the task names from the nuvfile.yaml inside the given directory

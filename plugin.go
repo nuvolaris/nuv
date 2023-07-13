@@ -28,7 +28,6 @@ import (
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/mitchellh/go-homedir"
-	"github.com/nuvolaris/task/v3"
 )
 
 func pluginTool() error {
@@ -130,7 +129,7 @@ func checkGitRepo(url string) (bool, string) {
 	return false, ""
 }
 
-func printInstalledPluginsMessage(localDir string) error {
+func printPluginsHelp(localDir string) error {
 	plgs, err := newPlugins(localDir)
 	if err != nil {
 		return err
@@ -140,23 +139,31 @@ func printInstalledPluginsMessage(localDir string) error {
 }
 
 func findTaskInPlugins(localDir string, plg string) (string, error) {
-	trace("findTaskInPlugins", plg)
-
 	plgs, err := newPlugins(localDir)
 	if err != nil {
 		return "", err
 	}
 
-	for _, folder := range plgs.local {
-		_, err := validateTaskName(folder, plg)
-		if err == nil {
-			return folder, nil
+	// check that plg is the suffix of a folder name in plgs.local
+	for _, path := range plgs.local {
+		folder := filepath.Base(path)
+		if strings.TrimPrefix(folder, "olaris-") == plg {
+			return path, nil
+		}
+	}
+
+	// check that plg is the suffix of a folder name in plgs.nuv
+	for _, path := range plgs.nuv {
+		folder := filepath.Base(path)
+		if strings.TrimPrefix(folder, "olaris-") == plg {
+			return path, nil
 		}
 	}
 
 	return "", &TaskNotFoundErr{input: plg}
 }
 
+// plugins struct holds the list of local and ~/.nuv olaris-* folders
 type plugins struct {
 	local []string
 	nuv   []string
@@ -206,38 +213,27 @@ func newPlugins(localDir string) (*plugins, error) {
 
 func (p *plugins) print() {
 	if len(p.local) == 0 && len(p.nuv) == 0 {
-		fmt.Println("No plugins installed. Use 'nuv -plugin' to add new ones.")
+		debug("No plugins installed")
+		// fmt.Println("No plugins installed. Use 'nuv -plugin' to add new ones.")
 		return
 	}
 
 	fmt.Println("Plugins:")
 	if len(p.local) > 0 {
 		for _, plg := range p.local {
-			fmt.Printf("[LOCAL] %s:\n", filepath.Base(plg))
-			printTaskHelp(plg)
+			// remove olaris- prefix
+			plgName := strings.TrimPrefix(filepath.Base(plg), "olaris-")
+
+			fmt.Printf("  %s (local)\n", plgName)
 		}
 	}
 
 	if len(p.nuv) > 0 {
 		for _, plg := range p.nuv {
-			fmt.Printf("[NUV] %s:\n", filepath.Base(plg))
-			printTaskHelp(plg)
+			// remove olaris- prefix
+			plgName := strings.TrimPrefix(filepath.Base(plg), "olaris-")
+
+			fmt.Printf("  %s (nuv)\n", plgName)
 		}
 	}
-}
-
-func printTaskHelp(path string) {
-	dir := path
-	entrypoint := NUVFILE
-	e := task.Executor{
-		Dir:        dir,
-		Entrypoint: entrypoint,
-		Summary:    true,
-		Color:      true,
-
-		Stdin:  os.Stdin,
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-	}
-	e.ListTaskNames(true)
 }

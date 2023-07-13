@@ -80,3 +80,9 @@ setup() {
     run nuv s o sal aaa hi 1 2 --fl=ag
     assert_line "salve name=('aaa') hi x=1 y=2 --fl=ag"
 }
+
+@test "bad shortening" {
+    run nuv f
+    assert_failure
+    assert_line --partial "error: ambiguous command: f. Possible matches: [failing fail_then_succeed]"
+}

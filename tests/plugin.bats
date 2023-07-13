@@ -25,33 +25,32 @@ setup() {
 @test "nuv prints 'Plugins:'" {
     run nuv
     assert_line 'Plugins:'
-    assert_line "[LOCAL] olaris-test:"
-    assert_line "grep-plg"
+    assert_line "  plugin (local)"
 }
 
 @test "nuv skips invalid plugin folders (without nuvfile.yaml)" {
     run mkdir olaris-test2
     run nuv
-    refute_line "[LOCAL] olaris-test2:"
+    refute_line "  test2 (local)"
     run rm -rf olaris-test2
 }
 
 @test "nuv with grep plugin command" {
-    run nuv grep-plg
+    run nuv plugin grep
     assert_line KO
-    run nuv grep-plg GREP=first
+    run nuv plugin grep GREP=first
     assert_line grep.txt:first
     assert_line OK
 }
 
 @test "nuv help on sub cmds plugin" {
-    run nuv sub-plg
+    run nuv plugin sub
     assert_line '* opts:         opts test'
     assert_line '* simple:       simple'
 }
 
 @test "nuv exec sub simple plugin cmd" {
-    run nuv sub-plg simple
+    run nuv plugin sub simple
     assert_line 'simple'
 }
 
@@ -67,10 +66,8 @@ setup() {
 
     run nuv
     assert_line 'Plugins:'
-    assert_line "[LOCAL] olaris-test:"
-    assert_line "grep-plg"
-    assert_line "[NUV] olaris-test:"
-    assert_line "sub-plg"
+    assert_line "  plugin (local)"
+    assert_line "  test (nuv)"
 
     run rm -rf ~/.nuv/olaris-test
 }
@@ -83,4 +80,6 @@ setup() {
     assert_success
     assert_line "Updating plugin olaris-test"
     assert_line "The plugin repo is already up to date!"
+
+    run rm -rf ~/.nuv/olaris-test
 }
