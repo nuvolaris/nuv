@@ -80,4 +80,6 @@ setup() {
     assert_success
     assert_line "Updating plugin olaris-test"
     assert_line "The plugin repo is already up to date!"
+
+    run rm -rf ~/.nuv/olaris-test
 }
