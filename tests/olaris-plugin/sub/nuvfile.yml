@@ -15,17 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-
 version: "3"
-tasks:
-  plg:
-    desc: sub command
 
-  grep-plg:
-    silent: true
+tasks:
+  opts:
+    desc: opts test
+
+  simple:
+    desc: simple
     cmds:
-      - |
-        if grep {{.GREP}} grep.txt
-        then echo OK
-        else echo KO
-        fi
+      - echo simple
