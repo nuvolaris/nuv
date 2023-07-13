@@ -206,7 +206,7 @@ func Nuv(base string, args []string) error {
 	}
 
 	if len(rest) == 0 || rest[0] == "help" {
-		debug("print help")
+		trace("print help")
 		err := help()
 		if !isSubCmd {
 			fmt.Println()
