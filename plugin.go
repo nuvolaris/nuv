@@ -129,7 +129,7 @@ func checkGitRepo(url string) (bool, string) {
 	return false, ""
 }
 
-func printInstalledPluginsMessage(localDir string) error {
+func printPluginsHelp(localDir string) error {
 	plgs, err := newPlugins(localDir)
 	if err != nil {
 		return err
@@ -139,17 +139,24 @@ func printInstalledPluginsMessage(localDir string) error {
 }
 
 func findTaskInPlugins(localDir string, plg string) (string, error) {
-	trace("findTaskInPlugins", plg)
-
 	plgs, err := newPlugins(localDir)
 	if err != nil {
 		return "", err
 	}
 
-	for _, folder := range plgs.local {
-		_, err := validateTaskName(folder, plg)
-		if err == nil {
-			return folder, nil
+	// check that plg is the suffix of a folder name in plgs.local
+	for _, path := range plgs.local {
+		folder := filepath.Base(path)
+		if strings.TrimPrefix(folder, "olaris-") == plg {
+			return path, nil
+		}
+	}
+
+	// check that plg is the suffix of a folder name in plgs.nuv
+	for _, path := range plgs.nuv {
+		folder := filepath.Base(path)
+		if strings.TrimPrefix(folder, "olaris-") == plg {
+			return path, nil
 		}
 	}
 
