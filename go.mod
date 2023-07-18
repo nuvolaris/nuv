@@ -16,7 +16,7 @@ require (
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230615104118-d593f7d6576f
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae
-	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230622105149-f79e6416ff6e
+	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230718131831-48d06b3099ca
 	github.com/stretchr/testify v1.8.1
 )
 
@@ -27,8 +27,8 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/nuvolaris/goja v0.0.0-20230527133949-2939724446aa // indirect
 	github.com/nuvolaris/goja_nodejs v0.0.0-20230527135110-3aa37178bb6c // indirect
-	github.com/nuvolaris/sh/v3 v3.0.0-20230506145920-eb793bb1aedd // indirect
-	github.com/nuvolaris/task/v3 v3.9.3-0.20230622101932-af3535e30027 // indirect
+	github.com/nuvolaris/sh/v3 v3.0.0-20230718131820-376e733299a4 // indirect
+	github.com/nuvolaris/task/v3 v3.9.3-0.20230718131831-48d06b3099ca // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/remeh/sizedwaitgroup v1.0.0 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
