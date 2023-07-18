@@ -17,20 +17,18 @@ require (
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae
 	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230622105149-f79e6416ff6e
-	github.com/nuvolaris/task/v3 v3.9.3-0.20230622101932-af3535e30027
 	github.com/stretchr/testify v1.8.1
 )
 
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/jessevdk/go-flags v1.5.0 // indirect
-	github.com/kr/fs v0.1.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/nuvolaris/goja v0.0.0-20230527133949-2939724446aa // indirect
 	github.com/nuvolaris/goja_nodejs v0.0.0-20230527135110-3aa37178bb6c // indirect
 	github.com/nuvolaris/sh/v3 v3.0.0-20230506145920-eb793bb1aedd // indirect
-	github.com/pkg/sftp v1.13.5 // indirect
+	github.com/nuvolaris/task/v3 v3.9.3-0.20230622101932-af3535e30027 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/remeh/sizedwaitgroup v1.0.0 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
@@ -84,7 +82,6 @@ require (
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mtibben/androiddnsfix v0.0.0-20200907095054-ff0280446354 // indirect
 	github.com/nuvolaris/go-replace v0.0.0-20230515190028-12766da1824c
-	github.com/nuvolaris/goph v0.0.0-20230425125736-e7c6bed14c20
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pjbgf/sha1cd v0.2.3 // indirect
@@ -100,7 +97,7 @@ require (
 	github.com/vbauerster/mpb/v5 v5.0.2 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/zalando/go-keyring v0.2.2
-	golang.org/x/crypto v0.6.0
+	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb
 	golang.org/x/net v0.6.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
