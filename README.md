@@ -159,7 +159,6 @@ Currently task embeds the following tools, and you can invoke them directly pref
 
 - [task](https://taskfile.dev) the Task build tool
 - [wsk](https://github.com/apache/openwhisk-cli) the OpenWhisk cli 
-- [ht](https://github.com/nojima/httpie-go) an httpie tool in Golan
 
 Basic unix like tools (`nuv -<tool> -help for details`):
 
