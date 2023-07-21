@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	gojq "github.com/itchyny/gojq/cli"
-	"github.com/nojima/httpie-go"
 	envsubst "github.com/nuvolaris/envsubst/cmd/envsubstmain"
 	replace "github.com/nuvolaris/go-replace"
 	"github.com/nuvolaris/goawk"
@@ -33,7 +32,7 @@ import (
 // note some of them are implemented in main.go (config, retry)
 var tools = []string{
 	"awk", "die", "jq", "js",
-	"envsubst", "wsk", "ht", "mkdir",
+	"envsubst", "wsk", "mkdir",
 	"filetype", "random", "datefmt",
 	"config", "retry", "urlenc", "find",
 	"replace", "base64", "validate",
@@ -80,12 +79,6 @@ func RunTool(name string, args []string) (int, error) {
 		//fmt.Println("=== wsk ===")
 		cmd := append([]string{"wsk"}, args...)
 		if err := Wsk(cmd); err != nil {
-			return 1, err
-		}
-	case "ht":
-		//fmt.Println("=== ht ===")
-		os.Args = append([]string{"ht"}, args...)
-		if err := httpie.Main(); err != nil {
 			return 1, err
 		}
 	case "awk":

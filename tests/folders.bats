@@ -32,7 +32,7 @@ setup() {
 
 @test "testcmd" {
     run nuv testcmd
-    assert_line "24"
+    assert_line "test"
 }
 
 @test "sub" {

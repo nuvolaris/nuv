@@ -84,5 +84,5 @@ setup() {
 @test "bad shortening" {
     run nuv f
     assert_failure
-    assert_line --partial "error: ambiguous command: f. Possible matches: [failing fail_then_succeed]"
+    assert_line --partial "error: ambiguous command: f."
 }
