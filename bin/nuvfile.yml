@@ -56,7 +56,7 @@ tasks:
     cmds:
       - |-
         if [[ "{{.OS}}" == "windows" ]]
-        then curl -o unzip.exe -d http://stahlworks.com/dev/unzip.exe
+        then curl -o unzip.exe http://stahlworks.com/dev/unzip.exe
         else cp /usr/bin/unzip unzip.exe
         fi
     status:
