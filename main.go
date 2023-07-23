@@ -109,6 +109,12 @@ func main() {
 		os.Setenv("NUV_PWD", pwd)
 	}
 
+	// preflight checks
+	if err := preflightChecks(); err != nil {
+		log.Fatalf("[PREFLIGHT CHECK] error: %s", err.Error())
+	}
+	// ***************
+
 	var err error
 	me := os.Args[0]
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
