@@ -103,12 +103,6 @@ func main() {
 		log.SetFlags(0)
 	}
 
-	if pwd, err := os.Getwd(); err != nil {
-		warn("unable to set NUV_PWD to working directory", err)
-	} else {
-		os.Setenv("NUV_PWD", pwd)
-	}
-
 	// preflight checks
 	if err := preflightChecks(); err != nil {
 		log.Fatalf("[PREFLIGHT CHECK] error: %s", err.Error())
@@ -133,6 +127,7 @@ func main() {
 	}
 
 	setupTmp()
+	setupNuvPwd()
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
 	args := os.Args
@@ -306,4 +301,12 @@ func runNuv(baseDir string, args []string) error {
 	}
 
 	return err
+}
+
+func setupNuvPwd() {
+	if os.Getenv("NUV_PWD") == "" {
+		dir, _ := os.Getwd()
+		//nolint:errcheck
+		os.Setenv("NUV_PWD", dir)
+	}
 }
