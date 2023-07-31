@@ -26,10 +26,13 @@ import (
 type configMapBuilder struct {
 	configJsonPath string
 	nuvRootPath    string
+	pluginNuvRoots map[string]string
 }
 
 func NewConfigMapBuilder() *configMapBuilder {
-	return &configMapBuilder{}
+	return &configMapBuilder{
+		pluginNuvRoots: make(map[string]string),
+	}
 }
 
 // WithConfigJson adds a config.json file that will be read and used
@@ -49,6 +52,13 @@ func (b *configMapBuilder) WithNuvRoot(file string) *configMapBuilder {
 	return b
 }
 
+// WithPluginNuvRoots works like WithPluginNuvRoot, but it allows to add multiple
+// plugin nuvroot.json files at once.
+func (b *configMapBuilder) WithPluginNuvRoots(nrts map[string]string) *configMapBuilder {
+	b.pluginNuvRoots = nrts
+	return b
+}
+
 func (b *configMapBuilder) Build() (ConfigMap, error) {
 	configJsonMap, err := readConfig(b.configJsonPath, fromConfigJson)
 	if err != nil {
@@ -60,10 +70,20 @@ func (b *configMapBuilder) Build() (ConfigMap, error) {
 		return ConfigMap{}, err
 	}
 
+	pluginNuvRootConfigs := make(map[string]map[string]interface{}, 0)
+	for plgName, nuvRootPath := range b.pluginNuvRoots {
+		pluginNuvRootMap, err := readConfig(nuvRootPath, fromNuvRoot)
+		if err != nil {
+			return ConfigMap{}, err
+		}
+		pluginNuvRootConfigs[plgName] = pluginNuvRootMap
+	}
+
 	return ConfigMap{
-		nuvRootConfig: nuvRootMap,
-		config:        configJsonMap,
-		configPath:    b.configJsonPath,
+		pluginNuvRootConfigs: pluginNuvRootConfigs,
+		nuvRootConfig:        nuvRootMap,
+		config:               configJsonMap,
+		configPath:           b.configJsonPath,
 	}, nil
 }
 
