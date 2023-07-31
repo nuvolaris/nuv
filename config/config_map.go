@@ -20,6 +20,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -125,6 +126,17 @@ func (c *ConfigMap) Flatten() map[string]string {
 	outputMap := make(map[string]string)
 
 	merged := mergeMaps(c.nuvRootConfig, c.config)
+
+	for name, pluginConfig := range c.pluginNuvRootConfigs {
+		// edge case: check that merged does not contain name already
+		if _, ok := merged[name]; ok {
+			log.Printf("config has key with same name as plugin %s. Plugin config will be ignored.", name)
+			continue
+		}
+
+		merged[name] = pluginConfig
+	}
+
 	flatten("", merged, outputMap)
 
 	return outputMap
