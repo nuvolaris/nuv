@@ -241,10 +241,10 @@ func parseValue(value string) (interface{}, error) {
 // mergeMaps merges map2 into map1 overwriting any values in map1 with values from map2
 // when there are conflicts. It returns the merged map.
 func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
-	if map1 == nil || len(map1) == 0 {
+	if len(map1) == 0 {
 		return map2
 	}
-	if map2 == nil || len(map2) == 0 {
+	if len(map2) == 0 {
 		return map1
 	}
 
