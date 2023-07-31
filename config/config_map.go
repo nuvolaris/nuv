@@ -20,6 +20,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -43,10 +44,14 @@ import (
 // To interact with the ConfigMap, use the Insert, Get, and Delete by passing
 // keys in the form above. Only the config map is modified by these functions.
 // The nuvRootConfig map is only used to read the config keys in nuvroot.json.
+// The pluginNuvRootConfigs map is only used to read the config keys in
+// plugins (from their nuvroot.json). It is a map that maps the plugin name to
+// the config map for that plugin.
 type ConfigMap struct {
-	nuvRootConfig map[string]interface{}
-	config        map[string]interface{}
-	configPath    string
+	pluginNuvRootConfigs map[string]map[string]interface{}
+	nuvRootConfig        map[string]interface{}
+	config               map[string]interface{}
+	configPath           string
 }
 
 // Insert inserts a key and value into the ConfigMap. If the key already exists,
@@ -121,6 +126,17 @@ func (c *ConfigMap) Flatten() map[string]string {
 	outputMap := make(map[string]string)
 
 	merged := mergeMaps(c.nuvRootConfig, c.config)
+
+	for name, pluginConfig := range c.pluginNuvRootConfigs {
+		// edge case: check that merged does not contain name already
+		if _, ok := merged[name]; ok {
+			log.Printf("config has key with same name as plugin %s. Plugin config will be ignored.", name)
+			continue
+		}
+
+		merged[name] = pluginConfig
+	}
+
 	flatten("", merged, outputMap)
 
 	return outputMap
@@ -225,6 +241,13 @@ func parseValue(value string) (interface{}, error) {
 // mergeMaps merges map2 into map1 overwriting any values in map1 with values from map2
 // when there are conflicts. It returns the merged map.
 func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
+	if len(map1) == 0 {
+		return map2
+	}
+	if len(map2) == 0 {
+		return map1
+	}
+
 	mergedMap := make(map[string]interface{})
 
 	for key, value := range map1 {

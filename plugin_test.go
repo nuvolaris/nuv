@@ -50,21 +50,67 @@ func setupPluginTest(dir string, t *testing.T) string {
 	t.Helper()
 	// create the olaris-test folder
 	olarisTestDir := filepath.Join(dir, "olaris-test")
-	if err := os.MkdirAll(olarisTestDir, 0755); err != nil {
-		t.Fatal(err)
-	}
+	err := os.MkdirAll(olarisTestDir, 0755)
+	require.NoError(t, err)
 
 	// copy the nuvroot.json from tests/olaris into the olaris-test folder
 	nuvRootJSON := filepath.Join("tests", "olaris", "nuvroot.json")
-	if err := copyFile(nuvRootJSON, filepath.Join(olarisTestDir, "nuvroot.json")); err != nil {
-		t.Fatal(err)
-	}
+	err = copyFile(nuvRootJSON, filepath.Join(olarisTestDir, "nuvroot.json"))
+	require.NoError(t, err)
+
 	// copy nuvfile.yml from tests/olaris into the olaris-test folder
 	nuvfileYML := filepath.Join("tests", "olaris", "nuvfile.yml")
-	if err := copyFile(nuvfileYML, filepath.Join(olarisTestDir, "nuvfile.yml")); err != nil {
-		t.Fatal(err)
-	}
+	err = copyFile(nuvfileYML, filepath.Join(olarisTestDir, "nuvfile.yml"))
+	require.NoError(t, err)
+
 	return olarisTestDir
+}
+
+func TestGetAllNuvRootPlugins(t *testing.T) {
+	t.Run("success: get all the nuvroots.json from plugins with 1 plugin", func(t *testing.T) {
+		tempDir := t.TempDir()
+		plgFolder := setupPluginTest(tempDir, t)
+
+		nuvRoots, err := GetNuvRootPlugins(tempDir)
+		require.NoError(t, err)
+		require.Len(t, nuvRoots, 1)
+		require.Equal(t, joinpath(plgFolder, NUVROOT), nuvRoots[getPluginName(plgFolder)])
+	})
+
+	t.Run("success: get all the nuvroots.json from plugins with 2 plugins", func(t *testing.T) {
+		tempDir := t.TempDir()
+		plgFolder := setupPluginTest(tempDir, t)
+
+		// create the olaris-test2 folder
+		olarisTestDir := filepath.Join(tempDir, "olaris-test2")
+		err := os.MkdirAll(olarisTestDir, 0755)
+		require.NoError(t, err)
+
+		// copy the nuvroot.json from tests/olaris into the olaris-test folder
+		nuvRootJSON := filepath.Join("tests", "olaris", "nuvroot.json")
+		err = copyFile(nuvRootJSON, filepath.Join(olarisTestDir, "nuvroot.json"))
+		require.NoError(t, err)
+
+		// copy nuvfile.yml from tests/olaris into the olaris-test folder
+		nuvfileYML := filepath.Join("tests", "olaris", "nuvfile.yml")
+		err = copyFile(nuvfileYML, filepath.Join(olarisTestDir, "nuvfile.yml"))
+		require.NoError(t, err)
+
+		nuvRoots, err := GetNuvRootPlugins(tempDir)
+		require.NoError(t, err)
+		require.Len(t, nuvRoots, 2)
+		require.Equal(t, joinpath(plgFolder, NUVROOT), nuvRoots[getPluginName(plgFolder)])
+		require.Equal(t, joinpath(olarisTestDir, NUVROOT), nuvRoots[getPluginName(olarisTestDir)])
+	})
+
+	t.Run("empty: no plugins folder found (olaris-*)", func(t *testing.T) {
+		tempDir := t.TempDir()
+
+		// Test when the folder is not found
+		nuvRoots, err := GetNuvRootPlugins(tempDir)
+		require.NoError(t, err)
+		require.Empty(t, nuvRoots)
+	})
 }
 
 func TestFindPluginTask(t *testing.T) {
@@ -165,5 +211,37 @@ func TestCheckGitRepo(t *testing.T) {
 		isOlarisRepo, repoName := checkGitRepo(test.url)
 		require.Equal(t, test.expectedRepo, isOlarisRepo)
 		require.Equal(t, test.expectedName, repoName)
+	}
+}
+
+func Test_getPluginName(t *testing.T) {
+
+	testCases := []struct {
+		name     string
+		expected string
+	}{
+		{
+			name:     "olaris-test",
+			expected: "test",
+		},
+		{
+			name:     "olaris-test-123",
+			expected: "test-123",
+		},
+		{
+			name:     "test",
+			expected: "test",
+		},
+		{
+			name:     "a/fake/path/to/olaris-test",
+			expected: "test",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			name := getPluginName(tc.name)
+			require.Equal(t, tc.expected, name)
+		})
 	}
 }

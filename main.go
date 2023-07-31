@@ -128,6 +128,7 @@ func main() {
 
 	setupTmp()
 	setupNuvPwd()
+
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
 	args := os.Args
@@ -196,7 +197,12 @@ func main() {
 			os.Args = args[1:]
 			nuvRootPath := joinpath(getRootDirOrExit(), NUVROOT)
 			configPath := joinpath(nuvHome, CONFIGFILE)
-			if err := config.ConfigTool(nuvRootPath, configPath); err != nil {
+			configMap, err := buildConfigMap(nuvRootPath, configPath)
+			if err != nil {
+				log.Fatalf("error: %s", err.Error())
+			}
+
+			if err := config.ConfigTool(*configMap); err != nil {
 				log.Fatalf("error: %s", err.Error())
 			}
 
@@ -247,11 +253,8 @@ func getRootDirOrExit() string {
 
 func setAllConfigEnvVars(nuvRootDir string, configDir string) error {
 	trace("setting all config env vars")
-	configMap, err := config.NewConfigMapBuilder().
-		WithNuvRoot(joinpath(nuvRootDir, NUVROOT)).
-		WithConfigJson(joinpath(configDir, CONFIGFILE)).
-		Build()
 
+	configMap, err := buildConfigMap(joinpath(nuvRootDir, NUVROOT), joinpath(configDir, CONFIGFILE))
 	if err != nil {
 		return err
 	}
@@ -277,6 +280,8 @@ func wskPropertySet(apihost, auth string) error {
 }
 
 func runNuv(baseDir string, args []string) error {
+	localFolder := os.Getenv("NUV_PWD")
+
 	err := Nuv(baseDir, args[1:])
 	if err == nil {
 		return nil
@@ -287,7 +292,7 @@ func runNuv(baseDir string, args []string) error {
 	var taskNotFoundErr *TaskNotFoundErr
 	if errors.As(err, &taskNotFoundErr) {
 		trace("task not found, looking for plugin:", args[1])
-		plgDir, err := findTaskInPlugins(parent(baseDir), args[1])
+		plgDir, err := findTaskInPlugins(localFolder, args[1])
 		if err != nil {
 			return taskNotFoundErr
 		}
@@ -309,4 +314,24 @@ func setupNuvPwd() {
 		//nolint:errcheck
 		os.Setenv("NUV_PWD", dir)
 	}
+}
+
+func buildConfigMap(nuvRootPath string, configPath string) (*config.ConfigMap, error) {
+	localDir := os.Getenv("NUV_PWD")
+	plgNuvRootMap, err := GetNuvRootPlugins(localDir)
+	if err != nil {
+		return nil, err
+	}
+
+	configMap, err := config.NewConfigMapBuilder().
+		WithNuvRoot(nuvRootPath).
+		WithConfigJson(configPath).
+		WithPluginNuvRoots(plgNuvRootMap).
+		Build()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &configMap, nil
 }

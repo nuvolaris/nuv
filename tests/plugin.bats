@@ -54,6 +54,12 @@ setup() {
     assert_line 'simple'
 }
 
+@test "config in plugin nuvroot is added with prefix" {
+    run nuv -config -d
+    assert_line 'PLUGIN_KEY=value'
+    assert_line 'PLUGIN_ANOTHER_KEY=a plugin value'
+}
+
 @test "nuv -plugin with wrong name" {
     run nuv -plugin https://github.com/giusdp/olari
     assert_line "error: plugin repository names must start with 'olaris-'"

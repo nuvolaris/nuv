@@ -40,7 +40,7 @@ Removing values from nuvroot.json is not supported, disable them instead.
 `)
 }
 
-func ConfigTool(nuvRootPath string, configPath string) error {
+func ConfigTool(configMap ConfigMap) error {
 	flag := flag.NewFlagSet("config", flag.ExitOnError)
 	var helpFlag bool
 	var dumpFlag bool
@@ -63,15 +63,6 @@ func ConfigTool(nuvRootPath string, configPath string) error {
 	if helpFlag {
 		flag.Usage()
 		return nil
-	}
-
-	configMap, err := NewConfigMapBuilder().
-		WithConfigJson(configPath).
-		WithNuvRoot(nuvRootPath).
-		Build()
-
-	if err != nil {
-		return err
 	}
 
 	if dumpFlag {
