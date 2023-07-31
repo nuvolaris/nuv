@@ -138,6 +138,39 @@ func printPluginsHelp(localDir string) error {
 	return nil
 }
 
+// GetNuvRootPlugins returns the map with all the olaris-*/nuvroot.json files
+// in the local and ~/.nuv folders, pointed by their plugin names.
+// If the same plugin is found in both folders, the one in the local folder
+// is used.
+// Useful to build the config map including the plugin configs
+func GetNuvRootPlugins(localDir string) (map[string]string, error) {
+	plgs, err := newPlugins(localDir)
+	if err != nil {
+		return nil, err
+	}
+
+	nuvRoots := make(map[string]string)
+	for _, path := range plgs.local {
+		name := getPluginName(path)
+		nuvRootPath := joinpath(path, NUVROOT)
+		nuvRoots[name] = nuvRootPath
+	}
+
+	for _, path := range plgs.nuv {
+		name := getPluginName(path)
+		// if the plugin is already in the map, skip it
+		if _, ok := nuvRoots[name]; ok {
+			continue
+		}
+		nuvRootPath := joinpath(path, NUVROOT)
+		nuvRoots[name] = nuvRootPath
+	}
+
+	return nuvRoots, nil
+}
+
+// findTaskInPlugins returns the path to the plugin containing the task
+// or an error if the task is not found
 func findTaskInPlugins(localDir string, plg string) (string, error) {
 	plgs, err := newPlugins(localDir)
 	if err != nil {
@@ -221,19 +254,24 @@ func (p *plugins) print() {
 	fmt.Println("Plugins:")
 	if len(p.local) > 0 {
 		for _, plg := range p.local {
-			// remove olaris- prefix
-			plgName := strings.TrimPrefix(filepath.Base(plg), "olaris-")
-
+			plgName := getPluginName(plg)
 			fmt.Printf("  %s (local)\n", plgName)
 		}
 	}
 
 	if len(p.nuv) > 0 {
 		for _, plg := range p.nuv {
-			// remove olaris- prefix
-			plgName := strings.TrimPrefix(filepath.Base(plg), "olaris-")
-
+			plgName := getPluginName(plg)
 			fmt.Printf("  %s (nuv)\n", plgName)
 		}
 	}
+}
+
+// getPluginName returns the plugin name from the plugin path, removing the
+// olaris- prefix
+func getPluginName(plg string) string {
+	// remove olaris- prefix
+	plgName := strings.TrimPrefix(filepath.Base(plg), "olaris-")
+	return plgName
+
 }
