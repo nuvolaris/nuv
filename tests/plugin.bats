@@ -20,6 +20,7 @@ setup() {
     load 'test_helper/bats-assert/load'
     export NO_COLOR=1
     export NUV_NO_LOG_PREFIX=1
+    export NUV_BRANCH="0.3.0"
 }
 
 @test "nuv prints 'Plugins:'" {
@@ -54,11 +55,51 @@ setup() {
     assert_line 'simple'
 }
 
+@test "original nuv sub simple still works" {
+    run nuv sub simple
+    assert_line 'simple'
+}
+
 @test "config in plugin nuvroot is added with prefix" {
     run nuv -config -d
     assert_line 'PLUGIN_KEY=value'
     assert_line 'PLUGIN_ANOTHER_KEY=a plugin value'
 }
+
+@test "other plugin without olaris is shown" {
+    cd testdata
+    run nuv -update
+    run nuv
+    assert_line 'Plugins:'
+    assert_line "  other (local)"
+    run rm -rf ~/.nuv/olaris
+}
+
+@test "other sub simple prints simple" {
+    cd testdata
+    run nuv -update
+    run nuv other sub simple
+    assert_line 'simple'
+    run rm -rf ~/.nuv/olaris
+}
+
+@test "other tool runs nuv tool" {
+    cd testdata
+    run nuv -update
+    run nuv other tool
+    assert_line 'hello'
+    run rm -rf ~/.nuv/olaris
+}
+
+@test "other command runs nuv command" {
+    cd testdata
+    run nuv -update
+    run nuv other command
+    assert_line 'nothing installed yet'
+    run rm -rf ~/.nuv/olaris
+}
+
+# Plugin Tool Tests
 
 @test "nuv -plugin with wrong name" {
     run nuv -plugin https://github.com/giusdp/olari

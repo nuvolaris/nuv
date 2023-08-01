@@ -162,7 +162,7 @@ func loadSavedArgs() []string {
 // Nuv parses args moving into the folder corresponding to args
 // then parses them with docopts and invokes the task
 func Nuv(base string, args []string) error {
-	trace("Nuv run with", args)
+	trace("Nuv run in", base, "with", args)
 	// go down using args as subcommands
 	err := os.Chdir(base)
 	debug("Nuv chdir", base)

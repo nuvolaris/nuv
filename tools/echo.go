@@ -130,7 +130,8 @@ func echoIfExistsTool() error {
 func printEchoIfUsage() {
 	fmt.Println(`Usage: echoif <a> <b>
 
-echoif is a utility that echoes the value of <a> if the exit code of the previous command is 0, echoes the value of <b>`)
+echoif is a utility that echoes the value of <a> if the exit code of the previous command is 0, 
+echoes the value of <b> otherwise`)
 }
 
 func printEchoIfEmptyUsage() {

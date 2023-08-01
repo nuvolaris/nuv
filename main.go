@@ -131,6 +131,7 @@ func main() {
 
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
+	trace("OS args:", os.Args)
 	args := os.Args
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
@@ -296,7 +297,6 @@ func runNuv(baseDir string, args []string) error {
 		}
 
 		debug("Found plugin", plgDir)
-		os.Setenv("NUV_ROOT", plgDir)
 		if err := Nuv(plgDir, args[2:]); err != nil {
 			log.Fatalf("error: %s", err.Error())
 		}
@@ -312,6 +312,8 @@ func setupNuvPwd() {
 		//nolint:errcheck
 		os.Setenv("NUV_PWD", dir)
 	}
+
+	trace("set NUV_PWD", os.Getenv("NUV_PWD"))
 }
 
 func buildConfigMap(nuvRootPath string, configPath string) (*config.ConfigMap, error) {
