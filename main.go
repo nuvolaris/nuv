@@ -280,8 +280,6 @@ func wskPropertySet(apihost, auth string) error {
 }
 
 func runNuv(baseDir string, args []string) error {
-	localFolder := os.Getenv("NUV_PWD")
-
 	err := Nuv(baseDir, args[1:])
 	if err == nil {
 		return nil
@@ -292,7 +290,7 @@ func runNuv(baseDir string, args []string) error {
 	var taskNotFoundErr *TaskNotFoundErr
 	if errors.As(err, &taskNotFoundErr) {
 		trace("task not found, looking for plugin:", args[1])
-		plgDir, err := findTaskInPlugins(localFolder, args[1])
+		plgDir, err := findTaskInPlugins(args[1])
 		if err != nil {
 			return taskNotFoundErr
 		}
@@ -317,8 +315,7 @@ func setupNuvPwd() {
 }
 
 func buildConfigMap(nuvRootPath string, configPath string) (*config.ConfigMap, error) {
-	localDir := os.Getenv("NUV_PWD")
-	plgNuvRootMap, err := GetNuvRootPlugins(localDir)
+	plgNuvRootMap, err := GetNuvRootPlugins()
 	if err != nil {
 		return nil, err
 	}
