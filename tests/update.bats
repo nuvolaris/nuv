@@ -23,6 +23,7 @@ setup() {
 }
 
 @test "nuv -update" {
+    run rm -rf ~/.nuv/olaris
     run nuv -update
     assert_line "Nuvfiles downloaded successfully"
     assert_success
