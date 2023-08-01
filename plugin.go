@@ -129,8 +129,8 @@ func checkGitRepo(url string) (bool, string) {
 	return false, ""
 }
 
-func printPluginsHelp(localDir string) error {
-	plgs, err := newPlugins(localDir)
+func printPluginsHelp() error {
+	plgs, err := newPlugins()
 	if err != nil {
 		return err
 	}
@@ -143,8 +143,8 @@ func printPluginsHelp(localDir string) error {
 // If the same plugin is found in both folders, the one in the local folder
 // is used.
 // Useful to build the config map including the plugin configs
-func GetNuvRootPlugins(localDir string) (map[string]string, error) {
-	plgs, err := newPlugins(localDir)
+func GetNuvRootPlugins() (map[string]string, error) {
+	plgs, err := newPlugins()
 	if err != nil {
 		return nil, err
 	}
@@ -171,8 +171,8 @@ func GetNuvRootPlugins(localDir string) (map[string]string, error) {
 
 // findTaskInPlugins returns the path to the plugin containing the task
 // or an error if the task is not found
-func findTaskInPlugins(localDir string, plg string) (string, error) {
-	plgs, err := newPlugins(localDir)
+func findTaskInPlugins(plg string) (string, error) {
+	plgs, err := newPlugins()
 	if err != nil {
 		return "", err
 	}
@@ -202,7 +202,8 @@ type plugins struct {
 	nuv   []string
 }
 
-func newPlugins(localDir string) (*plugins, error) {
+func newPlugins() (*plugins, error) {
+	localDir := os.Getenv("NUV_PWD")
 	localOlarisFolders := make([]string, 0)
 	nuvOlarisFolders := make([]string, 0)
 

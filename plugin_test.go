@@ -70,8 +70,9 @@ func TestGetAllNuvRootPlugins(t *testing.T) {
 	t.Run("success: get all the nuvroots.json from plugins with 1 plugin", func(t *testing.T) {
 		tempDir := t.TempDir()
 		plgFolder := setupPluginTest(tempDir, t)
+		os.Setenv("NUV_PWD", tempDir)
 
-		nuvRoots, err := GetNuvRootPlugins(tempDir)
+		nuvRoots, err := GetNuvRootPlugins()
 		require.NoError(t, err)
 		require.Len(t, nuvRoots, 1)
 		require.Equal(t, joinpath(plgFolder, NUVROOT), nuvRoots[getPluginName(plgFolder)])
@@ -79,6 +80,7 @@ func TestGetAllNuvRootPlugins(t *testing.T) {
 
 	t.Run("success: get all the nuvroots.json from plugins with 2 plugins", func(t *testing.T) {
 		tempDir := t.TempDir()
+		os.Setenv("NUV_PWD", tempDir)
 		plgFolder := setupPluginTest(tempDir, t)
 
 		// create the olaris-test2 folder
@@ -96,7 +98,7 @@ func TestGetAllNuvRootPlugins(t *testing.T) {
 		err = copyFile(nuvfileYML, filepath.Join(olarisTestDir, "nuvfile.yml"))
 		require.NoError(t, err)
 
-		nuvRoots, err := GetNuvRootPlugins(tempDir)
+		nuvRoots, err := GetNuvRootPlugins()
 		require.NoError(t, err)
 		require.Len(t, nuvRoots, 2)
 		require.Equal(t, joinpath(plgFolder, NUVROOT), nuvRoots[getPluginName(plgFolder)])
@@ -105,9 +107,10 @@ func TestGetAllNuvRootPlugins(t *testing.T) {
 
 	t.Run("empty: no plugins folder found (olaris-*)", func(t *testing.T) {
 		tempDir := t.TempDir()
+		os.Setenv("NUV_PWD", tempDir)
 
 		// Test when the folder is not found
-		nuvRoots, err := GetNuvRootPlugins(tempDir)
+		nuvRoots, err := GetNuvRootPlugins()
 		require.NoError(t, err)
 		require.Empty(t, nuvRoots)
 	})
@@ -116,18 +119,20 @@ func TestGetAllNuvRootPlugins(t *testing.T) {
 func TestFindPluginTask(t *testing.T) {
 	t.Run("success: plugin task found in ./olaris-test", func(t *testing.T) {
 		tempDir := t.TempDir()
+		os.Setenv("NUV_PWD", tempDir)
 		plgFolder := setupPluginTest(tempDir, t)
 
-		fld, err := findTaskInPlugins(tempDir, "test")
+		fld, err := findTaskInPlugins("test")
 		require.NoError(t, err)
 		require.Equal(t, plgFolder, fld)
 	})
 
 	t.Run("error: no plugins folder found (olaris-*)", func(t *testing.T) {
 		tempDir := t.TempDir()
+		os.Setenv("NUV_PWD", tempDir)
 
 		// Test when the folder is not found
-		fld, err := findTaskInPlugins(tempDir, "grep")
+		fld, err := findTaskInPlugins("grep")
 		require.Error(t, err)
 		require.Empty(t, fld)
 	})
@@ -138,7 +143,9 @@ func TestNewPlugins(t *testing.T) {
 		tempDir := t.TempDir()
 		plgFolder := setupPluginTest(tempDir, t)
 
-		p, err := newPlugins(tempDir)
+		os.Setenv("NUV_PWD", tempDir)
+
+		p, err := newPlugins()
 		require.NoError(t, err)
 		require.NotNil(t, p)
 		require.Len(t, p.local, 1)
@@ -147,7 +154,8 @@ func TestNewPlugins(t *testing.T) {
 
 	t.Run("non existent local dir results in empty local field", func(t *testing.T) {
 		localDir := "/path/to/nonexistent/dir"
-		p, err := newPlugins(localDir)
+		os.Setenv("NUV_PWD", localDir)
+		p, err := newPlugins()
 		require.NoError(t, err)
 		require.NotNil(t, p)
 		require.Len(t, p.local, 0)

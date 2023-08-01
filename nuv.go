@@ -210,7 +210,7 @@ func Nuv(base string, args []string) error {
 		err := help()
 		if !isSubCmd {
 			fmt.Println()
-			return printPluginsHelp(parent(base))
+			return printPluginsHelp()
 		}
 		return err
 	}
