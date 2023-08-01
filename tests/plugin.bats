@@ -20,6 +20,7 @@ setup() {
     load 'test_helper/bats-assert/load'
     export NO_COLOR=1
     export NUV_NO_LOG_PREFIX=1
+    export NUV_BRANCH="0.3.0"
 }
 
 @test "nuv prints 'Plugins:'" {
