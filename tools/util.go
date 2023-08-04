@@ -25,7 +25,7 @@ import (
 
 var Utils = []string{
 	"basename", "cat", "cp", "dirname",
-	"grep", "gunzip", "gzip", "head",
+	"gunzip", "gzip", "head",
 	"ls", "mv", "pwd", "rm", "sleep",
 	"tail", "tar", "tee", "touch", "tr",
 	"unzip", "wc", "which", "zip",

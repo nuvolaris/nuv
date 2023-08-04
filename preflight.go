@@ -18,7 +18,7 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"os/exec"
 )
 
@@ -29,7 +29,6 @@ type preflight struct {
 type checkFn func(pd *preflight)
 
 func (p *preflight) check(f checkFn) {
-
 	if p.err != nil {
 		// skip if previous check failed
 		return
@@ -44,24 +43,19 @@ func preflightChecks() error {
 	trace("preflight checks")
 	preflight := preflight{}
 
-	preflight.check(curlInstalled)
-	preflight.check(sshInstalled)
+	preflight.check(checkInstalled("curl"))
+	preflight.check(checkInstalled("ssh"))
+	preflight.check(checkInstalled("grep"))
 
 	return preflight.err
 }
 
-func curlInstalled(p *preflight) {
-	trace("check curl is installed")
-	_, err := exec.LookPath("curl")
-	if err != nil {
-		p.err = errors.New("curl is required but is not installed")
-	}
-}
-
-func sshInstalled(p *preflight) {
-	trace("check ssh is installed")
-	_, err := exec.LookPath("ssh")
-	if err != nil {
-		p.err = errors.New("ssh is required but is not installed")
+func checkInstalled(check string) checkFn {
+	return func(p *preflight) {
+		trace("check installed", check)
+		_, err := exec.LookPath(check)
+		if err != nil {
+			p.err = fmt.Errorf("%s not installed but is required", check)
+		}
 	}
 }
