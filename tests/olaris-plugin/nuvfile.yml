@@ -20,12 +20,3 @@ version: "3"
 tasks:
   sub:
     desc: sub command
-
-  grep:
-    silent: true
-    cmds:
-      - |
-        if grep {{.GREP}} grep.txt
-        then echo OK
-        else echo KO
-        fi

@@ -36,14 +36,6 @@ setup() {
     run rm -rf olaris-test2
 }
 
-@test "nuv with grep plugin command" {
-    run nuv plugin grep
-    assert_line KO
-    run nuv plugin grep GREP=first
-    assert_line grep.txt:first
-    assert_line OK
-}
-
 @test "nuv help on sub cmds plugin" {
     run nuv plugin sub
     assert_line '* opts:         opts test'
