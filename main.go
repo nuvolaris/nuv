@@ -133,6 +133,7 @@ func main() {
 	// using "-" or "--" or "-task" invokes embedded task
 	trace("OS args:", os.Args)
 	args := os.Args
+
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
@@ -231,13 +232,26 @@ func main() {
 	nuvRootDir := getRootDirOrExit()
 	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
 	if err != nil {
-		warn("cannot apply env vars from configs", err)
-		os.Exit(1)
+		log.Fatalf("cannot apply env vars from configs: %s", err.Error())
 	}
 
 	// check if olaris was recently updated
 	// we pass parent(dir) because we use the olaris parent folder
 	checkUpdated(parent(nuvRootDir), 24*time.Hour)
+
+	// in case args[1] is a wsk wrapper command
+	// invoke it and exit
+	if len(args) > 1 {
+		if cmd, ok := IsWskWrapperCommand(args[1]); ok {
+			trace("wsk wrapper command")
+			debug("extracted cmd", cmd)
+			rest := args[2:]
+			if err := tools.Wsk(cmd, rest...); err != nil {
+				log.Fatalf("error: %s", err.Error())
+			}
+			return //(skip runNuv)
+		}
+	}
 
 	if err := runNuv(nuvRootDir, args); err != nil {
 		log.Fatalf("error: %s", err.Error())
@@ -333,4 +347,21 @@ func buildConfigMap(nuvRootPath string, configPath string) (*config.ConfigMap, e
 	}
 
 	return &configMap, nil
+}
+
+func IsWskWrapperCommand(name string) ([]string, bool) {
+	wskWrapperCommands := map[string][]string{
+		"action":     {"wsk", "action"},
+		"activation": {"wsk", "activation"},
+		"invoke":     {"wsk", "action", "invoke", "-r"},
+		"logs":       {"wsk", "activation", "logs"},
+		"package":    {"wsk", "package"},
+		"result":     {"wsk", "activation", "result"},
+		"rule":       {"wsk", "rule"},
+		"trigger":    {"wsk", "trigger"},
+		"url":        {"wsk", "action", "get", "--url"},
+	}
+
+	cmd, ok := wskWrapperCommands[name]
+	return cmd, ok
 }
