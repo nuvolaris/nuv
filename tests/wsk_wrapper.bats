@@ -53,33 +53,33 @@ setup() {
 }
 
 @test "nuv -wsk action -r is wrapped in nuv invoke" {
-    run nuv invoke
+    run nuv invoke --apihost http://localhost:3233
     assert_line 'error: Invalid argument(s). An action name is required.'
 
-    run nuv invoke --help
+    run nuv invoke --apihost http://localhost:3233 --help
     assert_line 'invoke action'
 }
 
 @test "nuv -wsk activation result is wrapped in nuv result" {
-    run nuv result
+    run nuv result --apihost http://localhost:3233
     assert_line 'error: Invalid argument(s). An activation ID is required.'
 
-    run nuv result --help
+    run nuv result --apihost http://localhost:3233 --help
     assert_line 'get the result of an activation'
 }
 
 @test "nuv -wsk activation logs is wrapped in nuv logs" {
-    run nuv logs
+    run nuv logs --apihost http://localhost:3233
     assert_line 'error: Invalid argument(s). An activation ID is required.'
 
-    run nuv logs --help
+    run nuv logs --apihost http://localhost:3233 --help
     assert_line 'get the logs of an activation'
 }
 
 @test "nuv -wsk action get --url is wrapped in nuv url" {
-    run nuv url
+    run nuv url --apihost http://localhost:3233
     assert_line 'error: Invalid argument(s). An action name is required.'
 
-    run nuv url --help
+    run nuv url --apihost http://localhost:3233 --help
     assert_line 'get action'
 }
