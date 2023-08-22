@@ -23,6 +23,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/mitchellh/go-homedir"
 )
 
 func realpathTool() error {
@@ -51,7 +53,10 @@ func realpathTool() error {
 		return errors.New("no path provided")
 	}
 
-	path := flags.Arg(0)
+	path, err := homedir.Expand(flags.Arg(0))
+	if err != nil {
+		return err
+	}
 
 	var absPath string
 	if filepath.IsLocal(path) {
