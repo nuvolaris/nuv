@@ -45,7 +45,7 @@ func preflightChecks() error {
 
 	preflight.check(checkInstalled("curl"))
 	preflight.check(checkInstalled("ssh"))
-	preflight.check(checkInstalled("grep"))
+	// preflight.check(checkInstalled("grep"))
 
 	return preflight.err
 }

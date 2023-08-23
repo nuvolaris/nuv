@@ -103,12 +103,6 @@ func main() {
 		log.SetFlags(0)
 	}
 
-	// preflight checks
-	if err := preflightChecks(); err != nil {
-		log.Fatalf("[PREFLIGHT CHECK] error: %s", err.Error())
-	}
-	// ***************
-
 	var err error
 	me := os.Args[0]
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
@@ -252,6 +246,12 @@ func main() {
 			return //(skip runNuv)
 		}
 	}
+
+	// preflight checks
+	if err := preflightChecks(); err != nil {
+		log.Fatalf("[PREFLIGHT CHECK] error: %s", err.Error())
+	}
+	// ***************
 
 	if err := runNuv(nuvRootDir, args); err != nil {
 		log.Fatalf("error: %s", err.Error())
