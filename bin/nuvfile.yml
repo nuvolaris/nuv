@@ -62,6 +62,15 @@ tasks:
     status:
       - test -e unzip.exe
 
+  grep.exe:
+    cmds:
+      - |-
+        if [[ "{{.OS}}" == "windows" ]]
+          cp windows/grep.exe {{.BIN}}
+        fi
+    status:
+      - test -e grep.exe
+
   download-archive:
     dir: "{{.BIN}}"
     cmds:
@@ -231,6 +240,7 @@ tasks:
       - echo {{.VERSION}} >windows/version.txt
       - cp ../LICENSE windows/LICENSE
       - task: unzip.exe
+      - task: grep.exe
       - ./nuv getall OS=windows ARCH=amd64
       - ./nuv windows build
       - cp windows/*.msi ..
