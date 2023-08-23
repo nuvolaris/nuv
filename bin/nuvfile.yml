@@ -230,6 +230,7 @@ tasks:
       - task: mc
       - task: eksctl
       - task: q
+      - task: grep.exe
     # TODO: for some reasons, helm download does not work in github actions
     #- task: helm
 
@@ -240,7 +241,6 @@ tasks:
       - echo {{.VERSION}} >windows/version.txt
       - cp ../LICENSE windows/LICENSE
       - task: unzip.exe
-      - task: grep.exe
       - ./nuv getall OS=windows ARCH=amd64
       - ./nuv windows build
       - cp windows/*.msi ..
