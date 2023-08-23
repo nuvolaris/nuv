@@ -66,7 +66,7 @@ tasks:
     cmds:
       - |-
         if [[ "{{.OS}}" == "windows" ]]
-          cp windows/grep.exe {{.BIN}}
+        then cp windows/grep.exe {{.BIN}}
         fi
     status:
       - test -e grep.exe
