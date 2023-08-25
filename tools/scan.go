@@ -115,7 +115,7 @@ Example:
   nuv -scan -g "*" nuv -js script.js
 
 This results in running the script.js file on the ./actions folder and all subdirectories. 
-For example, if $NUV_DIR/actions contains a subfolder called 'i-am-sub' with a file called 'bar.js',
+For example, if $NUV_PWD/actions contains a subfolder called 'i-am-sub' with a file called 'bar.js',
 the following commands are executed:
 
 	- nuv -js script.js ./actions
@@ -136,8 +136,8 @@ Options:`)
 
 	// flag.BoolVar(&helpFlag, "h", false, "show help")
 	flag.BoolVar(&helpFlag, "help", false, "show help")
-	// flag.StringVar(&dirFlag, "d", getCurrentDir(), "directory to scan (default: $NUV_DIR=PWD)")
-	flag.StringVar(&dirFlag, "dir", getCurrentDir(), "directory to scan (default: $NUV_PWD)")
+	// flag.StringVar(&dirFlag, "d", getCurrentDir(), "directory to scan (default: $NUV_PWD)")
+	flag.StringVar(&dirFlag, "dir", os.Getenv("NUV_PWD"), "directory to scan (default: $NUV_PWD)")
 	// flag.StringVar(&globFlag, "g", "", "glob pattern to filter files (default: no files are passed to the nuv command)")
 	flag.StringVar(&globFlag, "glob", "", "glob pattern between quotes to filter files (default: none -> no files are passed to the nuv command)")
 	flag.BoolVar(&dryRunFlag, "dry-run", false, "print the plan without executing it")
@@ -280,14 +280,4 @@ func checkActionsFolderExists(path string) error {
 		return fmt.Errorf("%s in %s is not a folder", actionsFolder, path)
 	}
 	return nil
-}
-
-func getCurrentDir() string {
-	dir := os.Getenv("NUV_DIR")
-	if dir == "" {
-		dir, _ = os.Getwd()
-		//nolint:errcheck
-		os.Setenv("NUV_DIR", dir)
-	}
-	return dir
 }
