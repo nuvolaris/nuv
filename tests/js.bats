@@ -29,17 +29,22 @@ setup() {
 
 @test "-js with simple file.js" {
     run nuv -js testdata/js_simple_test.js
-    assert_line "2 + 2 = 4"
+    assert_line --partial "2 + 2 = 4"
     assert_success
 }
 
 @test "-js with js function" {
     run nuv -js testdata/js_function_test.js
-    assert_line "3"
+    assert_line --partial "3"
     assert_success
 }
 
 @test "-js argv" {
     run nuv -js testdata/js_test_argv.js a b c
-    assert_line "goja,testdata/js_test_argv.js,a,b,c"
+    assert_line --partial "goja,testdata/js_test_argv.js,a,b,c"
+}
+
+@test "-js with nuv module" {
+    run nuv -js testdata/js_read_file.js testdata/testfiletype.txt
+    assert_line --partial "a sample text"
 }
