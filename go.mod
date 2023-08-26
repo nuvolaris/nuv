@@ -11,7 +11,7 @@ require (
 	github.com/nicksnyder/go-i18n v1.10.1
 	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230603163828-10ca029cdb58
 	github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c
-	github.com/nuvolaris/goja/gojamain v0.0.0-20230527135333-d302d90d3283
+	github.com/nuvolaris/goja/gojamain v0.0.0-20230826141320-81daf86ddcc2
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230615104118-d593f7d6576f
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae
@@ -24,8 +24,8 @@ require (
 	github.com/jessevdk/go-flags v1.5.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
-	github.com/nuvolaris/goja v0.0.0-20230527133949-2939724446aa // indirect
-	github.com/nuvolaris/goja_nodejs v0.0.0-20230527135110-3aa37178bb6c // indirect
+	github.com/nuvolaris/goja v0.0.0-20230826140625-f4c22086ede6 // indirect
+	github.com/nuvolaris/goja_nodejs v0.0.0-20230826135643-676d5429636c // indirect
 	github.com/nuvolaris/sh/v3 v3.0.0-20230718131820-376e733299a4 // indirect
 	github.com/nuvolaris/task/v3 v3.9.3-0.20230718131831-48d06b3099ca // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
@@ -90,11 +90,11 @@ require (
 	github.com/zalando/go-keyring v0.2.2
 	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb
-	golang.org/x/net v0.6.0 // indirect
+	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/term v0.5.0
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/term v0.8.0
+	golang.org/x/text v0.9.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1

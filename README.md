@@ -64,7 +64,7 @@ The following environment variables allows to ovverride certain defaults.
 - `NUV_NO_NUVOPTS` can be defined to disable nuvopts parsing. Useful to test hidden tasks. When this is enabled it also shows all the tasks instead of just those with a description.
 - `NUV_PORT` is the port where `nuv` will run the web server. If not defined, it defaults to `9678`.
 - `NUV_TMP` is a temporary folder where you can store temp files - defaults to `~/.nuv/tmp`
-- `NUV_DIR` is the folder where `nuv` is executed - defaults to the current working directory. It is used to run the `scan` tool to scan the `NUV_DIR` folder for actions.
+- `NUV_PWD` is the folder where `nuv` is executed - defaults to the current working directory.
 - `NUV_LOGIN`: set the username for `nuv -login`. The default is `nuvolaris`. It can be overriden by passing the username as an argument to `nuv -login`. 
 - `NUV_PASSWORD`: set the password for `nuv -login`. If not 
 set, `nuv -login` will prompt for the password. It is useful for tests and non-interactive environments.
