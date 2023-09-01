@@ -29,18 +29,16 @@ import (
 func jsToolMain() error {
 	flag := flag.NewFlagSet("js", flag.ExitOnError)
 	flag.Usage = func() {
-		fmt.Println(`Usage: nuv -js FILE.js
-Interpret and run Javascript code.
+		fmt.Println(`nuv -js
 
-Options:`)
-		flag.PrintDefaults()
+Usage: 
+  nuv -js FILE.js
+
+Interpret and run Javascript code.`)
 	}
 
-	// Define command line flags
-	helpFlag := flag.Bool("h", false, "Print help message")
-
 	// Parse command line flags
-	err := flag.Parse(os.Args)
+	err := flag.Parse(os.Args[1:])
 	if err != nil {
 		return err
 	}
@@ -49,12 +47,6 @@ Options:`)
 	isTerminal := isatty.IsTerminal(os.Stdin.Fd()) || isatty.IsCygwinTerminal(os.Stdin.Fd())
 	// if no input file and no input from pipe, print help message
 	if isTerminal && flag.NArg() == 0 {
-		flag.Usage()
-		return nil
-	}
-
-	// Print help message if -h flag is provided
-	if *helpFlag {
 		flag.Usage()
 		return nil
 	}
