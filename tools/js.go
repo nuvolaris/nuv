@@ -27,13 +27,23 @@ import (
 )
 
 func jsToolMain() error {
-	flag.Usage = printJSHelp
+	flag := flag.NewFlagSet("js", flag.ExitOnError)
+	flag.Usage = func() {
+		fmt.Println(`Usage: nuv -js FILE.js
+Interpret and run Javascript code.
+
+Options:`)
+		flag.PrintDefaults()
+	}
 
 	// Define command line flags
 	helpFlag := flag.Bool("h", false, "Print help message")
 
 	// Parse command line flags
-	flag.Parse()
+	err := flag.Parse(os.Args)
+	if err != nil {
+		return err
+	}
 
 	// Check if input is from terminal and not from a pipe
 	isTerminal := isatty.IsTerminal(os.Stdin.Fd()) || isatty.IsCygwinTerminal(os.Stdin.Fd())
@@ -50,13 +60,4 @@ func jsToolMain() error {
 	}
 
 	return goja.GojaMain()
-}
-
-func printJSHelp() {
-	fmt.Println(`Usage: nuv -js FILE.js
-Interpret and run Javascript code.
-
-Options: 
-
--h  Print help message`)
 }
