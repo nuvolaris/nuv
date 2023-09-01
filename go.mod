@@ -25,7 +25,7 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/nuvolaris/goja v0.0.0-20230826140625-f4c22086ede6 // indirect
-	github.com/nuvolaris/goja_nodejs v0.0.0-20230826135643-676d5429636c // indirect
+	github.com/nuvolaris/goja_nodejs v0.0.0-20230830173113-e0ab07ae0f02 // indirect
 	github.com/nuvolaris/sh/v3 v3.0.0-20230718131820-376e733299a4 // indirect
 	github.com/nuvolaris/task/v3 v3.9.3-0.20230718131831-48d06b3099ca // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect

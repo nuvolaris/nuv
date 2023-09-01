@@ -282,6 +282,14 @@ github.com/nuvolaris/goja/gojamain v0.0.0-20230826141320-81daf86ddcc2/go.mod h1:
 github.com/nuvolaris/goja_nodejs v0.0.0-20230527135110-3aa37178bb6c/go.mod h1:3j67oDWJ3d1Zut6OfpmPuBwDH+L2bzyWCeYqvGMAi20=
 github.com/nuvolaris/goja_nodejs v0.0.0-20230826135643-676d5429636c h1:yYZZv9FQ4VtTeE799gm6K9zYL6PLrLmerYrKhdDynz8=
 github.com/nuvolaris/goja_nodejs v0.0.0-20230826135643-676d5429636c/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
+github.com/nuvolaris/goja_nodejs v0.0.0-20230830165412-c3eab9775cab h1:B6wHX9EWfaT5nUPX0h4rap4cL4M0nhgWNB4laue2bds=
+github.com/nuvolaris/goja_nodejs v0.0.0-20230830165412-c3eab9775cab/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
+github.com/nuvolaris/goja_nodejs v0.0.0-20230830171134-5acb7fe3694d h1:8RkEsWixtw9GFQ8vk2N6pu4wTpyYuFrPSQTnTE9Tn9o=
+github.com/nuvolaris/goja_nodejs v0.0.0-20230830171134-5acb7fe3694d/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
+github.com/nuvolaris/goja_nodejs v0.0.0-20230830171817-96fda7aef746 h1:zovyJudaoXgZ8sZlasCyYmGZhZ63i+PJYlBK7rd3jD4=
+github.com/nuvolaris/goja_nodejs v0.0.0-20230830171817-96fda7aef746/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
+github.com/nuvolaris/goja_nodejs v0.0.0-20230830173113-e0ab07ae0f02 h1:Zy16V8qVX5ik3+D1uJT1p0oOVhumMV7cpDRozuNkquw=
+github.com/nuvolaris/goja_nodejs v0.0.0-20230830173113-e0ab07ae0f02/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230615104118-d593f7d6576f h1:gYjKmnboe18DpSc4yIOa9Rqp4oQKIMbxzAt7NkSpEKQ=
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230615104118-d593f7d6576f/go.mod h1:Gv6ayVTiLPzMp3oA808nO5JxwXSN//vWxMu+qtG6Rf8=
 github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e h1:JEpF1YOoZKTU3U7k57Km3FytF6CaEAx0MkYIlGH5X34=
