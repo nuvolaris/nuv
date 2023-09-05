@@ -108,16 +108,23 @@ func main() {
 	if filepath.Base(me) == "nuv" || filepath.Base(me) == "nuv.exe" {
 		tools.NuvCmd, err = setupCmd(me)
 		if err != nil {
-			warn("cannot setup cmd", err)
-			os.Exit(1)
+			log.Fatalf("cannot setup cmd: %s", err.Error())
 		}
 		setupBinPath(tools.NuvCmd)
 	}
 
 	nuvHome, err := homedir.Expand("~/.nuv")
 	if err != nil {
-		warn("cannot expand home dir", err)
-		os.Exit(1)
+		log.Fatalf("error: %s", err.Error())
+	}
+
+	// Check if first run ever. If so, run `-update` to auto setup
+	if !isDir(nuvHome) {
+		log.Println("Welcome to nuv! Setting up...")
+		err := pullTasks(true, true)
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
 	}
 
 	setupTmp()
