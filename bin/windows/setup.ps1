@@ -15,24 +15,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
-version: '3'
+# choco list --local-only
+# choco install -y wixtoolset
 
-vars:
-  VERSION:
-    sh: cat version.txt || echo "unknown" 
-
-tasks:
-
-  build:
-    desc: build installer
-    cmds:
-    - test "{{OS}}" = "windows"
-    - task: go-msi
-    - task: setup
-
-  go-msi:
-    - go install github.com/mh-cbon/go-msi@latest
-
-  setup:
-    - powershell -File setup.ps1
-    - mv nuv.msi nuv_{{.VERSION}}_{{ARCH}}.msi
+$env:PATH = "C:\Program Files (x86)\WiX Toolset v3.11\bin;" + $env:PATH
+$Version = Get-Date -Format 'yyyy.MMdd.HHmm'
+go-msi make -p wix.json -a amd64 -m nuv.msi -l LICENSE --version $Version --src templates --out $PWD\go-msi-out
