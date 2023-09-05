@@ -19,5 +19,5 @@
 # choco install -y wixtoolset
 
 $env:PATH = "C:\Program Files (x86)\WiX Toolset v3.11\bin;" + $env:PATH
-$Version = Get-Date -Format 'yyyy.MMdd.HHmm'
+$Version = Get-Date -Format 'yy.M.dHH'
 go-msi make -p wix.json -a amd64 -m nuv.msi -l LICENSE --version $Version --src templates --out $PWD\go-msi-out
