@@ -216,7 +216,7 @@ func newPlugins() (*plugins, error) {
 
 	// filter all folders that are do not contain nuvfile.yaml
 	for _, folder := range olarisFolders {
-		if !exists(folder, NUVFILE) {
+		if !isDir(folder) || !exists(folder, NUVFILE) {
 			continue
 		}
 		localOlarisFolders = append(localOlarisFolders, folder)
@@ -233,7 +233,7 @@ func newPlugins() (*plugins, error) {
 		return nil, err
 	}
 	for _, folder := range olarisNuvFolders {
-		if !exists(folder, NUVFILE) {
+		if !isDir(folder) || !exists(folder, NUVFILE) {
 			continue
 		}
 		nuvOlarisFolders = append(nuvOlarisFolders, folder)
