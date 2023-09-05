@@ -37,7 +37,7 @@ var tools = []string{
 	"config", "retry", "urlenc", "find",
 	"replace", "base64", "validate",
 	"scan", "echoif", "echoifempty", "echoifexists",
-	"realpath",
+	"realpath", "zipf",
 }
 
 // not available in taskfiles
@@ -171,6 +171,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "realpath":
 		os.Args = append([]string{"realpath"}, args...)
 		if err := realpathTool(); err != nil {
+			return 1, err
+		}
+
+	case "zipf":
+		if err := zipfTool(args); err != nil {
 			return 1, err
 		}
 	}
