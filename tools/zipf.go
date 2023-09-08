@@ -60,9 +60,6 @@ Options:`)
 		return err
 	}
 
-	log.Println("zipf", flag.Args())
-	log.Println("zipf nargs", flag.NArg())
-
 	if *help {
 		flag.Usage()
 		return nil
@@ -94,6 +91,8 @@ Options:`)
 	if err != nil {
 		return err
 	}
+
+	log.Println("saving zip file to", *out)
 	return os.WriteFile(*out, stdout, 0644)
 }
 
