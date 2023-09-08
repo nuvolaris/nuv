@@ -44,6 +44,8 @@ You can specify the output file with the -o option to override the default name.
 You can pass a command with the -x option. 
 The command is a shell command that is executed on the zipped folder and its output is saved as the output file.
 
+N.B.: The zip file is saved in the same parent folder of the input folder.
+
 Usage:
   nuv -zipf <folder> [-o <zipfile>] [-x <command>]
 
@@ -78,13 +80,20 @@ Options:`)
 		}
 	}
 
+	*out = filepath.Join(filepath.Dir(dir), *out)
+
 	buf, err := Zip(dir)
 	if err != nil {
 		return err
 	}
 
 	if *cmd == "" {
-		return os.WriteFile(*out, buf, 0644)
+		err = os.WriteFile(*out, buf, 0644)
+		if err != nil {
+			return err
+		}
+		log.Println(*out)
+		return nil
 	}
 
 	stdout, err := runCommandWithStdin(*cmd, buf)
@@ -92,8 +101,12 @@ Options:`)
 		return err
 	}
 
-	log.Println("saving zip file to", *out)
-	return os.WriteFile(*out, stdout, 0644)
+	err = os.WriteFile(*out, stdout, 0644)
+	if err != nil {
+		return err
+	}
+	log.Println(*out)
+	return nil
 }
 
 func runCommandWithStdin(cmd string, stdin []byte) ([]byte, error) {
