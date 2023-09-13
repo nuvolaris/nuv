@@ -15,10 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 
-version: '3'
+version: "3"
 
 vars:
-  ARCH: '{{ARCH}}'
+  ARCH: "{{ARCH}}"
   VERSION:
     sh: cat version.txt || echo "unknown"
 
@@ -26,22 +26,21 @@ tasks:
   build:
     desc: build installer
     cmds:
-    - test "{{OS}}" = "darwin"
-    - >
-      pkgbuild --root $(pwd)/{{.ARCH}}
-      --identifier "io.nuvolaris.nuv" 
-      --scripts $(pwd)/scripts
-      --filter 'scripts/.*'
-      --filter 'nuvfile.yml'
-      --filter 'nuv*.pkg'
-      --install-location /usr/local/nuvolaris  
-      --version 0.3.0 
-      nuv_{{.VERSION}}_{{.ARCH}}.pkg
+      - test "{{OS}}" = "darwin"
+      - >
+        pkgbuild --root $(pwd)/{{.ARCH}}
+        --identifier "io.nuvolaris.nuv" 
+        --scripts $(pwd)/scripts
+        --filter 'scripts/.*'
+        --filter 'nuvfile.yml'
+        --filter 'nuv*.pkg'
+        --install-location /usr/local/nuvolaris  
+        --version 3.0.0
+        nuv_{{.VERSION}}_{{.ARCH}}.pkg
 
   uninstall:
     desc: uninstall pkg
     cmds:
-    - sudo rm -Rvf /usr/local/nuvolaris
-    - sudo rm /usr/local/bin/nuv
-    - sudo pkgutil --forget io.nuvolaris.nuv
-  
+      - sudo rm -Rvf /usr/local/nuvolaris
+      - sudo rm /usr/local/bin/nuv
+      - sudo pkgutil --forget io.nuvolaris.nuv
