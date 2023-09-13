@@ -62,28 +62,14 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 		if err != nil {
 			if err.Error() == "already up-to-date" {
 				fmt.Println("Your tasks are already up to date!")
-				return localDir, nil
+				return localDir, checkoutToNewestBranch(branch, r, w)
 			}
 			return "", err
 		}
 
-		// check that the branch is the right one
-		ref, err := r.Head()
-		if err != nil {
+		if err := checkoutToNewestBranch(branch, r, w); err != nil {
 			return "", err
 		}
-
-		if ref.Name().Short() != branch {
-			fmt.Println("Tasks on old branch", ref.Name().Short(), "- switching to", branch)
-			// checkout the right branch
-			err = w.Checkout(&git.CheckoutOptions{
-				Branch: plumbing.NewBranchReferenceName(branch),
-			})
-			if err != nil {
-				return "", err
-			}
-		}
-
 		fmt.Println("Nuvfiles updated successfully")
 		return localDir, nil
 	}
@@ -217,4 +203,25 @@ func autoCLIUpdate() error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
+}
+
+func checkoutToNewestBranch(branch string, r *git.Repository, w *git.Worktree) error {
+	// check that the branch is the right one
+	ref, err := r.Head()
+	if err != nil {
+		return err
+	}
+
+	if ref.Name().Short() != branch {
+		fmt.Println("Tasks on old branch", ref.Name().Short(), "- switching to", branch)
+		// checkout the right branch
+		err = w.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.NewBranchReferenceName(branch),
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
