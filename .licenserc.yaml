@@ -37,6 +37,7 @@ header:
     - 'LICENSE'
     - 'tests/bats/**'
     - 'tests/test_helper/**'
+    - 'runtimes.json'
 
 dependency:
   files:
