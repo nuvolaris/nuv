@@ -67,6 +67,23 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 			return "", err
 		}
 
+		// check that the branch is the right one
+		ref, err := r.Head()
+		if err != nil {
+			return "", err
+		}
+
+		if ref.Name().Short() != branch {
+			fmt.Println("Tasks on old branch", ref.Name().Short(), "- switching to", branch)
+			// checkout the right branch
+			err = w.Checkout(&git.CheckoutOptions{
+				Branch: plumbing.NewBranchReferenceName(branch),
+			})
+			if err != nil {
+				return "", err
+			}
+		}
+
 		fmt.Println("Nuvfiles updated successfully")
 		return localDir, nil
 	}
