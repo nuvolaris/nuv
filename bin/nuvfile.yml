@@ -21,7 +21,7 @@ version: "3"
 vars:
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
-  BRANCH: 0.3.0
+  BRANCH: 3.0.0
   ARCH: "{{ARCH}}"
   OS: "{{OS}}"
   BIN: "{{.OS}}/{{.ARCH}}"

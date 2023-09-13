@@ -37,3 +37,4 @@ bin/unzip.exe
 bin/*/LICENSE
 .test_fail_then_succeed
 cookie.txt
+actions.zip

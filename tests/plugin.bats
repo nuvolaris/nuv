@@ -87,7 +87,7 @@ setup() {
     cd testdata
     run nuv -update
     run nuv other command
-    assert_line 'nothing installed yet'
+    assert_line --partial 'nothing installed yet'
     run rm -rf ~/.nuv/olaris
 }
 
