@@ -37,4 +37,8 @@ bin/unzip.exe
 bin/*/LICENSE
 .test_fail_then_succeed
 cookie.txt
+<<<<<<< HEAD
 actions.zip
+=======
+runtimes.json
+>>>>>>> faefe98 (using my wskdeploy -a)

@@ -30,6 +30,8 @@ import (
 	"github.com/nuvolaris/nuv/config"
 	"github.com/nuvolaris/nuv/tools"
 	"github.com/nuvolaris/task/cmd/taskmain/v3"
+
+	_ "embed"
 )
 
 func setupCmd(me string) (string, error) {
@@ -81,9 +83,9 @@ func setupBinPath(cmd string) {
 }
 
 func info() {
-	fmt.Println("VERSION:", NuvVersion)
-	fmt.Println("BRANCH:", NuvBranch)
-	fmt.Println("CMD:", tools.GetNuvCmd())
+	fmt.Println("NUV_VERSION:", NuvVersion)
+	fmt.Println("NUV_BRANCH:", NuvBranch)
+	fmt.Println("NUV_CMD:", tools.GetNuvCmd())
 	fmt.Println("REPO:", getNuvRepo())
 	fmt.Println("NUV_BIN:", os.Getenv("NUV_BIN"))
 	fmt.Println("NUV_TMP:", os.Getenv("NUV_TMP"))
@@ -92,7 +94,13 @@ func info() {
 	fmt.Println("NUV_PWD:", os.Getenv("NUV_PWD"))
 }
 
+//go:embed runtimes.json
+var RUNTIMES_JSON string
+
 func main() {
+	// set runtime version as environment variable
+	os.Setenv("RUNTIMES_JSON", RUNTIMES_JSON)
+
 	// set version
 	if os.Getenv("NUV_VERSION") != "" {
 		NuvVersion = os.Getenv("NUV_VERSION")

@@ -17,15 +17,15 @@
 #
 [submodule "task"]
 	path = tools/task
-	url = https://github.com/nuvolaris/task
+	url = git@github.com:nuvolaris/task
 	branch = nuvolaris
 [submodule "openwhisk-cli"]
 	path = tools/openwhisk-cli
-	url = https://github.com/nuvolaris/openwhisk-cli
+	url = git@github.com:nuvolaris/openwhisk-cli
 	branch = nuvolaris
 [submodule "sh"]
 	path = tools/sh
-	url = https://github.com/nuvolaris/sh
+	url = git@github.com:nuvolaris/sh
 	branch = nuvolaris
 [submodule "tools/httpie-go"]
 	path = tools/httpie-go
@@ -67,3 +67,6 @@
 [submodule "tools/goja_nodejs"]
 	path = tools/goja_nodejs
 	url = https://github.com/nuvolaris/goja_nodejs
+[submodule "tools/openwhisk-wskdeploy"]
+	path = tools/openwhisk-wskdeploy
+	url = git@github.com:nuvolaris/openwhisk-wskdeploy

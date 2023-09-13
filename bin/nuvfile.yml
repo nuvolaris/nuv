@@ -95,16 +95,6 @@ tasks:
     status:
       - test -e {{.TGT}}{{.EXE}}
 
-  q:
-    dir: "{{.BIN}}"
-    vars:
-      SRC: https://github.com/natesales/q/releases/download/v0.11.1/q_0.11.1_{{.OS}}_{{.ARCH}}.tar.gz
-    cmds:
-      - echo "{{.BIN}}"
-      - curl -L -ccookie.txt -oq.tar.gz {{.SRC}}
-      - '{{if eq .OS "windows"}}tar.exe{{else}}/usr/bin/tar{{end}} xzvf q.tar.gz q{{.EXE}}'
-      - rm q.tar.gz cookie.txt
-
   kubectl:
     cmds:
       - task: download
@@ -190,6 +180,7 @@ tasks:
   nuv:
     dir: ".."
     cmds:
+      - curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json >runtimes.json
       - >
         GOOS={{.OS}} GOARCH={{.ARCH}} 
         go build 
@@ -229,7 +220,6 @@ tasks:
       - task: k3sup
       - task: mc
       - task: eksctl
-      - task: q
       - task: grep.exe
     # TODO: for some reasons, helm download does not work in github actions
     #- task: helm
