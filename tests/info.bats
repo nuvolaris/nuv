@@ -34,7 +34,7 @@ setup() {
 @test "-info" {
     run nuv -info
     WD=$(pwd)
-    assert_line "VERSION: test"
+    assert_line "NUV_VERSION: test"
     assert_line "NUV_PWD: $WD"
     assert_line "NUV_ROOT: $WD/olaris"
     assert_line "NUV_TMP: $HOME/.nuv/tmp"

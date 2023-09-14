@@ -18,7 +18,7 @@
 version: "3"
 vars:
   BRANCH: 3.0.0
-  BASEVER: "{{.BRANCH}}-dev"
+  BASEVER: "{{.BRANCH}}-beta"
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
   S: ""
@@ -66,6 +66,7 @@ tasks:
   test:
     desc: tests all
     cmds:
+      - curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json >runtimes.json
       - task: install
       - task: utest
       - task: itest

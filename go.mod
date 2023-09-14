@@ -12,8 +12,8 @@ require (
 	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230603163828-10ca029cdb58
 	github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c
 	github.com/nuvolaris/goja/gojamain v0.0.0-20230826141320-81daf86ddcc2
-	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230615104118-d593f7d6576f
-	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20221227222349-fba31e174b7e
+	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230914092333-ecad465580da
+	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20230115092405-cabe86261082
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae
 	github.com/nuvolaris/task/cmd/taskmain/v3 v3.0.0-20230718131831-48d06b3099ca
 	github.com/stretchr/testify v1.8.1
@@ -26,6 +26,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/nuvolaris/goja v0.0.0-20230826140625-f4c22086ede6 // indirect
 	github.com/nuvolaris/goja_nodejs v0.0.0-20230908085513-c4634a0b1160 // indirect
+	github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230914090445-d2b991c30132 // indirect
 	github.com/nuvolaris/sh/v3 v3.0.0-20230718131820-376e733299a4 // indirect
 	github.com/nuvolaris/task/v3 v3.9.3-0.20230718131831-48d06b3099ca // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
@@ -41,7 +42,6 @@ require (
 	github.com/a8m/envsubst v1.4.2 // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
 	github.com/alessio/shellescape v1.4.1 // indirect
-	github.com/apache/openwhisk-wskdeploy v0.0.0-20221221215944-0e9b45ff5ff3 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.0
 	github.com/cloudflare/circl v1.1.0 // indirect
 	github.com/cloudfoundry/jibber_jabber v0.0.0-20151120183258-bcc4c8345a21 // indirect
