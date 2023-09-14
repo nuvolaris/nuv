@@ -216,7 +216,7 @@ func checkoutToNewestBranch(branch string, r *git.Repository, w *git.Worktree) e
 		fmt.Println("Tasks on old branch", ref.Name().Short(), "- switching to", branch)
 		// checkout the right branch
 		err = w.Checkout(&git.CheckoutOptions{
-			Branch: plumbing.NewBranchReferenceName(branch),
+			Branch: plumbing.NewRemoteReferenceName("origin", branch),
 		})
 		if err != nil {
 			return err
