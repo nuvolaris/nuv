@@ -69,7 +69,7 @@ func Example_checkUpdated_uptodate() {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	olarisTmpPath := joinpath(tmpDir, "olaris")
+	olarisTmpPath := joinpath(joinpath(tmpDir, getNuvBranch()), "olaris")
 
 	_, _ = git.PlainClone(olarisTmpPath, false, &git.CloneOptions{
 		URL:      getNuvRepo(),
@@ -103,7 +103,7 @@ func Example_checkUpdated_outdated() {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	olarisTmpPath := joinpath(tmpDir, "olaris")
+	olarisTmpPath := joinpath(joinpath(tmpDir, getNuvBranch()), "olaris")
 
 	repo, _ := git.PlainClone(olarisTmpPath, false, &git.CloneOptions{
 		URL:      getNuvRepo(),

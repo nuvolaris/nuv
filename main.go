@@ -84,7 +84,7 @@ func setupBinPath(cmd string) {
 
 func info() {
 	fmt.Println("NUV_VERSION:", NuvVersion)
-	fmt.Println("NUV_BRANCH:", NuvBranch)
+	fmt.Println("NUV_BRANCH:", getNuvBranch())
 	fmt.Println("NUV_CMD:", tools.GetNuvCmd())
 	fmt.Println("NUV_REPO:", getNuvRepo())
 	fmt.Println("NUV_BIN:", os.Getenv("NUV_BIN"))
@@ -245,8 +245,7 @@ func main() {
 	}
 
 	// check if olaris was recently updated
-	// we pass parent(dir) because we use the olaris parent folder
-	checkUpdated(parent(nuvRootDir), 24*time.Hour)
+	checkUpdated(nuvHome, 24*time.Hour)
 
 	// in case args[1] is a wsk wrapper command
 	// invoke it and exit

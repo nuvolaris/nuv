@@ -30,8 +30,9 @@ import (
 const LATESTCHECK = ".latestcheck"
 
 func checkUpdated(base string, timeInterval time.Duration) {
+	trace("checkUpdated", base)
 	latest_check_path := joinpath(base, LATESTCHECK)
-	olaris_path := joinpath(base, "olaris")
+	olaris_path := joinpath(joinpath(base, getNuvBranch()), "olaris")
 
 	// if no olaris dir, no update check
 	if exists(base, "olaris") && !isDir(olaris_path) {
@@ -84,6 +85,7 @@ func createLatestCheckFile(base string) {
 }
 
 func touchLatestCheckFile(latest_check_path string) {
+	trace("touch latest_check file", latest_check_path)
 	currentTime := time.Now().Local()
 	err := os.Chtimes(latest_check_path, currentTime, currentTime)
 	if err != nil {
@@ -92,6 +94,7 @@ func touchLatestCheckFile(latest_check_path string) {
 }
 
 func checkRemoteOlarisNewer(olaris_path string) bool {
+	trace("checkRemoteOlarisNewer", olaris_path)
 	repo, err := git.PlainOpen(olaris_path)
 	if err != nil {
 		warn("failed to check olaris folder", err)

@@ -23,7 +23,7 @@ setup() {
 }
 
 @test "nuv -update" {
-    run rm -rf ~/.nuv/olaris
+    run rm -rf ~/.nuv
     run nuv -update
     assert_line "Nuvfiles downloaded successfully"
     assert_success
@@ -43,7 +43,7 @@ setup() {
 }
 
 @test "nuv -update with newer version" {
-    NUV_VERSION=1.2.3 run nuv -update
-    assert_line "Your tasks are already up to date!"
+    NUV_VERSION=10.2.3 run nuv -update
+    assert_line "Tasks are already up to date!"
     assert_success
 }
