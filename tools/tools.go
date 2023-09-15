@@ -130,11 +130,6 @@ func RunTool(name string, args []string) (int, error) {
 		if err := URLEncTool(); err != nil {
 			return 1, err
 		}
-	case "find":
-		os.Args = append([]string{"find"}, args...)
-		if err := FindTool(); err != nil {
-			return 1, err
-		}
 	case "replace":
 		os.Args = append([]string{"replace"}, args...)
 		return replace.ReplaceMain()
