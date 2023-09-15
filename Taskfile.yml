@@ -16,6 +16,7 @@
 # under the License.
 #
 version: "3"
+
 vars:
   BRANCH: 3.0.1
   BASEVER: "{{.BRANCH}}-beta"
@@ -101,7 +102,6 @@ tasks:
         else  python3 difftest.py {{.N}}
         fi
 
- 
   sync-wsk:
     - |
       NOW=$(date +%y%m%d%H%M)
@@ -120,22 +120,22 @@ tasks:
       go get github.com/nuvolaris/openwhisk-cli@v0.0.0.$NOW
 
 
- sync-task:
+  sync-task:
     - |
       NOW=$(date +%y%m%d%H%M)
       cd tools/sh
       git tag -d $(git tag)
       git commit -m $NOW -a
-      git tag v3.30.2-nuv.$NOW
+      git tag v3.7.1-nuv.$NOW
       git push origin nuvolaris --tags
       cd ../task
       git tag -d $(git tag)
-      go get github.com/nuvolaris/openwhisk-wskdeploy@v0.0.0.$NOW
+      go get github.com/nuvolaris/sh/v3@v3.7.1-nuv.$NOW
       git commit -m $NOW -a
       git tag v3.30.2-nuv.$NOW
       git push origin nuvolaris --tags
       cd ../..
-      go get github.com/nuvolaris/openwhisk-cli@v0.0.0.$NOW
+      go get github.com/nuvolaris/task/v3@v3.30.2-nuv.$NOW
 
 
 
