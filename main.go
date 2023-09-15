@@ -29,7 +29,6 @@ import (
 	"github.com/nuvolaris/nuv/auth"
 	"github.com/nuvolaris/nuv/config"
 	"github.com/nuvolaris/nuv/tools"
-	"github.com/nuvolaris/task/cmd/taskmain/v3"
 
 	_ "embed"
 )
@@ -84,7 +83,7 @@ func setupBinPath(cmd string) {
 
 func info() {
 	fmt.Println("NUV_VERSION:", NuvVersion)
-	fmt.Println("NUV_BRANCH:", NuvBranch)
+	fmt.Println("NUV_BRANCH:", getNuvBranch())
 	fmt.Println("NUV_CMD:", tools.GetNuvCmd())
 	fmt.Println("NUV_REPO:", getNuvRepo())
 	fmt.Println("NUV_BIN:", os.Getenv("NUV_BIN"))
@@ -146,11 +145,7 @@ func main() {
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
-			params := []string{"task"}
-			if len(args) > 2 {
-				params = append(params, args[2:]...)
-			}
-			exitCode, err := taskmain.Task(params)
+			exitCode, err := Task(args[2:]...)
 			if err != nil {
 				log.Println(err)
 			}
@@ -245,8 +240,7 @@ func main() {
 	}
 
 	// check if olaris was recently updated
-	// we pass parent(dir) because we use the olaris parent folder
-	checkUpdated(parent(nuvRootDir), 24*time.Hour)
+	checkUpdated(nuvHome, 24*time.Hour)
 
 	// in case args[1] is a wsk wrapper command
 	// invoke it and exit

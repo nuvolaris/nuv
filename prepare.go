@@ -29,6 +29,7 @@ import (
 )
 
 func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
+	debug("Download tasks from github")
 	repoURL := getNuvRepo()
 	branch := getNuvBranch()
 	nuvDir, err := homedir.Expand("~/.nuv")
@@ -38,14 +39,16 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	if err := os.MkdirAll(nuvDir, 0755); err != nil {
 		return "", err
 	}
-	localDir, err := homedir.Expand("~/.nuv/olaris")
+
+	nuvBranchDir := joinpath(nuvDir, branch)
+	localDir, err := homedir.Expand(joinpath(nuvBranchDir, "olaris"))
 	if err != nil {
 		return "", err
 	}
-	//fmt.Println(localDir)
+	debug("localDir", localDir)
 
 	// Updating existing tools
-	if exists(nuvDir, "olaris") {
+	if exists(nuvBranchDir, "olaris") {
 		fmt.Println("Updating tasks...")
 		r, err := git.PlainOpen(localDir)
 		if err != nil {
@@ -61,15 +64,12 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 		err = w.Pull(&git.PullOptions{RemoteName: "origin"})
 		if err != nil {
 			if err.Error() == "already up-to-date" {
-				fmt.Println("Your tasks are already up to date!")
-				return localDir, checkoutToNewestBranch(branch, r, w)
+				fmt.Println("Tasks are already up to date!")
+				return localDir, nil
 			}
 			return "", err
 		}
 
-		if err := checkoutToNewestBranch(branch, r, w); err != nil {
-			return "", err
-		}
 		fmt.Println("Nuvfiles updated successfully")
 		return localDir, nil
 	}
@@ -161,9 +161,10 @@ func locateNuvRoot(cur string) (string, error) {
 	}
 
 	// is there an olaris folder in ~/.nuv ?
-	olaris, err = homedir.Expand("~/.nuv/olaris")
+	nuvOlarisDir := fmt.Sprintf("~/.nuv/%s/olaris", getNuvBranch())
+	olaris, err = homedir.Expand(nuvOlarisDir)
 	if err == nil && exists(olaris, NUVFILE) && exists(olaris, NUVROOT) {
-		trace("found sub ~/.nuv/olaris:", olaris)
+		trace("found sub", nuvOlarisDir, ":", olaris)
 		return olaris, nil
 	}
 
@@ -203,25 +204,4 @@ func autoCLIUpdate() error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
-}
-
-func checkoutToNewestBranch(branch string, r *git.Repository, w *git.Worktree) error {
-	// check that the branch is the right one
-	ref, err := r.Head()
-	if err != nil {
-		return err
-	}
-
-	if ref.Name().Short() != branch {
-		fmt.Println("Tasks on old branch", ref.Name().Short(), "- switching to", branch)
-		// checkout the right branch
-		err = w.Checkout(&git.CheckoutOptions{
-			Branch: plumbing.NewRemoteReferenceName("origin", branch),
-		})
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

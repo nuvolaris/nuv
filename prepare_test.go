@@ -59,7 +59,7 @@ func Example_locate_git() {
 	// 2 <nil> /work/tests/olaris
 	// Cloning tasks...
 	// Nuvfiles downloaded successfully
-	// 3 <nil> /home/.nuv/olaris
+	// 3 <nil> /home/.nuv/test/olaris
 	// Updating tasks...
-	// 4 <nil> /home/.nuv/olaris
+	// 4 <nil> /home/.nuv/test/olaris
 }
