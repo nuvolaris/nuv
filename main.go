@@ -95,11 +95,14 @@ func info() {
 }
 
 //go:embed runtimes.json
-var RUNTIMES_JSON string
+var WSK_RUNTIMES_JSON string
 
 func main() {
 	// set runtime version as environment variable
-	os.Setenv("RUNTIMES_JSON", RUNTIMES_JSON)
+	if os.Getenv("WSK_RUNTIMES_JSON") == "" {
+	   os.Setenv("WSK_RUNTIMES_JSON", WSK_RUNTIMES_JSON)
+	   trace(WSK_RUNTIMES_JSON);
+        }
 
 	// set version
 	if os.Getenv("NUV_VERSION") != "" {

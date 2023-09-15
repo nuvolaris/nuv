@@ -265,3 +265,11 @@ tasks:
     desc: commands to build windows setup
   darwin:
     desc: commands to build macos setup
+
+  local-build-ubuntu:
+    desc: local build linux ubuntu
+    cmds:
+      - test "{{OS}}" = "linux"
+      - echo {{.VERSION}} >linux/version.txt
+      - cp ../LICENSE linux/LICENSE
+      - ./nuv getall OS=linux ARCH=$(dpkg --print-architecture)
