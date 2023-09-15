@@ -124,6 +124,8 @@ tasks:
     - |
       NOW=$(date +%y%m%d%H%M)
       cd tools/sh
+      go get github.com/nuvolaris/nuv@9e76cabec87cc4908fd4c4a6571927283a28a991
+      go mod tidy
       git tag -d $(git tag)
       git commit -m $NOW -a
       git tag v3.7.1-nuv.$NOW

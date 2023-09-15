@@ -40,9 +40,6 @@
 [submodule "tools/goawk"]
 	path = tools/goawk
 	url = https://github.com/nuvolaris/goawk
-[submodule "tools/go-find"]
-	path = tools/go-find
-	url = https://github.com/nuvolaris/go-find
 [submodule "tests/test/bats"]
 	path = tests/bats
 	url = https://github.com/bats-core/bats-core.git
