@@ -101,26 +101,7 @@ tasks:
         else  python3 difftest.py {{.N}}
         fi
 
-  old-sync-task:
-    - |
-      cd tools/sh
-      git fetch --all
-      git checkout origin/nuvolaris -B nuvolaris
-      go get github.com/nuvolaris/nuv@latest
-      git commit -m "updated go mod" -a
-      git push origin nuvolaris
-      cd ../task
-      git fetch --all
-      git checkout origin/nuvolaris -B nuvolaris
-      go get github.com/nuvolaris/sh/v3@nuvolaris
-      git commit -m "updated go mod" -a
-      git push origin nuvolaris
-      cd ..
-      go get github.com/nuvolaris/task/v3@nuvolaris
-      git commit -m "updated go mod" -a
-      git push origin main
-
-
+ 
   sync-wsk:
     - |
       NOW=$(date +%y%m%d%H%M)
@@ -134,6 +115,24 @@ tasks:
       go get github.com/nuvolaris/openwhisk-wskdeploy@v0.0.0.$NOW
       git commit -m $NOW -a
       git tag v0.0.0.$NOW
+      git push origin nuvolaris --tags
+      cd ../..
+      go get github.com/nuvolaris/openwhisk-cli@v0.0.0.$NOW
+
+
+ sync-task:
+    - |
+      NOW=$(date +%y%m%d%H%M)
+      cd tools/sh
+      git tag -d $(git tag)
+      git commit -m $NOW -a
+      git tag v3.30.2-nuv.$NOW
+      git push origin nuvolaris --tags
+      cd ../task
+      git tag -d $(git tag)
+      go get github.com/nuvolaris/openwhisk-wskdeploy@v0.0.0.$NOW
+      git commit -m $NOW -a
+      git tag v3.30.2-nuv.$NOW
       git push origin nuvolaris --tags
       cd ../..
       go get github.com/nuvolaris/openwhisk-cli@v0.0.0.$NOW
