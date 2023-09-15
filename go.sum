@@ -289,6 +289,7 @@ github.com/nuvolaris/goja_nodejs v0.0.0-20230527135110-3aa37178bb6c/go.mod h1:3j
 github.com/nuvolaris/goja_nodejs v0.0.0-20230826135643-676d5429636c/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
 github.com/nuvolaris/goja_nodejs v0.0.0-20230908085513-c4634a0b1160 h1:/PhIMFTHKYzupL5wnmwTKlqW2nrx+8GBs9gN82YW8Yw=
 github.com/nuvolaris/goja_nodejs v0.0.0-20230908085513-c4634a0b1160/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
+<<<<<<< HEAD
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230914211457-35b540a1ded7 h1:kvpT8vl5PEza3Fu8OZZjkCB6rC9r1ymIToOtytyTtUc=
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230914211457-35b540a1ded7/go.mod h1:aXJusnuxBX3WRX7aLrFPInwOrhAS31reOm+bHPYaDIs=
 github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20230914211457-35b540a1ded7 h1:DVMDkKVsaSuKNA0psVWGug6lM978U3EvV3A01F/uK9k=
@@ -297,6 +298,34 @@ github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230914211027-67b4275c3f51 h1:D
 github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230914211027-67b4275c3f51/go.mod h1:Rx9BGhPmwoWToPAVFr/12P3W0JRYlxCH/xzCz6NeOQo=
 github.com/nuvolaris/sh/v3 v3.0.0-20230914150033-67ad29e8e5a7 h1:LTd9DSvSutJSyvKMHiQIfWQ1UjYlAwDz3QzCt2Lea2k=
 github.com/nuvolaris/sh/v3 v3.0.0-20230914150033-67ad29e8e5a7/go.mod h1:UQ2cf9TrM8j3WS8GUUxrwTC0nt2NWpApU21Kg31nkQ0=
+=======
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230914211457-35b540a1ded7 h1:meYa4IXwesH9OtEqGV4/dMNzKjcgoL2XDeIcxlwSaUg=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230914211457-35b540a1ded7/go.mod h1:q6NIxc0kq+eUPJkaSsADVLPyjeXa5+OwZl/Gp1sC3Us=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230915100231-ef0203c62223 h1:afOR/Ton482EiBxwVyFRgvfDk00dpg/b9sD+W6rJ/SE=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230915100231-ef0203c62223/go.mod h1:JOj+qA68/WV/YgGXWs0qt5WuoynBqLGQprqAHc/oy7o=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230915110209-ceabd6742996 h1:qA0Tsy4P2gA9DIBiGt0bOuRJCtm7P1Giuq/da1DlwP0=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230915110209-ceabd6742996/go.mod h1:Dq6NC2M1a5p7/4lvfcsfPhRTot4nrutJkw/2/gVn7TI=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230915131014-0860d32e7b5f h1:xBZkuhHMZTKEMImqOsH4QgunrWroACLkrkyh1d3GIlM=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230915131014-0860d32e7b5f/go.mod h1:4rw62hnhoUO861QcweIxm0DhSYmEZDPNcKr50o1zKOU=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230915131333-f453c18f05a2 h1:CdASneWQNH6nXdfWzlg3l3GW94LgLyUIOOBld+YCESA=
+github.com/nuvolaris/openwhisk-cli v0.0.0-20230915131333-f453c18f05a2/go.mod h1:uuQkOt/ctWeESmbRp0MeXTlJGl7OqrwyxQ4te12DoEI=
+github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230914092333-ecad465580da h1:nuYTrOJFUsLTShqsHx1pu0fG5wq1pBB5Umc9m3iVvuI=
+github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230914092333-ecad465580da/go.mod h1:DO3hjYKIh53y9tvuF6jCwaBJbxC7YpQvm9nhObemaQM=
+github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20230115092405-cabe86261082 h1:BwbvrgNv09A3lEy+diuLfREiFui7SJy4SbV8CryitQE=
+github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20230115092405-cabe86261082/go.mod h1:x57w2QArhPOdDEibanGlaQlYA/1PP4RNe5e21b+R9XA=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230914211027-67b4275c3f51 h1:DZaaz73nfRnW4CzLNoC9FFVky+Vl3zDHlonKu2MajtI=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230914211027-67b4275c3f51/go.mod h1:Rx9BGhPmwoWToPAVFr/12P3W0JRYlxCH/xzCz6NeOQo=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915100210-63577e74efa6 h1:zXlqXCS+azHezlMTk6q41YTMOpsA1yPm7Dv/vZyYPfA=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915100210-63577e74efa6/go.mod h1:Rx9BGhPmwoWToPAVFr/12P3W0JRYlxCH/xzCz6NeOQo=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915110137-9b4b02cf0789 h1:XxzJjKvqaxzNWcL2ncmUjg52le+XUhKsTNliqXfhtaQ=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915110137-9b4b02cf0789/go.mod h1:Rx9BGhPmwoWToPAVFr/12P3W0JRYlxCH/xzCz6NeOQo=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915130341-a1e60ac59a3a h1:6XgqH8lQpGqZu33Mw5inGh2rxHyTHQmQaKYV1Ph/Vlo=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915130341-a1e60ac59a3a/go.mod h1:Rx9BGhPmwoWToPAVFr/12P3W0JRYlxCH/xzCz6NeOQo=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915131310-1e795a4247d3 h1:6x1vY+BgLVdC/XnEXyCsqdsFnHvLsI5EUqKNwc1L9UI=
+github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915131310-1e795a4247d3/go.mod h1:Rx9BGhPmwoWToPAVFr/12P3W0JRYlxCH/xzCz6NeOQo=
+github.com/nuvolaris/sh/v3 v3.0.0-20230718131820-376e733299a4 h1:WPJRi1EAqvL6t1iFjMATuGcLbCozDgYAU+kNx7wsGcQ=
+github.com/nuvolaris/sh/v3 v3.0.0-20230718131820-376e733299a4/go.mod h1:oxvCDW76PnRJg/NnMVjTag/Gja9Dxg0kYe9i/rSaFB8=
+>>>>>>> 9558264 (fixed issues with wskdeploy)
 github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae h1:r/98Ma2fvAFYBEQC2OqKsD4tI7r75N7YzhWv2ievhRA=
 github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae/go.mod h1:27LYTtM+ymckYJ+I+C5Tg6/ir+QyBQZVNN6TvlNQ1zA=
 github.com/nuvolaris/task/v3 v3.30.1-0.20230915101827-996add287a7e h1:YEjUsaUYFAHWAI/9EHwLqlSTaGiSAbyArzeVKa3ACuw=

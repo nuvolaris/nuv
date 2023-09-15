@@ -17,7 +17,7 @@
 #
 version: "3"
 vars:
-  BRANCH: 3.0.0
+  BRANCH: 3.0.1
   BASEVER: "{{.BRANCH}}-beta"
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
@@ -36,7 +36,7 @@ tasks:
   setup: { silent:true }
 
   build:
-    desc: build nuv
+    desc: build nuv locally
     cmds:
       - go build {{.DEBUG}} -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"  -o bin/nuv
     sources:
@@ -101,7 +101,7 @@ tasks:
         else  python3 difftest.py {{.N}}
         fi
 
-  upgrade-tool:
+  old-sync-task:
     - |
       cd tools/sh
       git fetch --all
@@ -119,3 +119,24 @@ tasks:
       go get github.com/nuvolaris/task/v3@nuvolaris
       git commit -m "updated go mod" -a
       git push origin main
+
+
+  sync-wsk:
+    - |
+      NOW=$(date +%y%m%d%H%M)
+      cd tools/openwhisk-wskdeploy
+      git tag -d $(git tag)
+      git commit -m $NOW -a
+      git tag v0.0.0.$NOW
+      git push origin nuvolaris --tags
+      cd ../openwhisk-cli
+      git tag -d $(git tag)
+      go get github.com/nuvolaris/openwhisk-wskdeploy@v0.0.0.$NOW
+      git commit -m $NOW -a
+      git tag v0.0.0.$NOW
+      git push origin nuvolaris --tags
+      cd ../..
+      go get github.com/nuvolaris/openwhisk-cli@v0.0.0.$NOW
+
+
+
