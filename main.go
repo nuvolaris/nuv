@@ -29,7 +29,6 @@ import (
 	"github.com/nuvolaris/nuv/auth"
 	"github.com/nuvolaris/nuv/config"
 	"github.com/nuvolaris/nuv/tools"
-	"github.com/nuvolaris/task/cmd/taskmain/v3"
 
 	_ "embed"
 )
@@ -146,11 +145,7 @@ func main() {
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
-			params := []string{"task"}
-			if len(args) > 2 {
-				params = append(params, args[2:]...)
-			}
-			exitCode, err := taskmain.Task(params)
+			exitCode, err := Task(args[2:]...)
 			if err != nil {
 				log.Println(err)
 			}

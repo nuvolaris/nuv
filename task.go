@@ -21,7 +21,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/nuvolaris/task/cmd/taskmain/v3"
+	"github.com/nuvolaris/task/v3/cmd/taskmain"
 )
 
 var taskDryRun = false
