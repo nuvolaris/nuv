@@ -180,7 +180,10 @@ tasks:
   nuv:
     dir: ".."
     cmds:
-      - curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json >runtimes.json
+      - >
+        curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json
+        | jq '{"runtimes": .runtimes}'
+        >runtimes.json
       - >
         GOOS={{.OS}} GOARCH={{.ARCH}} 
         go build 

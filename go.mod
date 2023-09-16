@@ -31,7 +31,8 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/nuvolaris/goja v0.0.0-20230826141320-81daf86ddcc2 // indirect
 	github.com/nuvolaris/goja_nodejs v0.0.0-20230908085513-c4634a0b1160 // indirect
-	github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230915131310-1e795a4247d3 // indirect
+	github.com/nuvolaris/openwhisk-cli v0.0.0-20230916104949-fd9d71a5c1cc // indirect
+	github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230916104531-c4bc982185e9 // indirect
 	github.com/nuvolaris/sh/v3 v3.7.1-nuv.2309151614 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/remeh/sizedwaitgroup v1.0.0 // indirect

@@ -18,8 +18,8 @@
 version: "3"
 
 vars:
-  BRANCH: 3.0.1
-  BASEVER: "{{.BRANCH}}-beta"
+  BRANCH: 3.0.0
+  BASEVER: "3.0.1-beta"
   VERSION:
     sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
   S: ""
@@ -67,7 +67,9 @@ tasks:
   test:
     desc: tests all
     cmds:
-      - curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json >runtimes.json
+      - >
+        curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json 
+        | jq '{"runtimes": .runtimes}' >runtimes.json
       - task: install
       - task: utest
       - task: itest
@@ -118,7 +120,9 @@ tasks:
       git push origin nuvolaris --tags
       cd ../..
       go get github.com/nuvolaris/openwhisk-cli@v0.0.0.$NOW
-
+      git add tools/openwhisk-cli
+      git add tools/openwhisk-wskdeploy
+      git add go.mod go.sum
 
   sync-task:
     - |
