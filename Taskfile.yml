@@ -39,6 +39,9 @@ tasks:
   build:
     desc: build nuv locally
     cmds:
+      - >
+        curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json 
+        | jq '{"runtimes": .runtimes}' >runtimes.json
       - go build {{.DEBUG}} -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"  -o bin/nuv
     sources:
       - "*.go"
@@ -67,9 +70,6 @@ tasks:
   test:
     desc: tests all
     cmds:
-      - >
-        curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json 
-        | jq '{"runtimes": .runtimes}' >runtimes.json
       - task: install
       - task: utest
       - task: itest
@@ -88,7 +88,7 @@ tasks:
       - bats/bin/bats .
 
   clean:
-    - rm -f bin/nuv
+    - rm -f bin/nuv runtimes.json
     - go clean -cache -modcache
 
   rebuild:
