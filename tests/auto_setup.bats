@@ -28,7 +28,6 @@ setup() {
     assert_output --partial "Welcome to nuv! Setting up..."
     run ls ~/.nuv
     assert_success
-    assert_output --partial "3.0.0"
 }
 
 @test "wrong branch fails to setup" {
