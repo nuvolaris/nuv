@@ -36,7 +36,7 @@ var tools = []string{
 	"filetype", "random", "datefmt",
 	"config", "retry", "urlenc",
 	"replace", "base64", "validate",
-	"scan", "echoif", "echoifempty", "echoifexists",
+	"echoif", "echoifempty", "echoifexists",
 	"realpath", "zipf",
 }
 
