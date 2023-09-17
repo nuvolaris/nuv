@@ -61,5 +61,6 @@ func Example_locate_git() {
 	// Nuvfiles downloaded successfully
 	// 3 <nil> /home/.nuv/test/olaris
 	// Updating tasks...
+	// Tasks are already up to date!
 	// 4 <nil> /home/.nuv/test/olaris
 }

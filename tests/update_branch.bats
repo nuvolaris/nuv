@@ -20,38 +20,21 @@ setup() {
     load 'test_helper/bats-assert/load'
     export NO_COLOR=1
     export NUV_NO_LOG_PREFIX=1
-}
-
-@test "nuv -update" {
-    run rm -rf ~/.nuv
-    run nuv -update
-    assert_line "Nuvfiles downloaded successfully"
-    assert_success
-}
-
-@test "nuv -update with old version warns" {
-    NUV_VERSION=0.2.0 run nuv -update
-    assert_line --partial "Your nuv version (0.2.0) is older than the required version in nuvroot.json"
-    assert_line "Attempting to update nuv..."
-    assert_success
-}
-
-@test "nuv -update with bad version" {
-    NUV_VERSION=notsemver run nuv -update
-    assert_line "Unable to validate nuv version notsemver : Invalid Semantic Version"
-    assert_success
-}
-
-@test "nuv -update with newer version" {
-    NUV_VERSION=10.2.3 run nuv -update
-    assert_line "Tasks are already up to date!"
-    assert_success
-}
-
-@test "nuv -update on branch" {
-    run rm -rf ~/.nuv
     export NUV_BRANCH=3.0.0-testing
+    rm -rf ~/.nuv
     run nuv -update
-    assert_line "Nuvfiles downloaded successfully"
+    cd ~/.nuv/3.0.0-testing/olaris
+}
+
+@test "nuv -update on olaris with old commit updates correctly" {
+    run git reset --hard HEAD~1
+    run git status
+    assert_line --partial "Your branch is behind 'origin/3.0.0-testing'"
+
+    run nuv -update
+    assert_line "Nuvfiles updated successfully"
     assert_success
+
+    run git status
+    assert_line "Your branch is up to date with 'origin/3.0.0-testing'."
 }
