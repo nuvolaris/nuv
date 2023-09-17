@@ -76,7 +76,6 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 
 	// Clone the repo if not existing
 	ref := plumbing.NewBranchReferenceName(branch)
-	//fmt.Println(ref)
 	cloneOpts := &git.CloneOptions{
 		URL:           repoURL,
 		Progress:      os.Stderr,
@@ -86,12 +85,14 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	fmt.Println("Cloning tasks...")
 	_, err = git.PlainClone(localDir, false, cloneOpts)
 	if err != nil {
+		os.RemoveAll(nuvBranchDir)
+		warn(fmt.Sprintf("failed to clone olaris on branch '%s'", branch))
 		return "", err
 	}
 
 	fmt.Println("Nuvfiles downloaded successfully")
 
-	createLatestCheckFile(nuvDir)
+	createLatestCheckFile(nuvBranchDir)
 
 	// clone
 	return localDir, nil

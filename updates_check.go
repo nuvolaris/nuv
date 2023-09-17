@@ -31,11 +31,12 @@ const LATESTCHECK = ".latestcheck"
 
 func checkUpdated(base string, timeInterval time.Duration) {
 	trace("checkUpdated", base)
-	latest_check_path := joinpath(base, LATESTCHECK)
-	olaris_path := joinpath(joinpath(base, getNuvBranch()), "olaris")
+	olaris_base := joinpath(base, getNuvBranch())
+	latest_check_path := joinpath(olaris_base, LATESTCHECK)
+	olaris_path := joinpath(olaris_base, "olaris")
 
 	// if no olaris dir, no update check
-	if exists(base, "olaris") && !isDir(olaris_path) {
+	if !isDir(olaris_path) {
 		return
 	}
 
