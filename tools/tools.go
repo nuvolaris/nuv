@@ -34,15 +34,15 @@ var tools = []string{
 	"awk", "die", "jq", "js",
 	"envsubst", "wsk", "mkdir",
 	"filetype", "random", "datefmt",
-	"config", "retry", "urlenc", "find",
+	"config", "retry", "urlenc",
 	"replace", "base64", "validate",
-	"scan", "echoif", "echoifempty", "echoifexists",
+	"echoif", "echoifempty", "echoifexists",
 	"realpath", "zipf",
 }
 
 // not available in taskfiles
 var extraTools = []string{
-	"update", "serve", "help", "info", "version", "task", "plugin",
+	"update", "help", "info", "version", "task", "plugin",
 }
 
 func IsTool(name string) bool {
