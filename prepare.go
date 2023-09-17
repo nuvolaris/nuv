@@ -49,6 +49,7 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 
 	// Updating existing tools
 	if exists(nuvBranchDir, "olaris") {
+		trace("Updating olaris in", nuvBranchDir)
 		fmt.Println("Updating tasks...")
 		r, err := git.PlainOpen(localDir)
 		if err != nil {
@@ -61,7 +62,13 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 		}
 
 		// Pull the latest changes from the origin remote and merge into the current branch
-		err = w.Pull(&git.PullOptions{RemoteName: "origin"})
+		// Clone the repo if not existing
+		ref := plumbing.NewBranchReferenceName(branch)
+		err = w.Pull(&git.PullOptions{
+			RemoteName:    "origin",
+			ReferenceName: ref,
+			SingleBranch:  true,
+		})
 		if err != nil {
 			if err.Error() == "already up-to-date" {
 				fmt.Println("Tasks are already up to date!")
@@ -76,7 +83,6 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 
 	// Clone the repo if not existing
 	ref := plumbing.NewBranchReferenceName(branch)
-	//fmt.Println(ref)
 	cloneOpts := &git.CloneOptions{
 		URL:           repoURL,
 		Progress:      os.Stderr,
@@ -86,12 +92,14 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	fmt.Println("Cloning tasks...")
 	_, err = git.PlainClone(localDir, false, cloneOpts)
 	if err != nil {
+		os.RemoveAll(nuvBranchDir)
+		warn(fmt.Sprintf("failed to clone olaris on branch '%s'", branch))
 		return "", err
 	}
 
 	fmt.Println("Nuvfiles downloaded successfully")
 
-	createLatestCheckFile(nuvDir)
+	createLatestCheckFile(nuvBranchDir)
 
 	// clone
 	return localDir, nil

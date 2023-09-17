@@ -68,23 +68,23 @@ func Example_checkUpdated_uptodate() {
 		pr("failed to create temp dir", err)
 	}
 	defer os.RemoveAll(tmpDir)
-
-	olarisTmpPath := joinpath(joinpath(tmpDir, getNuvBranch()), "olaris")
+	tmpDirBranch := joinpath(tmpDir, getNuvBranch())
+	olarisTmpPath := joinpath(tmpDirBranch, "olaris")
 
 	_, _ = git.PlainClone(olarisTmpPath, false, &git.CloneOptions{
-		URL:      getNuvRepo(),
-		Progress: os.Stderr},
+		URL: getNuvRepo(),
+	},
 	)
 
 	// run checkUpdated and check if it creates the latest_check file
-	createLatestCheckFile(tmpDir)
+	createLatestCheckFile(tmpDirBranch)
 
-	if exists(tmpDir, ".latestcheck") {
+	if exists(tmpDirBranch, ".latestcheck") {
 		pr("latest_check file created")
 	}
 
 	// change latest_check file mtime to 2 seconds ago
-	changeLatestCheckTime(tmpDir, -2*time.Second)
+	changeLatestCheckTime(tmpDirBranch, -2*time.Second)
 
 	// re-run checkUpdated and check output "Tasks up to date!"
 	checkUpdated(tmpDir, 1*time.Second)
@@ -103,22 +103,23 @@ func Example_checkUpdated_outdated() {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	olarisTmpPath := joinpath(joinpath(tmpDir, getNuvBranch()), "olaris")
+	tmpDirBranch := joinpath(tmpDir, getNuvBranch())
+	olarisTmpPath := joinpath(tmpDirBranch, "olaris")
 
 	repo, _ := git.PlainClone(olarisTmpPath, false, &git.CloneOptions{
-		URL:      getNuvRepo(),
-		Progress: os.Stderr},
+		URL: getNuvRepo(),
+	},
 	)
 
 	// run checkUpdated and check if it creates the latest_check file
-	createLatestCheckFile(tmpDir)
+	createLatestCheckFile(tmpDirBranch)
 
-	if exists(tmpDir, ".latestcheck") {
+	if exists(tmpDirBranch, ".latestcheck") {
 		pr("latest_check file created")
 	}
 
 	// change latest_check file mtime to 2 seconds ago
-	changeLatestCheckTime(tmpDir, -2*time.Second)
+	changeLatestCheckTime(tmpDirBranch, -2*time.Second)
 
 	// git reset olaris to a previous commit
 	resetOneCommit(repo)
