@@ -99,9 +99,9 @@ var WSK_RUNTIMES_JSON string
 func main() {
 	// set runtime version as environment variable
 	if os.Getenv("WSK_RUNTIMES_JSON") == "" {
-	   os.Setenv("WSK_RUNTIMES_JSON", WSK_RUNTIMES_JSON)
-	   trace(WSK_RUNTIMES_JSON);
-        }
+		os.Setenv("WSK_RUNTIMES_JSON", WSK_RUNTIMES_JSON)
+		trace(WSK_RUNTIMES_JSON)
+	}
 
 	// set version
 	if os.Getenv("NUV_VERSION") != "" {
@@ -333,12 +333,9 @@ func runNuv(baseDir string, args []string) error {
 }
 
 func setupNuvPwd() {
-	if os.Getenv("NUV_PWD") == "" {
-		dir, _ := os.Getwd()
-		//nolint:errcheck
-		os.Setenv("NUV_PWD", dir)
-	}
-
+	dir, _ := os.Getwd()
+	//nolint:errcheck
+	os.Setenv("NUV_PWD", dir)
 	trace("set NUV_PWD", os.Getenv("NUV_PWD"))
 }
 
