@@ -336,9 +336,11 @@ func runNuv(baseDir string, args []string) error {
 }
 
 func setupNuvPwd() {
-	dir, _ := os.Getwd()
-	//nolint:errcheck
-	os.Setenv("NUV_PWD", dir)
+	if os.Getenv("NUV_PWD") == "" {
+		dir, _ := os.Getwd()
+		//nolint:errcheck
+		os.Setenv("NUV_PWD", dir)
+	}
 	trace("set NUV_PWD", os.Getenv("NUV_PWD"))
 }
 

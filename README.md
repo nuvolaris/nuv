@@ -67,6 +67,8 @@ The following environment variables allows to ovverride certain defaults.
 - `NUV_LOGIN`: set the username for `nuv -login`. The default is `nuvolaris`. It can be overriden by passing the username as an argument to `nuv -login`. 
 - `NUV_PASSWORD`: set the password for `nuv -login`. If not 
 set, `nuv -login` will prompt for the password. It is useful for tests and non-interactive environments.
+- `NUV_PWD` is the folder where `nuv` is executed (the current working directory). It is used to preserve the original working directory when `nuv` is used again in tasks (e.g. nuv -realpath to retrieve the correct path). Change it only if you know what you are doing!
+
 ## Where `nuv` looks for binaries 
 
 Nuv requires some binary command line tools to work with ("bins").
