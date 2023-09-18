@@ -18,6 +18,7 @@
 package tools
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -28,54 +29,62 @@ import (
 func validateTool() error {
 	flag := flag.NewFlagSet("validate", flag.ContinueOnError)
 
-	flag.Usage = printValidateUsage
+	flag.Usage = func() {
+		fmt.Println(`Usage:
+nuv -validate [-e] [-m | -n | -r <regex>] <value> [<message>]
 
-	helpHalf := flag.Bool("h", false, "")
-	envFlag := flag.Bool("e", false, "")
-	mailFlag := flag.Bool("m", false, "")
-	numberFlag := flag.Bool("n", false, "")
-	regexFlag := flag.String("r", "", "")
+Check if a value is valid according to the given constraints.
+If -e is specified, the value is retrieved from the environment variable with the given name.
+
+Options:`)
+		flag.PrintDefaults()
+	}
+
+	helpFlag := flag.Bool("h", false, "Print this help message.")
+	envFlag := flag.Bool("e", false, "Retrieve value from the environment variable with the given name.")
+	mailFlag := flag.Bool("m", false, "Check if the value is a valid email address.")
+	numberFlag := flag.Bool("n", false, "Check if the value is a number.")
+	regexFlag := flag.String("r", "", "Check if the value matches the given regular expression.")
 
 	err := flag.Parse(os.Args[1:])
 	if err != nil {
 		return err
 	}
 
-	if *helpHalf {
+	if *helpFlag {
 		flag.Usage()
 		return nil
 	}
 
-	if flag.NArg() != 1 {
+	if flag.NArg() != 1 && flag.NArg() != 2 {
 		flag.Usage()
-		return nil
+		return errors.New("invalid number of arguments")
 	}
 
 	arg := flag.Arg(0)
+	customErr := flag.Arg(1)
+	if customErr == "" {
+		customErr = "validation failed"
+	}
 	value := arg
 
 	if *envFlag {
 		value = os.Getenv(arg)
 		if value == "" {
-			fmt.Printf("The variable '%s' is not set.\n", arg)
-			return nil
+			return fmt.Errorf("variable '%s' not set", arg)
 		}
 	}
 
 	if *mailFlag {
-		if isValidEmail(value) {
-			fmt.Printf("'%s' %sis a valid email address.\n", value, envVarMsg(*envFlag, arg))
-		} else {
-			fmt.Printf("'%s' %sis NOT a valid email address.\n", value, envVarMsg(*envFlag, arg))
+		if !isValidEmail(value) {
+			return fmt.Errorf(customErr)
 		}
 		return nil
 	}
 
 	if *numberFlag {
-		if isValidNumber(value) {
-			fmt.Printf("'%s' %sis a valid number.\n", value, envVarMsg(*envFlag, arg))
-		} else {
-			fmt.Printf("'%s' %sis NOT a valid number.\n", value, envVarMsg(*envFlag, arg))
+		if !isValidNumber(value) {
+			return fmt.Errorf(customErr)
 		}
 		return nil
 	}
@@ -86,22 +95,12 @@ func validateTool() error {
 			return err
 		}
 
-		if valid {
-			fmt.Printf("'%s' %smatches the regex.\n", value, envVarMsg(*envFlag, arg))
-		} else {
-			fmt.Printf("'%s' %sdoes NOT match the regex.\n", value, envVarMsg(*envFlag, arg))
+		if !valid {
+			return fmt.Errorf(customErr)
 		}
-		return nil
 	}
 
 	return nil
-}
-
-func envVarMsg(envFlag bool, name string) string {
-	if envFlag {
-		return "from the variable '" + name + "' "
-	}
-	return ""
 }
 
 func isValidNumber(number string) bool {
@@ -129,19 +128,4 @@ func isValidByRegex(value string, regex string) (bool, error) {
 
 	// Use the regular expression to match the email string
 	return regExp.MatchString(value), nil
-}
-
-func printValidateUsage() {
-	fmt.Println(`Usage:
-nuv -validate [-e] [-m | -n | -r <regex>] <value>
-
-Check if a value is valid according to the given constraints.
-If -e is specified, the value is retrieved from the environment variable with the given name.
-
-Options:
-	-h		Print this help message.
-	-e		The value is retrieved from the environment variable with the given name.
-	-m		Check if the value is a valid email address.
-	-n		Check if the value is a number.
-	-r		Check if the value matches the given regular expression.`)
 }
