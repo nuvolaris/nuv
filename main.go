@@ -141,7 +141,8 @@ func main() {
 	}
 
 	setupTmp()
-	setupNuvPwd()
+	setNuvPwdEnv()
+	setNuvRootPluginEnv()
 
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
@@ -335,7 +336,15 @@ func runNuv(baseDir string, args []string) error {
 	return err
 }
 
-func setupNuvPwd() {
+func setNuvRootPluginEnv() {
+	if os.Getenv("NUV_ROOT_PLUGIN") == "" {
+		//nolint:errcheck
+		os.Setenv("NUV_ROOT_PLUGIN", os.Getenv("NUV_PWD"))
+	}
+	trace("set NUV_ROOT_PLUGIN", os.Getenv("NUV_ROOT_PLUGIN"))
+}
+
+func setNuvPwdEnv() {
 	if os.Getenv("NUV_PWD") == "" {
 		dir, _ := os.Getwd()
 		//nolint:errcheck

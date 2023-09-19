@@ -203,7 +203,7 @@ type plugins struct {
 }
 
 func newPlugins() (*plugins, error) {
-	localDir := os.Getenv("NUV_PWD")
+	localDir := os.Getenv("NUV_ROOT_PLUGIN")
 	localOlarisFolders := make([]string, 0)
 	nuvOlarisFolders := make([]string, 0)
 
