@@ -166,6 +166,23 @@ tasks:
               esac
           TGT: mc
 
+  ntfy:
+    vars:
+      BASE: "https://github.com/binwiederhier/ntfy/releases/download/v2.7.0/"
+    cmds:
+      - task: download-archive
+        vars:
+          SRC:
+            sh: >
+              case {{.OS}}-{{.ARCH}} in
+              (linux-amd64)   echo {{.BASE}}ntfy_2.7.0_linux_amd64.tar.gz ;;
+              (linux-arm64)   echo {{.BASE}}ntfy_2.7.0_linux_arm64.tar.gz ;;
+              (darwin-amd64)  echo {{.BASE}}ntfy_2.7.0_darwin_all.tar.gz ;;
+              (darwin-arm64)  echo {{.BASE}}ntfy_2.7.0_darwin_all.tar.gz ;;
+              (windows-amd64) echo {{.BASE}}ntfy_2.7.0_windows_amd64.zip ;;
+              esac
+          TGT: ntfy
+
   echo-download-archive: echo "{{.SRC}}"
 
   helm:
@@ -224,6 +241,7 @@ tasks:
       - task: mc
       - task: eksctl
       - task: grep.exe
+      - task: ntfy
     # TODO: for some reasons, helm download does not work in github actions
     #- task: helm
 
