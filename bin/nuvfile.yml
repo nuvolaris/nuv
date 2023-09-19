@@ -185,7 +185,7 @@ tasks:
       - curl -L -ccookie.txt -o{{.TGT}}{{.ARC}} {{.SRC}}
       - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC}}{{end}}'
       - mv ntfy_2.7.0_{{.OS}}_{{.ARCH}}/{{.TGT}}{{.EXE}} .
-      - rm {{.TGT}}{{.ARC}} ntfy_2.7.0_{{.OS}}_{{.ARCH}}/*
+      - rm -r {{.TGT}}{{.ARC}} ntfy_2.7.0_{{.OS}}_{{.ARCH}}/*
       - rmdir ntfy_2.7.0_{{.OS}}_{{.ARCH}}
       - rm cookie.txt
     status:
