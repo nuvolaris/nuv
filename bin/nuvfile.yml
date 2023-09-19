@@ -169,19 +169,27 @@ tasks:
   ntfy:
     vars:
       BASE: "https://github.com/binwiederhier/ntfy/releases/download/v2.7.0/"
+      SRC:
+        sh: >
+          case {{.OS}}-{{.ARCH}} in
+          (linux-amd64)   echo {{.BASE}}ntfy_2.7.0_linux_amd64.tar.gz ;;
+          (linux-arm64)   echo {{.BASE}}ntfy_2.7.0_linux_arm64.tar.gz ;;
+          (darwin-amd64)  echo {{.BASE}}ntfy_2.7.0_darwin_all.tar.gz ;;
+          (darwin-arm64)  echo {{.BASE}}ntfy_2.7.0_darwin_all.tar.gz ;;
+          (windows-amd64) echo {{.BASE}}ntfy_2.7.0_windows_amd64.zip ;;
+          esac
+      TGT: ntfy
+    dir: "{{.BIN}}"
     cmds:
-      - task: download-archive
-        vars:
-          SRC:
-            sh: >
-              case {{.OS}}-{{.ARCH}} in
-              (linux-amd64)   echo {{.BASE}}ntfy_2.7.0_linux_amd64.tar.gz ;;
-              (linux-arm64)   echo {{.BASE}}ntfy_2.7.0_linux_arm64.tar.gz ;;
-              (darwin-amd64)  echo {{.BASE}}ntfy_2.7.0_darwin_all.tar.gz ;;
-              (darwin-arm64)  echo {{.BASE}}ntfy_2.7.0_darwin_all.tar.gz ;;
-              (windows-amd64) echo {{.BASE}}ntfy_2.7.0_windows_amd64.zip ;;
-              esac
-          TGT: ntfy
+      - task: unzip.exe
+      - curl -L -ccookie.txt -o{{.TGT}}{{.ARC}} {{.SRC}}
+      - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC}}{{end}}'
+      - mv ntfy_2.7.0_{{.OS}}_{{.ARCH}}/{{.TGT}}{{.EXE}} .
+      - rm {{.TGT}}{{.ARC}} ntfy_2.7.0_{{.OS}}_{{.ARCH}}/*
+      - rmdir ntfy_2.7.0_{{.OS}}_{{.ARCH}}
+      - rm cookie.txt
+    status:
+      - test -e {{.TGT}}{{.EXE}}
 
   echo-download-archive: echo "{{.SRC}}"
 
