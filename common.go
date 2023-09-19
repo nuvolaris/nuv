@@ -38,7 +38,7 @@ const NUVREPO = "http://github.com/nuvolaris/olaris"
 // branch where download tasks
 // defaults to test - will be changed in compilation
 var NuvVersion = "main"
-var NuvBranch = "main"
+var NuvBranch = "3.0.0"
 
 // Represents nuvroot.json. It is used to parse the file.
 type NuvRootJSON struct {
