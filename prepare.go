@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/Masterminds/semver"
 	git "github.com/go-git/go-git/v5"
@@ -136,11 +137,19 @@ func pullTasks(force, silent bool) error {
 
 	// check if the version is up to date, if not warn the user
 	if nuvVersion.LessThan(nuvRootVersion) {
+		fmt.Println()
 		fmt.Printf("Your nuv version (%v) is older than the required version in nuvroot.json (%v).\n", nuvVersion, nuvRootVersion)
 		fmt.Println("Attempting to update nuv...")
 		if err := autoCLIUpdate(); err != nil {
 			return err
 		}
+	}
+
+	err = checkOperatorVersion(nuvRoot.Config)
+	if err == nil {
+		fmt.Println()
+		fmt.Println("New operator version detected!")
+		fmt.Println("Current deployed operator can be updated with: nuv update operator")
 	}
 
 	return nil
@@ -209,8 +218,19 @@ func locateNuvRootSearch(cur string) string {
 }
 
 func autoCLIUpdate() error {
+	trace("autoCLIUpdate")
 	cmd := exec.Command("nuv", "update", "cli")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
+func checkOperatorVersion(nuvRootConfig map[string]interface{}) error {
+	trace("checkOperatorVersion")
+	images := nuvRootConfig["images"].(map[string]interface{})
+	operator := images["operator"].(string)
+	opVer := strings.Split(operator, ":")[1]
+
+	cmd := exec.Command("nuv", "util", "check-operator-version", opVer)
 	return cmd.Run()
 }
