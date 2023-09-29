@@ -19,6 +19,7 @@ package tools
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"math/rand"
@@ -74,8 +75,22 @@ func (r randomGeneratorImpl) GenerateUUID() error {
 	return nil
 }
 
-func RandTool() error {
-	flag.Usage = printRandomGeneratorHelp
+func RandTool(args ...string) error {
+
+	flag := flag.NewFlagSet("random", flag.ExitOnError)
+
+	flag.Usage = func() {
+		fmt.Println(`Generate random numbers, strings and uuids
+		
+Usage:
+	nuv -random [options]
+
+Options:
+	-h, --help  shows this help
+	-u, --uuid  generates a random uuid v4
+	--int  <max> [min] generates a random non-negative integer between min and max (default min=0)
+	--str  <len> [<characters>] generates an alphanumeric string of length <len> from the set of <characters> provided (default <characters>=a-zA-Z0-9)`)
+	}
 
 	var helpFlag bool
 	var intFlag int
@@ -91,8 +106,10 @@ func RandTool() error {
 	flag.BoolVar(&uuidFlag, "uuid", false, "Generate a random uuid")
 
 	// Parse command line flags
-	flag.Parse()
-	args := flag.Args()
+	err := flag.Parse(args)
+	if err != nil {
+		return err
+	}
 
 	// Print help message if -h flag is provided
 	if helpFlag {
@@ -104,10 +121,10 @@ func RandTool() error {
 		return randomGen.GenerateUUID()
 	}
 
-	if isFlagPassed("int") {
-		if len(args) > 1 {
+	if isInputFlag(*flag, "int") {
+		if flag.NArg() > 1 {
 			flag.Usage()
-			return nil
+			return errors.New("invalid number of arguments, expected 1 or 2 for --int")
 		}
 
 		max := intFlag
@@ -117,8 +134,8 @@ func RandTool() error {
 			return fmt.Errorf("invalid max value: %v. Must be greater than 0", max)
 		}
 
-		if len(args) == 1 {
-			minOpt, err := strconv.Atoi(args[0])
+		if flag.NArg() == 1 {
+			minOpt, err := strconv.Atoi(flag.Arg(0))
 			if err != nil {
 				return err
 			}
@@ -134,10 +151,10 @@ func RandTool() error {
 		return nil
 	}
 
-	if isFlagPassed("str") {
-		if len(args) > 1 {
+	if isInputFlag(*flag, "str") {
+		if flag.NArg() > 1 {
 			flag.Usage()
-			return nil
+			return errors.New("invalid number of arguments, expected 1 or 2 for --str")
 		}
 
 		length := strFlag
@@ -147,8 +164,8 @@ func RandTool() error {
 			return fmt.Errorf("invalid length value: %v. Must be greater than 0", length)
 		}
 
-		if len(args) == 1 {
-			chars = args[0]
+		if flag.NArg() == 1 {
+			chars = flag.Arg(0)
 		}
 
 		randomGen.GenerateString(length, chars)
@@ -156,33 +173,21 @@ func RandTool() error {
 	}
 
 	// Get remaining args
-	if len(args) != 0 {
+	if flag.NArg() > 0 {
 		flag.Usage()
-		return nil
+		return errors.New("invalid number of arguments")
 	}
 
 	randomGen.GenerateFloat01()
 	return nil
 }
 
-func isFlagPassed(name string) bool {
+func isInputFlag(fs flag.FlagSet, flagName string) bool {
 	found := false
-	flag.Visit(func(f *flag.Flag) {
-		if f.Name == name {
+	fs.Visit(func(f *flag.Flag) {
+		if f.Name == flagName {
 			found = true
 		}
 	})
 	return found
-}
-
-func printRandomGeneratorHelp() {
-	fmt.Print(`Usage:
-random [options]
-Generates random numbers, strings and uuids
-
--h, --help  shows this help
--u, --uuid  generates a random uuid v4
---int  <max> [min] generates a random non-negative integer between min and max (default min=0)
---str  <len> [<characters>] generates an alphanumeric string of length <len> from the set of <characters> provided (default <characters>=a-zA-Z0-9)
-`)
 }

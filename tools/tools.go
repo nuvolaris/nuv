@@ -111,8 +111,7 @@ func RunTool(name string, args []string) (int, error) {
 			return 1, err
 		}
 	case "random":
-		os.Args = append([]string{"random"}, args...)
-		if err := RandTool(); err != nil {
+		if err := RandTool(args...); err != nil {
 			return 1, err
 		}
 	case "datefmt":
