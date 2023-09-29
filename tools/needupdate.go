@@ -18,7 +18,6 @@
 package tools
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 
@@ -29,8 +28,8 @@ func needUpdateTool(args []string) error {
 
 	flag := flag.NewFlagSet("needupdate", flag.ExitOnError)
 	flag.Usage = func() {
-		fmt.Println(`Check if a semver version is greater than another semver version.
-Returns 0 if greater, 1 otherwise.
+		fmt.Println(`Check if a semver version A > semver version B.
+Exits with 0 if greater, 1 otherwise.
 
 Usage:
   nuv -needupdate <versionA> <versionB>
@@ -73,5 +72,5 @@ Options:`)
 		return nil
 	}
 
-	return errors.New("a <= b")
+	return fmt.Errorf("%s is not greater than %s", a, b)
 }
