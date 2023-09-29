@@ -37,7 +37,7 @@ var tools = []string{
 	"config", "retry", "urlenc",
 	"replace", "base64", "validate",
 	"echoif", "echoifempty", "echoifexists",
-	"realpath", "zipf",
+	"realpath", "zipf", "needupdate",
 }
 
 // not available in taskfiles
@@ -111,8 +111,7 @@ func RunTool(name string, args []string) (int, error) {
 			return 1, err
 		}
 	case "random":
-		os.Args = append([]string{"random"}, args...)
-		if err := RandTool(); err != nil {
+		if err := RandTool(args...); err != nil {
 			return 1, err
 		}
 	case "datefmt":
@@ -171,6 +170,11 @@ func RunTool(name string, args []string) (int, error) {
 
 	case "zipf":
 		if err := zipfTool(args); err != nil {
+			return 1, err
+		}
+
+	case "needupdate":
+		if err := needUpdateTool(args); err != nil {
 			return 1, err
 		}
 	}

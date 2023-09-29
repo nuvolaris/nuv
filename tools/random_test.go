@@ -19,10 +19,8 @@ package tools
 
 import (
 	"bytes"
-	"flag"
 	"fmt"
 	"io"
-	"os"
 	"testing"
 )
 
@@ -84,11 +82,7 @@ func TestRandom(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os.Args = append([]string{"random"}, tt.args...)
-			flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError) //flags are now reset
-			flag.CommandLine.SetOutput(&output)
-
-			err := RandTool()
+			err := RandTool(tt.args...)
 			if err != nil && err.Error() != tt.err.Error() {
 				t.Errorf("RandTool() error = %v, wantErr %v", err, tt.err)
 			}
