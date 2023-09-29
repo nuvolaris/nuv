@@ -78,6 +78,7 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 		}
 
 		fmt.Println("Nuvfiles updated successfully")
+		touchLatestCheckFile(joinpath(nuvBranchDir, LATESTCHECK))
 		return localDir, nil
 	}
 
