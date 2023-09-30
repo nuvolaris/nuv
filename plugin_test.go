@@ -189,11 +189,6 @@ func TestCheckGitRepo(t *testing.T) {
 			expectedName: "olaris-test",
 		},
 		{
-			url:          "git@github.com:giusdp/olaris-test.git",
-			expectedRepo: true,
-			expectedName: "olaris-test",
-		},
-		{
 			url:          "https://github.com/giusdp/some-repo",
 			expectedRepo: false,
 			expectedName: "",
@@ -217,8 +212,8 @@ func TestCheckGitRepo(t *testing.T) {
 
 	for _, test := range tests {
 		isOlarisRepo, repoName := checkGitRepo(test.url)
-		require.Equal(t, test.expectedRepo, isOlarisRepo)
 		require.Equal(t, test.expectedName, repoName)
+		require.Equal(t, test.expectedRepo, isOlarisRepo)
 	}
 }
 

@@ -18,6 +18,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -39,26 +40,25 @@ func pluginTool() error {
 		return err
 	}
 
-	args := flag.Args()
-	if len(args) != 1 {
+	if flag.NArg() != 1 {
 		flag.Usage()
-		return nil
+		return errors.New("invalid number of arguments. Expected 1")
 	}
 
-	return downloadPluginTasksFromRepo(args[0])
+	return downloadPluginTasksFromRepo(flag.Arg(0))
 }
 
 func printPluginUsage() {
-	fmt.Println(`Usage: nuv -plugin <repo>
+	fmt.Println(`Usage: nuv -plugin <repo-url>
 
-Install/update plugins from a repository.
+Install/update plugins from a remote repository.
 The name of the repository must start with 'olaris-'.`)
 }
 
 func downloadPluginTasksFromRepo(repo string) error {
 	isNameValid, repoName := checkGitRepo(repo)
 	if !isNameValid {
-		return fmt.Errorf("plugin repository names must start with 'olaris-'")
+		return fmt.Errorf("plugin repository must be a https url and plugin must start with 'olaris-'")
 	}
 
 	pluginDir, err := homedir.Expand("~/.nuv/" + repoName)
@@ -66,7 +66,7 @@ func downloadPluginTasksFromRepo(repo string) error {
 		return err
 	}
 
-	if _, err := os.Stat(pluginDir); !os.IsNotExist(err) {
+	if isDir(pluginDir) {
 		fmt.Println("Updating plugin", repoName)
 
 		r, err := git.PlainOpen(pluginDir)
@@ -120,10 +120,11 @@ func checkGitRepo(url string) (bool, string) {
 	parts := strings.Split(url, "/")
 	repoName := parts[len(parts)-1]
 
-	// Check if the repository name matches the pattern "olaris-*"
-	match, _ := regexp.MatchString("^olaris-.*$", repoName)
+	// Check if the repository name matches the pattern "https://...olaris-*"
+	matchProtocol, _ := regexp.MatchString(`^https://.*$`, url)
+	matchName, _ := regexp.MatchString(`^olaris-.*$`, repoName)
 
-	if match {
+	if matchName && matchProtocol {
 		return true, repoName
 	}
 	return false, ""

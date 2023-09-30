@@ -95,7 +95,11 @@ setup() {
 
 @test "nuv -plugin with wrong name" {
     run nuv -plugin https://github.com/giusdp/olari
-    assert_line "error: plugin repository names must start with 'olaris-'"
+    assert_line "error: plugin repository must be a https url and plugin must start with 'olaris-'"
+    assert_failure
+
+    run nuv -plugin olaris-test
+    assert_line "error: plugin repository must be a https url and plugin must start with 'olaris-'"
     assert_failure
 }
 
