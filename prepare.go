@@ -107,18 +107,18 @@ func downloadTasksFromGitHub(force bool, silent bool) (string, error) {
 	return localDir, nil
 }
 
-func pullTasks(force, silent bool) error {
+func pullTasks(force, silent bool) (string, error) {
 	// download from github
 	localDir, err := downloadTasksFromGitHub(force, silent)
 	debug("localDir", localDir)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// validate NuvVersion semver against nuvroot.json
 	nuvRoot, err := readNuvRootFile(localDir)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// check if the version is up to date
@@ -126,13 +126,13 @@ func pullTasks(force, silent bool) error {
 	if err != nil {
 		// in development mode, we don't have a valid semver version
 		warn("Unable to validate nuv version", NuvVersion, ":", err)
-		return nil
+		return localDir, nil
 	}
 
 	nuvRootVersion, err := semver.NewVersion(nuvRoot.Version)
 	if err != nil {
 		warn("Unable to validate nuvroot.json version", nuvRoot.Version, ":", err)
-		return nil
+		return localDir, nil
 	}
 
 	// check if the version is up to date, if not warn the user
@@ -141,7 +141,7 @@ func pullTasks(force, silent bool) error {
 		fmt.Printf("Your nuv version (%v) is older than the required version in nuvroot.json (%v).\n", nuvVersion, nuvRootVersion)
 		fmt.Println("Attempting to update nuv...")
 		if err := autoCLIUpdate(); err != nil {
-			return err
+			return "", err
 		}
 	}
 
@@ -152,7 +152,7 @@ func pullTasks(force, silent bool) error {
 		fmt.Println("Current deployed operator can be updated with: nuv update operator")
 	}
 
-	return nil
+	return localDir, nil
 }
 
 // locateNuvRoot locate the folder where starts execution
@@ -233,4 +233,20 @@ func checkOperatorVersion(nuvRootConfig map[string]interface{}) error {
 
 	cmd := exec.Command("nuv", "util", "check-operator-version", opVer)
 	return cmd.Run()
+}
+
+func setNuvOlarisHash(olarisDir string) error {
+	trace("setNuvOlarisHash", olarisDir)
+	r, err := git.PlainOpen(olarisDir)
+	if err != nil {
+		return err
+	}
+	h, err := r.Head()
+	if err != nil {
+		return err
+	}
+	debug("olaris hash", h.Hash().String())
+	os.Setenv("NUV_OLARIS", h.Hash().String())
+	trace("NUV_OLARIS", os.Getenv("NUV_OLARIS"))
+	return nil
 }

@@ -91,6 +91,7 @@ func info() {
 	root, _ := getNuvRoot()
 	fmt.Println("NUV_ROOT:", root)
 	fmt.Println("NUV_PWD:", os.Getenv("NUV_PWD"))
+	fmt.Println("NUV_OLARIS:", os.Getenv("NUV_OLARIS"))
 }
 
 //go:embed runtimes.json
@@ -133,9 +134,12 @@ func main() {
 	if !isDir(olarisDir) {
 		if !(len(os.Args) == 2 && os.Args[1] == "-update") {
 			log.Println("Welcome to nuv! Setting up...")
-			err := pullTasks(true, true)
+			dir, err := pullTasks(true, true)
 			if err != nil {
 				log.Fatalf("error: %v", err)
+			}
+			if err := setNuvOlarisHash(dir); err != nil {
+				warn("unable to set NUV_OLARIS...", err.Error())
 			}
 		}
 	}
@@ -143,6 +147,9 @@ func main() {
 	setupTmp()
 	setNuvPwdEnv()
 	setNuvRootPluginEnv()
+	if err := setNuvOlarisHash(olarisDir); err != nil {
+		warn("unable to set NUV_OLARIS...", err.Error())
+	}
 
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
@@ -179,9 +186,12 @@ func main() {
 
 		case "update":
 			// ok no up, nor down, let's download it
-			err := pullTasks(true, true)
+			dir, err := pullTasks(true, true)
 			if err != nil {
 				log.Fatalf("error: %v", err)
+			}
+			if err := setNuvOlarisHash(dir); err != nil {
+				log.Fatal("unable to set NUV_OLARIS...", err.Error())
 			}
 
 		case "retry":
@@ -241,6 +251,7 @@ func main() {
 	}
 
 	nuvRootDir := getRootDirOrExit()
+	debug("nuvRootDir", nuvRootDir)
 	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
 	if err != nil {
 		log.Fatalf("cannot apply env vars from configs: %s", err.Error())
@@ -274,6 +285,7 @@ func main() {
 	}
 }
 
+// getRootDirOrExit returns the olaris dir or exits (Fatal) if not found
 func getRootDirOrExit() string {
 	dir, err := getNuvRoot()
 	if err != nil {

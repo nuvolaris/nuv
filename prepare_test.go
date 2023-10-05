@@ -18,8 +18,10 @@ package main
 
 import (
 	"os"
+	"testing"
 
 	"github.com/mitchellh/go-homedir"
+	"github.com/stretchr/testify/require"
 )
 
 func Example_locate() {
@@ -63,4 +65,16 @@ func Example_locate_git() {
 	// Updating tasks...
 	// Tasks are already up to date!
 	// 4 <nil> /home/.nuv/3.0.0-testing/olaris
+}
+
+func Test_setNuvOlarisHash(t *testing.T) {
+	_ = os.Chdir(workDir)
+	NuvBranch = "3.0.0-testing"
+	nuvdir, _ := homedir.Expand("~/.nuv")
+	_ = os.RemoveAll(nuvdir)
+	_ = os.Setenv("NUV_BIN", workDir)
+	dir, _ := downloadTasksFromGitHub(true, true)
+	err := setNuvOlarisHash(dir)
+	require.NoError(t, err)
+	require.NotEmpty(t, os.Getenv("NUV_OLARIS"))
 }

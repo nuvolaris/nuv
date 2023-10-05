@@ -69,7 +69,7 @@ The following environment variables allows to ovverride certain defaults.
 set, `nuv -login` will prompt for the password. It is useful for tests and non-interactive environments.
 - `NUV_PWD` is the folder where `nuv` is executed (the current working directory). It is used to preserve the original working directory when `nuv` is used again in tasks (e.g. nuv -realpath to retrieve the correct path). Change it only if you know what you are doing!
 - `NUV_ROOT_PLUGIN` is the folder where `nuv` looks for plugins. If not defined, it defaults to the same directory where  `nuv` is located.
-
+- `NUV_OLARIS` holds the head commit hash of the used olaris repo. You can see the hash with `nuv -info`.
 ## Where `nuv` looks for binaries 
 
 Nuv requires some binary command line tools to work with ("bins").

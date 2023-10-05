@@ -38,5 +38,6 @@ setup() {
     assert_line "NUV_PWD: $WD"
     assert_line "NUV_ROOT: $WD/olaris"
     assert_line "NUV_TMP: $HOME/.nuv/tmp"
+    assert_line --partial "NUV_OLARIS: "
     assert_success
 }
