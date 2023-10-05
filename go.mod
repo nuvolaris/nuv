@@ -1,6 +1,6 @@
 module github.com/nuvolaris/nuv
 
-go 1.20
+go 1.21
 
 require (
 	github.com/apache/openwhisk-client-go v0.0.0-20230421081559-13fc65f65684
