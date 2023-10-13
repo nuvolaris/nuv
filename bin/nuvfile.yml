@@ -288,6 +288,25 @@ tasks:
       - ./nuv linux build ARCH=arm64
       - cp linux/*.deb linux/*.rpm ..
 
+  ubuntu-20.04:
+    desc: build a deb and rpm installer for linux
+    cmds:
+      - test "{{OS}}" = "linux"
+      - echo {{.VERSION}} >linux/version.txt
+      - cp ../LICENSE linux/LICENSE
+      - ./nuv getall OS=linux ARCH=amd64
+      - ./nuv getall OS=linux ARCH=arm64
+      - ./nuv linux build ARCH=amd64
+      - ./nuv linux build ARCH=arm64
+      - |
+        for FILE in linux/*.deb linux/*.rpm
+        do
+          NEW="$(echo $FILE | sed 's/\(.*\)\(\.[a-zA-Z0-9]*\)$/\1_glibc2.31\2/')"
+          mv -v $FILE $NEW
+        done
+      - cp linux/*.deb linux/*.rpm ..
+
+
   linux:
     desc: commands to build linux setup
   windows:
