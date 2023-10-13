@@ -302,7 +302,8 @@ tasks:
         for FILE in linux/*.deb linux/*.rpm
         do
           NEW="$(echo $FILE | sed 's/\(.*\)\(\.[a-zA-Z0-9]*\)$/\1_glibc2.31\2/')"
-          mv -v $FILE $NEW
+          mv "$FILE" "$NEW"
+          echo "renamed $FILE to $NEW"
         done
       - cp linux/*.deb linux/*.rpm ..
 
