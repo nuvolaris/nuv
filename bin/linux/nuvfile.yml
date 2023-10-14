@@ -33,12 +33,19 @@ tasks:
 
   download: 
     - curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh | GH=mh-cbon/go-bin-deb sh -xe
-    - sudo apt-get -y install alien
+    - sudo apt-get -y install alien rpm
 
   assemble:
     - rm -r deb-build-{{.ARCH}}
     - go-bin-deb generate -a {{.ARCH}} --version {{.VERSION}} --wd deb-build-{{.ARCH}}
-    - sudo alien --to-rpm nuv_{{.VERSION}}_{{.ARCH}}.deb --scripts
+    - |
+      mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+      cd rpmbuild
+      sudo alien --to-rpm $NUV_PWD/../nuv_{{.VERSION}}_{{.ARCH}}.deb --scripts --generate
+      sudo mv nuv-*/*.spec SPECS
+      sudo mv nuv-*/* BUILD/
+      sudo rpmbuild --buildroot $PWD/BUILD -bb SPECS/nuv*.spec
+      cd ..
     - mv nuv-*.rpm nuv_{{.VERSION}}_{{.ARCH}}.rpm
 
   clean: rm -r *.deb *.rpm deb-build-{{.ARCH}}
