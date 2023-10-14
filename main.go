@@ -109,10 +109,8 @@ func main() {
 		NuvVersion = os.Getenv("NUV_VERSION")
 	}
 
-	// disable log
-	if os.Getenv("NUV_NO_LOG_PREFIX") != "" {
-		log.SetFlags(0)
-	}
+	// disable log prefix
+	log.SetFlags(0)
 
 	var err error
 	me := os.Args[0]
