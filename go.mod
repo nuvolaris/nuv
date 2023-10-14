@@ -11,7 +11,7 @@ require (
 	github.com/nicksnyder/go-i18n v1.10.1
 	github.com/nuvolaris/envsubst/cmd/envsubstmain v0.0.0-20230603163828-10ca029cdb58
 	github.com/nuvolaris/goawk v1.21.1-0.20230314201833-d0931fd55c2c
-	github.com/nuvolaris/goja/gojamain v0.0.0-20230826141320-81daf86ddcc2
+	github.com/nuvolaris/goja/gojamain v0.0.0-20231014103102-50b9dd76d9a9
 	github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230914211457-35b540a1ded7
 	github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20230914211457-35b540a1ded7
 	github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae
@@ -29,8 +29,8 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
-	github.com/nuvolaris/goja v0.0.0-20230826141320-81daf86ddcc2 // indirect
-	github.com/nuvolaris/goja_nodejs v0.0.0-20230919090927-04bb06d8ea02 // indirect
+	github.com/nuvolaris/goja v0.0.0-20231014102242-ba65db3f805b // indirect
+	github.com/nuvolaris/goja_nodejs v0.0.0-20231014102937-c453e3fed097 // indirect
 	github.com/nuvolaris/openwhisk-wskdeploy v0.0.0-20230916104531-c4bc982185e9 // indirect
 	github.com/nuvolaris/sh/v3 v3.7.1-nuv.2309151614 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
