@@ -44,6 +44,7 @@ tasks:
     - |
       export VERSION="{{.VERSION}}"
       export VER="${VERSION%%-*}"
+      export REL="${VERSION##*.}"
       export ARCH="{{.ARCH}}"
       case "$ARCH" in
         arm64) export TGT="arm64" ;;
@@ -55,7 +56,9 @@ tasks:
       esac
       cd $NUV_ROOT/linux
       sudo alien --to-rpm "nuv_${VERSION}_${ARCH}.deb" --scripts --generate
-      cat nuv-${VER}/nuv-${VER}-*.spec | grep -v '%dir "/"' >nuv.spec
+      cat nuv-${VER}/nuv-${VER}-*.spec |\
+      grep -v '%dir "/"' |\
+      sed -e "s/Release:.*/Release: $REL/" >nuv.spec
       cat rpmbuild.sh | docker run -i -v $PWD:/mnt "$IMG" env VER=$VER TGT=$TGT bash -
       sudo mv nuv-${VER}-*.$TGT.rpm nuv_${VERSION}_${ARCH}.rpm
 
