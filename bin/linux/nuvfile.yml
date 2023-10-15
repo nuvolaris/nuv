@@ -47,7 +47,7 @@ tasks:
       export REL="${VERSION##*.}"
       export ARCH="{{.ARCH}}"
       case "$ARCH" in
-        arm64) export TGT="arm64" ;;
+        arm64) export TGT="aarch64" ;;
         amd64) export TGT="x86_64" ;;
       esac
       case "$(lsb_release -rs)" in
