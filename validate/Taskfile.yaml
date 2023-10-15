@@ -22,25 +22,37 @@ vars:
         sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
 
 tasks:
-    
+    default: task --list-all
+
     pre:
       - docker login
  
     validate:
-      silent: false
+      silent: true
       cmds:
       - echo === "{{.IMG}}"
       - >
         cat validate.sh 
         | docker run -i "{{.IMG}}" 
         env VER="{{.VER}}" EXT="{{.EXT}}" ARCH={{ARCH}} bash -
-        | grep "$VER"
 
-    rh9:
+    ro9:
       - task: validate
         vars:
             EXT: ".rpm"
             IMG: "rockylinux:9"
+    
+    ubi9:
+      - task: validate
+        vars:
+            EXT: ".rpm"
+            IMG: "registry.access.redhat.com/ubi9/ubi:latest"
+     
+    ostumble:
+      - task: validate
+        vars:
+            EXT: ".rpm"
+            IMG: "opensuse/tumbleweed:latest"
 
     ub22:
       - task: validate
@@ -48,14 +60,57 @@ tasks:
             EXT: ".deb"
             IMG: "ubuntu:22.04"
 
-    rh8:
+    de12:
+      - task: validate
+        vars:
+            EXT: ".deb"
+            IMG: "debian:12"
+
+    ro8:
       - task: validate
         vars:
             EXT: "_redhat8.rpm"
             IMG: "rockylinux:8"
 
+    ubi8:
+      - task: validate
+        vars:
+            EXT: "_redhat8.rpm"
+            IMG: "registry.access.redhat.com/ubi8/ubi:latest"
+   
+    os15:
+      - task: validate
+        vars:
+            EXT: "_redhat8.rpm"
+            IMG: "opensuse/leap:latest"
     ub20:
       - task: validate
         vars:
             EXT: "_ubuntu20.deb"
-            IMG: "ubuntu:20.04"        
+            IMG: "ubuntu:20.04"
+
+    de11:
+      - task: validate
+        vars:
+            EXT: "_ubuntu20.deb"
+            IMG: "debian:11"
+
+    osleap:
+      - task: validate
+        vars:
+            EXT: "_redhat8.rpm"
+            IMG: "opensuse/leap:latest"
+
+
+    all:
+     - task: pre
+     - task: ub22
+     - task: ub20
+     - task: ubi9
+     - task: ubi8
+     - task: de12
+     - task: de11
+     - task: ro9
+     - task: ro8
+     - task: osleap
+     - task: ostumble

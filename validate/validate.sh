@@ -19,10 +19,11 @@
 #EXT=.rpm
 
 URL=https://github.com/nuvolaris/nuv/releases/download/$VER/nuv_${VER}_${ARCH}${EXT} >nuv${EXT}
-echo $URL
+echo $(basename $URL)
+
 case "$EXT" in 
   *.deb)
-    apt-get update && apt-get install -y curl
+    apt-get update >/dev/null 2>/dev/null && apt-get install -y curl >/dev/null 2>/dev/null
     export INST="dpkg -i"
   ;;
   *.rpm) 
@@ -31,7 +32,11 @@ case "$EXT" in
 esac
 
 curl -sL "$URL" >nuv${EXT}
-$INST "nuv${EXT}"
+$INST "nuv${EXT}" >/dev/null 2>/dev/null
+nuv -v >/dev/null 2>/dev/null
 
-nuv -v 
+if nuv -info | grep "NUV_VERSION: $VER"
+then exit 0
+else exit 1
+fi
 
