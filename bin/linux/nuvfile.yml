@@ -39,14 +39,20 @@ tasks:
     - rm -r deb-build-{{.ARCH}}
     - go-bin-deb generate -a {{.ARCH}} --version {{.VERSION}} --wd deb-build-{{.ARCH}}
     - |
-      mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-      cd rpmbuild
-      sudo alien --to-rpm $NUV_PWD/../nuv_{{.VERSION}}_{{.ARCH}}.deb --scripts --generate
-      sudo mv nuv-*/*.spec SPECS
-      sudo mv nuv-*/* BUILD/
-      sudo rpmbuild --buildroot $PWD/BUILD -bb SPECS/nuv*.spec
+      export ARCH="{{.ARCH}}"
+      case "$ARCH" in
+        arm64) export TGT="arm64" ;;
+        amd64) export TGT="x86_64" ;;
+      esac
+      export VERSION="{{.VERSION}}"
+      export VER="${VERSION%%-*}"
+      cd $NUV_ROOT/linux
+      sudo alien --to-rpm nuv_${VERSION}_${ARCH}.deb --scripts --generate
+      cd nuv-${VER}
+      mv nuv-${VER}-*.spec ../nuv.spec
+      sudo rpmbuild --target=$TGT --buildroot=$NUV_ROOT/linux/nuv-${VER} -bb ../nuv.spec
       cd ..
-    - mv nuv-*.rpm nuv_{{.VERSION}}_{{.ARCH}}.rpm
+      mv nuv-${VER}-*.$TGT.rpm nuv_${VERSION}_${ARCH}.rpm
 
   clean: rm -r *.deb *.rpm deb-build-{{.ARCH}}
 

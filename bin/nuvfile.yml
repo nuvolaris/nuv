@@ -244,14 +244,15 @@ tasks:
       - task: nuv
       - task: kubectl
       - task: kind
-      - task: kops
       - task: k3sup
-      - task: mc
       - task: eksctl
       - task: grep.exe
       - task: ntfy
-    # TODO: for some reasons, helm download does not work in github actions
-    #- task: helm
+      # currently not used
+      #- task: mc # it has "licensing complications"
+      #- task: kops
+      # TODO: for some reasons, helm download does not work in github actions
+      #- task: helm
 
   windows-latest:
     desc: build a msi installer for windows
