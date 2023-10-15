@@ -1,0 +1,44 @@
+version: '3'
+
+vars:
+    VER:
+        sh: git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD
+
+tasks:
+    
+    pre:
+      - docker login
+ 
+    validate:
+      silent: false
+      cmds:
+      - echo === "{{.IMG}}"
+      - >
+        cat validate.sh 
+        | docker run -i "{{.IMG}}" 
+        env VER="{{.VER}}" EXT="{{.EXT}}" ARCH={{ARCH}} bash -
+        | grep "$VER"
+
+    rh9:
+      - task: validate
+        vars:
+            EXT: ".rpm"
+            IMG: "rockylinux:9"
+
+    ub22:
+      - task: validate
+        vars:
+            EXT: ".deb"
+            IMG: "ubuntu:22.04"
+
+    rh8:
+      - task: validate
+        vars:
+            EXT: "_redhat8.rpm"
+            IMG: "rockylinux:8"
+
+    ub20:
+      - task: validate
+        vars:
+            EXT: "_ubuntu20.deb"
+            IMG: "ubuntu:20.04"        

@@ -55,7 +55,7 @@ tasks:
       esac
       cd $NUV_ROOT/linux
       sudo alien --to-rpm "nuv_${VERSION}_${ARCH}.deb" --scripts --generate
-      sudo mv nuv-${VER}/nuv-${VER}-*.spec nuv.spec
+      cat nuv-${VER}/nuv-${VER}-*.spec | grep -v '%dir "/"' >nuv.spec
       cat rpmbuild.sh | docker run -i -v $PWD:/mnt "$IMG" env VER=$VER TGT=$TGT bash -
       sudo mv nuv-${VER}-*.$TGT.rpm nuv_${VERSION}_${ARCH}.rpm
 
