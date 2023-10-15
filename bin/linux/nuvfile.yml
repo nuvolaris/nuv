@@ -33,25 +33,30 @@ tasks:
 
   download: 
     - curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh | GH=mh-cbon/go-bin-deb sh -xe
-    - sudo apt-get -y install alien rpm
+    - sudo apt-get -y install alien
 
   assemble:
     - rm -r deb-build-{{.ARCH}}
     - go-bin-deb generate -a {{.ARCH}} --version {{.VERSION}} --wd deb-build-{{.ARCH}}
+    - task: assemble-rpm
+
+  assemble-rpm:
     - |
+      export VERSION="{{.VERSION}}"
+      export VER="${VERSION%%-*}"
       export ARCH="{{.ARCH}}"
       case "$ARCH" in
         arm64) export TGT="arm64" ;;
         amd64) export TGT="x86_64" ;;
       esac
-      export VERSION="{{.VERSION}}"
-      export VER="${VERSION%%-*}"
+      case "$(lsb_release -rs)" in
+        20.*) IMG="rockylinux:8" ;;
+        22.*) IMG="rockylinux:9" ;;
+      esac
       cd $NUV_ROOT/linux
-      sudo alien --to-rpm nuv_${VERSION}_${ARCH}.deb --scripts --generate
-      cd nuv-${VER}
-      sudo mv nuv-${VER}-*.spec ../nuv.spec
-      sudo rpmbuild --target=$TGT --buildroot=$NUV_ROOT/linux/nuv-${VER} -bb ../nuv.spec
-      cd ..
+      sudo alien --to-rpm "nuv_${VERSION}_${ARCH}.deb" --scripts --generate
+      sudo mv nuv-${VER}/nuv-${VER}-*.spec nuv.spec
+      cat rpmbuild.sh | docker run -i -v $PWD:/mnt "$IMG" env VER=$VER TGT=$TGT bash -
       sudo mv nuv-${VER}-*.$TGT.rpm nuv_${VERSION}_${ARCH}.rpm
 
   clean: rm -r *.deb *.rpm deb-build-{{.ARCH}}

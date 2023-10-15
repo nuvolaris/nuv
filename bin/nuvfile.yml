@@ -300,9 +300,16 @@ tasks:
       - ./nuv linux build ARCH=amd64
       - ./nuv linux build ARCH=arm64
       - |
-        for FILE in linux/*.deb linux/*.rpm
+        for FILE in linux/*.deb
         do
-          NEW="$(echo $FILE | sed 's/\(.*\)\(\.[a-zA-Z0-9]*\)$/\1_glibc2.31\2/')"
+          NEW="$(echo $FILE | sed 's/\(.*\)\(\.[a-zA-Z0-9]*\)$/\1_ubuntu20\2/')"
+          mv "$FILE" "$NEW"
+          echo "renamed $FILE to $NEW"
+        done
+      - |
+        for FILE in linux/*.rpm
+        do
+          NEW="$(echo $FILE | sed 's/\(.*\)\(\.[a-zA-Z0-9]*\)$/\1_redhat8\2/')"
           mv "$FILE" "$NEW"
           echo "renamed $FILE to $NEW"
         done
