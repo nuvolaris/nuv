@@ -49,10 +49,10 @@ tasks:
       cd $NUV_ROOT/linux
       sudo alien --to-rpm nuv_${VERSION}_${ARCH}.deb --scripts --generate
       cd nuv-${VER}
-      mv nuv-${VER}-*.spec ../nuv.spec
+      sudo mv nuv-${VER}-*.spec ../nuv.spec
       sudo rpmbuild --target=$TGT --buildroot=$NUV_ROOT/linux/nuv-${VER} -bb ../nuv.spec
       cd ..
-      mv nuv-${VER}-*.$TGT.rpm nuv_${VERSION}_${ARCH}.rpm
+      sudo mv nuv-${VER}-*.$TGT.rpm nuv_${VERSION}_${ARCH}.rpm
 
   clean: rm -r *.deb *.rpm deb-build-{{.ARCH}}
 
