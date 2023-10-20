@@ -25,6 +25,7 @@ import (
 	envsubst "github.com/nuvolaris/envsubst/cmd/envsubstmain"
 	replace "github.com/nuvolaris/go-replace"
 	"github.com/nuvolaris/goawk"
+	"github.com/nuvolaris/gron"
 	"golang.org/x/exp/slices"
 )
 
@@ -38,6 +39,7 @@ var tools = []string{
 	"replace", "base64", "validate",
 	"echoif", "echoifempty", "echoifexists",
 	"realpath", "zipf", "needupdate",
+	"gron",
 }
 
 // not available in taskfiles
@@ -177,7 +179,12 @@ func RunTool(name string, args []string) (int, error) {
 		if err := needUpdateTool(args); err != nil {
 			return 1, err
 		}
+
+	case "gron":
+		os.Args = append([]string{"gron"}, args...)
+		return gron.GronMain()
 	}
+
 	return 0, nil
 }
 
