@@ -249,6 +249,7 @@ github.com/mattn/go-colorable v0.1.8/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
 github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovkB8vQcUbaXHg=
 github.com/mattn/go-isatty v0.0.3/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
+github.com/mattn/go-isatty v0.0.4/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
 github.com/mattn/go-isatty v0.0.19 h1:JITubQf0MOLdlGRuRq+jtsDlekdYPia9ZFsB8h/APPA=
@@ -296,6 +297,10 @@ github.com/nuvolaris/goja_nodejs v0.0.0-20230527135110-3aa37178bb6c/go.mod h1:3j
 github.com/nuvolaris/goja_nodejs v0.0.0-20230826135643-676d5429636c/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
 github.com/nuvolaris/goja_nodejs v0.0.0-20231014102937-c453e3fed097 h1:cHspcFB5uEQvORg1yE/+TK7n2OTgIjlSEr5FW41KWxE=
 github.com/nuvolaris/goja_nodejs v0.0.0-20231014102937-c453e3fed097/go.mod h1:bik1pvnsEagEp/uCTjjKUHVWPyuy53ETukJZVuaSG2U=
+github.com/nuvolaris/gron v0.0.0-20231020133828-14f240ae2abe h1:QTR0YaLEh+oQD7EM22MqkLVjb/wantAKwVWVIte3wrI=
+github.com/nuvolaris/gron v0.0.0-20231020133828-14f240ae2abe/go.mod h1:5Hm1DZ5jqgtsL9ZjkS7ucgNX1ho6ZBt3uQVZG21OGV8=
+github.com/nuvolaris/gron v0.0.0-20231020134423-84e679ea6aad h1:HM0XUN8Euf/cougdYRNlga/dZUIi0TiI931IbqxzoRk=
+github.com/nuvolaris/gron v0.0.0-20231020134423-84e679ea6aad/go.mod h1:5Hm1DZ5jqgtsL9ZjkS7ucgNX1ho6ZBt3uQVZG21OGV8=
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230914211457-35b540a1ded7 h1:kvpT8vl5PEza3Fu8OZZjkCB6rC9r1ymIToOtytyTtUc=
 github.com/nuvolaris/openwhisk-cli/commands v0.0.0-20230914211457-35b540a1ded7/go.mod h1:aXJusnuxBX3WRX7aLrFPInwOrhAS31reOm+bHPYaDIs=
 github.com/nuvolaris/openwhisk-cli/wski18n v0.0.0-20230914211457-35b540a1ded7 h1:DVMDkKVsaSuKNA0psVWGug6lM978U3EvV3A01F/uK9k=
@@ -308,6 +313,8 @@ github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae h1:r/98Ma2fvAF
 github.com/nuvolaris/someutils v0.0.0-20230406090008-39e94b70e1ae/go.mod h1:27LYTtM+ymckYJ+I+C5Tg6/ir+QyBQZVNN6TvlNQ1zA=
 github.com/nuvolaris/task/v3 v3.30.2-nuv.2309151614 h1:zwuGDvIpuzvGvFJCMPeCmt7cUqgTSSwkZFnQRDM+Bi4=
 github.com/nuvolaris/task/v3 v3.30.2-nuv.2309151614/go.mod h1:jq1DGrJssGJpZF7acN3Taem7Hizry9BXMV+BLoSeFi4=
+github.com/nwidger/jsoncolor v0.0.0-20170215171346-75a6de4340e5 h1:d+C3xJdxZT7wNlxqEwbXn3R355CwAhYBL9raVNfSnK0=
+github.com/nwidger/jsoncolor v0.0.0-20170215171346-75a6de4340e5/go.mod h1:GYFm0zZgTNeoK1QxuIofRDasy2ibmaJZhZLzwsMXUF4=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
@@ -532,6 +539,7 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210616045830-e2b7044e8c71/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20220412211240-33da011f77ad/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=

@@ -14,32 +14,26 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
 
-header:
-  license:
-    spdx-id: Apache-2.0
-    copyright-owner: Apache Software Foundation
+setup() {
+    load 'test_helper/bats-support/load'
+    load 'test_helper/bats-assert/load'
+    export NO_COLOR=1
+}
 
-  paths-ignore:
-    - nuv
-    - env
-    - go.mod
-    - go.sum
-    - '**/*.help'
-    - 'attic/**'
-    - 'bin/**'
-    - 'tools/*/**'
-    - '**/_*'
-    - '*.off'
-    - 'tryit/**'
-    - '**/*.json'
-    - 'LICENSE'
-    - 'tests/bats/**'
-    - 'tests/test_helper/**'
+@test "-gron help " {
+    run nuv -gron -h
+    assert_line --partial "Usage:"
+    assert_success
+}
 
-dependency:
-  files:
-    - go.mod
-    - package.json 
+@test "-gron with file" {
+    run nuv -gron testdata/sample.json
+    assert_line 'json = {};'
+    assert_line 'json.nested = {};'
+    assert_line 'json.nested["b-key"] = "b-value";'
+    assert_line 'json["a-key"] = "a-value";'
+    assert_line 'json["a-number"] = 1;'
+    assert_success
+}
 
