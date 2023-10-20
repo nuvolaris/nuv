@@ -26,6 +26,7 @@ import (
 	replace "github.com/nuvolaris/go-replace"
 	"github.com/nuvolaris/goawk"
 	"github.com/nuvolaris/gron"
+	"github.com/nuvolaris/jj"
 	"golang.org/x/exp/slices"
 )
 
@@ -39,7 +40,7 @@ var tools = []string{
 	"replace", "base64", "validate",
 	"echoif", "echoifempty", "echoifexists",
 	"realpath", "zipf", "needupdate",
-	"gron",
+	"gron", "jj",
 }
 
 // not available in taskfiles
@@ -183,6 +184,10 @@ func RunTool(name string, args []string) (int, error) {
 	case "gron":
 		os.Args = append([]string{"gron"}, args...)
 		return gron.GronMain()
+
+	case "jj":
+		os.Args = append([]string{"jj"}, args...)
+		return jj.JJMain()
 	}
 
 	return 0, nil
