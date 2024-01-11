@@ -46,7 +46,7 @@ tasks:
   download:
     dir: "{{.BIN}}"
     cmds:
-      - curl -L -ccookie.txt -o{{.TGT}} {{.SRC}}
+      - curl -sL -ccookie.txt -o{{.TGT}} {{.SRC}}
       - '{{if eq .OS "windows"}}mv {{.TGT}} {{.TGT}}.exe{{else}}chmod +x {{.TGT}}{{end}}'
       - rm cookie.txt
     status:
@@ -182,12 +182,38 @@ tasks:
     dir: "{{.BIN}}"
     cmds:
       - task: unzip.exe
-      - curl -L -ccookie.txt -o{{.TGT}}{{.ARC}} {{.SRC}}
+      - curl -sL -ccookie.txt -o{{.TGT}}{{.ARC}} {{.SRC}}
       - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC}}{{end}}'
       - '{{if eq .OS "darwin"}} mv ntfy_2.7.0_{{.OS}}_all/{{.TGT}} . {{else}} mv ntfy_2.7.0_{{.OS}}_{{.ARCH}}/{{.TGT}}{{.EXE}} . {{end}}'
       - '{{if eq .OS "darwin"}} rm -r {{.TGT}}{{.ARC}} ntfy_2.7.0_{{.OS}}_all/* {{else}} rm -r {{.TGT}}{{.ARC}} ntfy_2.7.0_{{.OS}}_{{.ARCH}}/* {{end}}'
       - '{{if eq .OS "darwin"}} rmdir ntfy_2.7.0_{{.OS}}_all {{else}} rmdir ntfy_2.7.0_{{.OS}}_{{.ARCH}} {{end}}'
       - rm cookie.txt
+    status:
+      - test -e {{.TGT}}{{.EXE}}
+
+  coreutils:
+    vars:
+      BASE: "https://github.com/uutils/coreutils/releases/download/0.0.23/coreutils-0.0.23-"
+      SRC:
+        sh: >
+          case {{.OS}}-{{.ARCH}} in
+          (linux-amd64)   echo {{.BASE}}x86_64-unknown-linux-gnu.tar.gz ;;
+          (linux-arm64)   echo {{.BASE}}aarch64-unknown-linux-gnu.tar.gz ;;
+          (darwin-amd64)  echo {{.BASE}}x86_64-apple-darwin.tar.gz ;;
+          (darwin-arm64)  echo {{.BASE}}aarch64-apple-darwin.tar.gz ;;
+          (windows-amd64) echo {{.BASE}}x86_64-pc-windows-msvc.zip ;;
+          esac
+      TGT: coreutils
+    dir: "{{.BIN}}"
+    cmds:
+      - task: unzip.exe
+      - curl -sL -ccookie.txt -o{{.TGT}}{{.ARC2}} {{.SRC}}
+      - rm cookie.txt
+      - mkdir {{.TGT}}-extract
+      - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC2}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC2}} -C {{.TGT}}-extract --strip-components{{end}}'
+      - '{{if eq .OS "windows"}} mv coreutils-0.0.23-x86_64-pc-windows-msvc/{{.TGT}}{{EXE}} . {{else}} mv {{.TGT}}-extract/{{.TGT}}{{.EXE}} . {{end}}'
+      - '{{if eq .OS "windows"}} rm -r coreutils-0.0.23-x86_64-pc-windows-msvc {{else}} rm -r {{.TGT}}-extract {{end}}'
+      - rm -r {{.TGT}}{{.ARC2}}
     status:
       - test -e {{.TGT}}{{.EXE}}
 
