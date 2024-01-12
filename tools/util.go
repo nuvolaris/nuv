@@ -19,6 +19,7 @@ package tools
 import (
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/nuvolaris/someutils"
 	"github.com/nuvolaris/someutils/some"
@@ -45,12 +46,10 @@ func IsUtil(name string) bool {
 func RunUtil(name string, args []string) (int, error) {
 	if IsUtil(name) {
 		full := append([]string{name}, args...)
-		fmt.Println(name, full)
 		var err error
 		var code int
 		if useCoreutils() {
 			code, err = runCoreUtils(name, args)
-
 		} else {
 			err, code = someutils.Call(name, full)
 		}
@@ -64,5 +63,10 @@ func useCoreutils() bool {
 }
 
 func runCoreUtils(name string, args []string) (int, error) {
-	return 0, nil
+	cmd := exec.Command("nuv", "update", "cli")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	code := cmd.ProcessState.ExitCode()
+	return code, err
 }
