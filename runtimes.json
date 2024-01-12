@@ -128,28 +128,28 @@
           "attachmentName": "codefile",
           "attachmentType": "text/plain"
         },
-        "default": false,
+        "default": true,
         "deprecated": false,
         "image": {
-          "name": "action-php-v7.3",
-          "prefix": "openwhisk",
-          "tag": "nightly"
+          "name": "action-php-v8.2",
+          "prefix": "ghcr.io/nuvolaris",
+          "tag": "3.0.0-beta.2311031603"
         },
-        "kind": "php:7.3"
+        "kind": "php:8.2"
       },
       {
         "attached": {
           "attachmentName": "codefile",
           "attachmentType": "text/plain"
         },
-        "default": true,
+        "default": false,
         "deprecated": false,
         "image": {
-          "name": "action-php-v7.4",
-          "prefix": "openwhisk",
-          "tag": "nightly"
+          "name": "action-php-v8.1",
+          "prefix": "ghcr.io/nuvolaris",
+          "tag": "3.0.0-beta.2311031603"
         },
-        "kind": "php:7.4"
+        "kind": "php:8.1"
       },
       {
         "attached": {
@@ -160,8 +160,8 @@
         "deprecated": false,
         "image": {
           "name": "action-php-v8.0",
-          "prefix": "openwhisk",
-          "tag": "nightly"
+          "prefix": "ghcr.io/nuvolaris",
+          "tag": "3.0.0-beta.2311031603"
         },
         "kind": "php:8.0"
       }
@@ -207,6 +207,20 @@
           "tag": "3.0.0-beta.2309081459"
         },
         "kind": "python:310"
+      },
+      {
+        "attached": {
+          "attachmentName": "codefile",
+          "attachmentType": "text/plain"
+        },
+        "default": false,
+        "deprecated": false,
+        "image": {
+          "name": "action-python-v310-kube",
+          "prefix": "ghcr.io/nuvolaris",
+          "tag": "3.0.0-beta.2310270000"
+        },
+        "kind": "python:310kube"
       }
     ],
     "ruby": [
