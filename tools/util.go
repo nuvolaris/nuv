@@ -64,6 +64,7 @@ func useCoreutils() bool {
 
 func runCoreUtils(full []string) (int, error) {
 	cmd := exec.Command("coreutils", full...)
+	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
