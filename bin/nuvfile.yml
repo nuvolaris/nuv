@@ -210,10 +210,11 @@ tasks:
       - curl -sL -ccookie.txt -o{{.TGT}}{{.ARC2}} {{.SRC}}
       - rm cookie.txt
       - mkdir {{.TGT}}-extract
-      - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC2}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC2}} -C {{.TGT}}-extract --strip-components{{end}}'
-      - '{{if eq .OS "windows"}} mv coreutils-0.0.23-x86_64-pc-windows-msvc/{{.TGT}}{{EXE}} . {{else}} mv {{.TGT}}-extract/{{.TGT}}{{.EXE}} . {{end}}'
+      - '{{if eq .OS "windows"}}unzip.exe {{.TGT}}{{.ARC2}}{{else}}/usr/bin/tar xvzf {{.TGT}}{{.ARC2}} -C {{.TGT}}-extract --strip-components 1{{end}}'
+      - '{{if eq .OS "windows"}} mv coreutils-0.0.23-x86_64-pc-windows-msvc/{{.TGT}}{{.EXE}} . {{else}} mv {{.TGT}}-extract/{{.TGT}}{{.EXE}} . {{end}}'
       - '{{if eq .OS "windows"}} rm -r coreutils-0.0.23-x86_64-pc-windows-msvc {{else}} rm -r {{.TGT}}-extract {{end}}'
       - rm -r {{.TGT}}{{.ARC2}}
+      - rm -r {{.TGT}}-extract
     status:
       - test -e {{.TGT}}{{.EXE}}
 
@@ -274,6 +275,7 @@ tasks:
       - task: eksctl
       - task: grep.exe
       - task: ntfy
+      - task: coreutils
       # currently not used
       #- task: mc # it has "licensing complications"
       #- task: kops

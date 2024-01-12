@@ -18,6 +18,7 @@ package tools
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/nuvolaris/someutils"
 	"github.com/nuvolaris/someutils/some"
@@ -44,9 +45,24 @@ func IsUtil(name string) bool {
 func RunUtil(name string, args []string) (int, error) {
 	if IsUtil(name) {
 		full := append([]string{name}, args...)
-		//fmt.Println(name, full)
-		err, code := someutils.Call(name, full)
+		fmt.Println(name, full)
+		var err error
+		var code int
+		if useCoreutils() {
+			code, err = runCoreUtils(name, args)
+
+		} else {
+			err, code = someutils.Call(name, full)
+		}
 		return code, err
 	}
 	return 1, fmt.Errorf("command %s not found", name)
+}
+
+func useCoreutils() bool {
+	return os.Getenv("NUV_USE_COREUTILS") != ""
+}
+
+func runCoreUtils(name string, args []string) (int, error) {
+	return 0, nil
 }

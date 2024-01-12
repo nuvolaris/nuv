@@ -70,6 +70,7 @@ set, `nuv -login` will prompt for the password. It is useful for tests and non-i
 - `NUV_ROOT_PLUGIN` is the folder where `nuv` looks for plugins. If not defined, it defaults to the same directory where  `nuv` is located.
 - `NUV_OLARIS` holds the head commit hash of the used olaris repo. You can see the hash with `nuv -info`.
 ## Where `nuv` looks for binaries 
+- `NUV_USE_COREUTILS` enables the use of [coreutils](https://github.com/uutils/coreutils) instead of the current unix tools implementation. They will eventually replace the current tools.
 
 Nuv requires some binary command line tools to work with ("bins").
 
