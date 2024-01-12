@@ -49,7 +49,7 @@ func RunUtil(name string, args []string) (int, error) {
 		var err error
 		var code int
 		if useCoreutils() {
-			code, err = runCoreUtils(name, args)
+			code, err = runCoreUtils(full)
 		} else {
 			err, code = someutils.Call(name, full)
 		}
@@ -62,8 +62,8 @@ func useCoreutils() bool {
 	return os.Getenv("NUV_USE_COREUTILS") != ""
 }
 
-func runCoreUtils(name string, args []string) (int, error) {
-	cmd := exec.Command("nuv", "update", "cli")
+func runCoreUtils(full []string) (int, error) {
+	cmd := exec.Command("coreutils", full...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
