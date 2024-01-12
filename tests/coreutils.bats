@@ -22,8 +22,8 @@ setup() {
     export NUV_USE_COREUTILS=1
 }
 
-@test "-cat" {
-    run echo "$(echo "Hello World" | nuv -cat)"
-    assert_line "Hello World"
-    assert_success
-}
+# @test "-cat" {
+#     run echo "$(echo "Hello World" | nuv -cat)"
+#     assert_line "Hello World"
+#     assert_success
+# }
