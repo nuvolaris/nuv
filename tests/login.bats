@@ -38,9 +38,40 @@ setup() {
     refute_line "Enter Password:"
 }
 
-@test "nuv -login with NUV_LOGIN env defines username" {
+@test "nuv -login with NUV_USER env defines username" {
     export NUV_PASSWORD=1234
-    export NUV_LOGIN=foo
+    export NUV_USER=foo
     run nuv -login localhost
     assert_line "Logging in as foo to localhost"
+}
+
+@test "nuv -login with NUV_USER and NUV_PASSWORD env" {
+    export NUV_PASSWORD=1234
+    export NUV_USER=foo
+    run nuv -login localhost
+    assert_line "Logging in as foo to localhost"
+    refute_line "Enter Password:"
+}
+
+@test "nuv -login with NUV_APIHOST env" {
+    export NUV_APIHOST=localhost
+    export NUV_PASSWORD=1234
+    run nuv -login
+    assert_line "Logging in as nuvolaris to localhost"
+}
+
+@test "nuv -login with NUV_APIHOST and NUV_USER env" {
+    export NUV_APIHOST=localhost
+    export NUV_USER=foo
+    export NUV_PASSWORD=1234
+    run nuv -login
+    assert_line "Logging in as foo to localhost"
+}
+
+@test "nuv -login with NUV_APIHOST, user is now first argument" {
+    export NUV_APIHOST=localhost
+    export NUV_PASSWORD=1234
+    run nuv -login hello
+    assert_line "Logging in as hello to localhost"
+    refute_line "Enter Password:"
 }
