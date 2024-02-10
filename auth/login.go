@@ -44,6 +44,8 @@ const usage = `Usage:
 nuv login <apihost> [<user>]
 
 Login to a Nuvolaris instance. If no user is specified, the default user "nuvolaris" is used.
+You can use the environment variables NUV_APIHOST and NUV_USER to avoid specifying them on the command line.
+And NUV_PASSWORD to avoid entering the password interactively.
 
 Options:
   -h, --help   Show usage`
@@ -73,7 +75,7 @@ func LoginCmd() (*LoginResult, error) {
 
 	args := flag.Args()
 
-	if len(args) == 0 {
+	if len(args) == 0 && os.Getenv("NUV_APIHOST") == "" {
 		flag.Usage()
 		return nil, errors.New("missing apihost")
 	}
@@ -89,15 +91,35 @@ func LoginCmd() (*LoginResult, error) {
 		fmt.Println()
 	}
 
-	apihost := args[0]
+	apihost := os.Getenv("NUV_APIHOST")
+	if apihost == "" {
+		apihost = args[0]
+	}
 	url := apihost + whiskLoginPath
-	user := os.Getenv("NUV_LOGIN")
+
+	// try to get the user from the environment
+	user := os.Getenv("NUV_USER")
 	if user == "" {
+		// if env var not set, try to get it from the command line
+		if os.Getenv("NUV_APIHOST") != "" {
+			// if apihost env var was set, treat the first arg as the user
+			if len(args) > 0 {
+				user = args[0]
+			}
+		} else {
+			// if apihost env var was not set, treat the second arg as the user
+			if len(args) > 1 {
+				user = args[1]
+			} 
+		}
+	}
+
+	// if still not set, use the default user
+	if user == "" {
+		log.Println("Using the default user:", defaultUser)
 		user = defaultUser
 	}
-	if len(args) > 1 {
-		user = args[1]
-	}
+
 	log.Println("Logging in as", user, "to", apihost)
 
 	creds, err := doLogin(url, user, password)
