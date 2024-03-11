@@ -29,41 +29,53 @@
 	branch = nuvolaris
 [submodule "tools/httpie-go"]
 	path = tools/httpie-go
-	url = https://github.com/nuvolaris/httpie-go
+	url = git@github.com:nuvolaris/httpie-go
+	branch = master
 [submodule "tools/go-replace"]
 	path = tools/go-replace
-	url = https://github.com/nuvolaris/go-replace
+	url = git@github.com:nuvolaris/go-replace
+	branch = master
 [submodule "tools/someutils"]
 	path = tools/someutils
-	url = https://github.com/nuvolaris/someutils
+	url = git@github.com:nuvolaris/someutils
 	branch = nuvolaris
 [submodule "tools/goawk"]
 	path = tools/goawk
-	url = https://github.com/nuvolaris/goawk
+	url = git@github.com:nuvolaris/goawk
+	branch = nuvolaris
 [submodule "tests/test/bats"]
 	path = tests/bats
-	url = https://github.com/bats-core/bats-core.git
+	url = git@github.com:bats-core/bats-core.git
+	branch = master
 [submodule "tests/test_helper/bats-support"]
 	path = tests/test_helper/bats-support
-	url = https://github.com/bats-core/bats-support.git
+	url = git@github.com:bats-core/bats-support.git
+	branch = master
 [submodule "tests/test_helper/bats-assert"]
 	path = tests/test_helper/bats-assert
-	url = https://github.com/bats-core/bats-assert.git
+	url = git@github.com:bats-core/bats-assert.git
+	branch = master
 [submodule "tools/gojq"]
 	path = tools/gojq
-	url = https://github.com/nuvolaris/gojq
+	url = git@github.com:nuvolaris/gojq
+	branch = nuvolaris
 [submodule "tools/goja"]
 	path = tools/goja
-	url = https://github.com/nuvolaris/goja
+	url = git@github.com:nuvolaris/goja
+	branch = nuvolaris
 [submodule "tools/envsubst"]
 	path = tools/envsubst
-	url = https://github.com/nuvolaris/envsubst/
+	url = git@github.com:nuvolaris/envsubst/
+	branch = nuvolaris
 [submodule "tools/goph"]
 	path = tools/goph
-	url = https://github.com/nuvolaris/goph
+	url = git@github.com:nuvolaris/goph
+	branch = master
 [submodule "tools/goja_nodejs"]
 	path = tools/goja_nodejs
-	url = https://github.com/nuvolaris/goja_nodejs
+	url = git@github.com:nuvolaris/goja_nodejs
+	branch = master
 [submodule "tools/openwhisk-wskdeploy"]
 	path = tools/openwhisk-wskdeploy
 	url = git@github.com:nuvolaris/openwhisk-wskdeploy
+	branch = nuvolaris
