@@ -181,3 +181,48 @@ func TestDeployAction(t *testing.T) {
 		})
 	}
 }
+func TestSplitPath(t *testing.T) {
+	tests := []struct {
+		name     string
+		path     string
+		expected []string
+	}{
+		{
+			name:     "Split empty path",
+			path:     "",
+			expected: []string{},
+		},
+		{
+			name:     "Split path with single directory",
+			path:     "dir1",
+			expected: []string{"dir1"},
+		},
+		{
+			name:     "Split path with multiple directories",
+			path:     "dir1/dir2/dir3",
+			expected: []string{"dir1", "dir2", "dir3"},
+		},
+		{
+			name:     "Split path with leading slash",
+			path:     "/dir1/dir2/dir3",
+			expected: []string{"dir1", "dir2", "dir3"},
+		},
+		{
+			name:     "Split path with trailing slash",
+			path:     "dir1/dir2/dir3/",
+			expected: []string{"dir1", "dir2", "dir3"},
+		},
+		{
+			name:     "Split path with leading and trailing slash",
+			path:     "/dir1/dir2/dir3/",
+			expected: []string{"dir1", "dir2", "dir3"},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			result := splitPath(tc.path)
+			require.Equal(t, tc.expected, result)
+		})
+	}
+}

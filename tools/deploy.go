@@ -22,10 +22,10 @@ var nuvPackageUpdate = "nuv package update"
 func DeployTool() error {
 	flag := flag.NewFlagSet("deploy", flag.ExitOnError)
 	flag.Usage = func() {
-		fmt.Println(`Command to deploy Nuvolaris projects. It takes the path to the project to deploy (must contain 'packages' folder) as argument.
+		fmt.Println(`Command to deploy Nuvolaris projects. Must be run from the root of the project (containing 'packages').
 
 Usage:
-	nuv -deploy [Options] <path>
+	nuv -deploy [Options]
 
 Options:
 	-s, --single <string>     Deploy a single action with the given path, either a single file or a directory.
@@ -53,22 +53,20 @@ Options:
 		return err
 	}
 
-	if (flag.NArg() == 0) || helpFlag {
+	if helpFlag {
 		flag.Usage()
 		return nil
 	}
 
-	rootPath := flag.Arg(0)
-
-	// if there is not "packages" folder from where deploy was called, abort
-	if !exists(filepath.Join(rootPath, "packages")) {
-		return fmt.Errorf("no 'packages' folder found in the given directory (%s)", rootPath)
-	}
-
 	ctx := deployCtx{
-		path:               rootPath,
+		path:               os.Getenv("NUV_PWD"),
 		packageCmdExecuted: make(map[string]bool),
 		dryRun:             dryRunFlag,
+	}
+
+	// if there is not "packages" folder from where deploy was called, abort
+	if !exists(filepath.Join(ctx.path, "packages")) {
+		return fmt.Errorf("no 'packages' folder found in the current directory")
 	}
 
 	if singleFlag != "" {
@@ -80,6 +78,11 @@ Options:
 			}
 		}
 		return deploy(ctx, action)
+	}
+
+	err = scan(ctx)
+	if err != nil {
+		return err
 	}
 	// walk and deploy
 	//scan()
@@ -161,18 +164,17 @@ func deployAction(ctx deployCtx, artifact string) error {
 
 	args := strings.Join(extractArgs(toInspect), " ")
 	action := packageName + "/" + name // the action name, it's not a file path
-	fullPath := filepath.Join(ctx.path, artifact)
 	if packageName == "packages" {
 		action = name
 	}
 	if !ctx.dryRun {
-		cmd := []string{"action", "update", action, fullPath, args}
+		cmd := []string{"action", "update", action, artifact, args}
 		err := exec.Command("nuv", cmd...).Run()
 		if err != nil {
 			log.Println("Error deploying action", name, err)
 		}
 	} else {
-		log.Println("Would run:", "nuv action update", action, fullPath, args)
+		log.Println("Would run:", "nuv action update", action, artifact, args)
 	}
 
 	return nil
@@ -245,9 +247,103 @@ func exists(file string) bool {
 }
 
 func splitPath(path string) []string {
-	dir, last := filepath.Split(path)
-	if dir == "" {
+	if path == "" {
+		return []string{}
+	}
+	dir, last := filepath.Split(filepath.Clean(path))
+	if dir == "." || dir == "/" || dir == "" {
 		return []string{last}
 	}
-	return append(splitPath(filepath.Clean(dir)), last)
+	return append(splitPath(dir), last)
 }
+
+// region: scan
+
+// scan scans the packages and deployments.
+func scan(ctx deployCtx) error {
+	wd, _ := os.Getwd()
+	os.Chdir(ctx.path)
+	defer os.Chdir(wd)
+
+	// First look for requirements.txt and build the venv (add in set)
+	deployments := make(map[string]bool)
+	packages := make(map[string]bool)
+
+	log.Println(">>> Scan:")
+	pyGlob := filepath.Join("packages", "*", "*", "requirements.txt")
+	jsGlob := filepath.Join("packages", "*", "*", "package.json")
+	reqs, _ := filepath.Glob(pyGlob)
+	reqs2, _ := filepath.Glob(jsGlob)
+	reqs = append(reqs, reqs2...)
+
+	for _, req := range reqs {
+		log.Println(">", req)
+		sp := splitPath(req)
+		action, err := buildZip(ctx, sp[1], sp[2])
+		if err != nil {
+			return fmt.Errorf("error building zip for %s/%s: %v", sp[1], sp[2], err)
+		}
+		deployments[action] = true
+		packages[sp[1]] = true
+	}
+
+	pyMainGlob := filepath.Join("packages", "*", "*", "__main__.py")
+	jsMainGlob := filepath.Join("packages", "*", "*", "index.js")
+	mains, _ := filepath.Glob(pyMainGlob)
+	pymains, _ := filepath.Glob(jsMainGlob)
+	mains = append(mains, pymains...)
+	for _, main := range mains {
+		log.Println(">", main)
+		sp := splitPath(main)
+		action, err := buildAction(ctx, sp[1], sp[2])
+		if err != nil {
+			return fmt.Errorf("error building action %s/%s: %v", sp[1], sp[2], err)
+		}
+		deployments[action] = true
+		packages[sp[1]] = true
+	}
+
+	pySinglesGlob := filepath.Join("packages", "*", "*.py")
+	jsSinglesGlob := filepath.Join("packages", "*", "*.js")
+	singles, _ := filepath.Glob(pySinglesGlob)
+	jsSingles, _ := filepath.Glob(jsSinglesGlob)
+	singles = append(singles, jsSingles...)
+	for _, single := range singles {
+		log.Println(">", single)
+		sp := splitPath(single)
+		deployments[single] = true
+		packages[sp[1]] = true
+	}
+
+	log.Println(">>> Deploying:")
+
+	for p := range packages {
+		log.Println("%", p)
+		deployPackage(ctx, p)
+	}
+
+	for a := range deployments {
+		log.Println("^", a)
+		err := deployAction(ctx, a)
+		if err != nil {
+			return fmt.Errorf("error deploying action %s: %v", a, err)
+		}
+	}
+
+	return nil
+}
+
+func buildZip(ctx deployCtx, pkg string, action string) (string, error) {
+	if !ctx.dryRun {
+		err := exec.Command("nuv", "ide", "util", "zip", fmt.Sprintf("A=%s/%s", pkg, action)).Run()
+		if err != nil {
+			return "", fmt.Errorf("error building zip %s/%s: %v", pkg, action, err)
+		}
+	} else {
+		log.Println("Would run: nuv ide util zip A=" + pkg + "/" + action)
+	}
+
+	return fmt.Sprintf("packages/%s/%s.zip", pkg, action), nil
+}
+
+// endregion
