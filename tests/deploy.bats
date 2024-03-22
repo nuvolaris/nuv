@@ -89,6 +89,6 @@ setup() {
     assert_line --partial "Would run: nuv package update sub"
     assert_line --partial "Would run: nuv action update zipped/mfa packages/zipped/mfa.zip"
     assert_line --partial "Would run: nuv action update sub/mfa packages/sub/mfa.zip"
-    assert_line --partial "Would run: nuv action update sub/index packages/sub/index.js "
+    assert_line --partial "Would run: nuv action update sub/index packages/sub/index.js"
     assert_success
 }

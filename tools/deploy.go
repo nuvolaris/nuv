@@ -38,16 +38,14 @@ type deployCtx struct {
 	packageCmdExecuted map[string]bool
 }
 
-var nuvPackageUpdate = "nuv package update"
-
 func DeployTool() error {
 	flag := flag.NewFlagSet("deploy", flag.ExitOnError)
 	flag.Usage = func() {
 		fmt.Println(`Command to deploy Nuvolaris projects. Must be given the path of a valid project (containing 'packages').
 
 Usage:
-	nuv -deploy <path> [-s <string> | --single <string>] [-d | --dry-run]
-	nuv -deploy <path> [-w | --watch] [-d | --dry-run]
+	nuv -deploy [-s <string> | --single <string>] [-d | --dry-run] <path> 
+	nuv -deploy [-w | --watch] [-d | --dry-run] <path> 
 
 Options:
 	-s, --single <string>     Deploy a single action with the given path, either a single file or a directory.
@@ -187,9 +185,7 @@ func deployAction(ctx deployCtx, artifact string) error {
 	typ := nameType[1]
 	packageName := filepath.Base(filepath.Dir(artifact))
 
-	if packageName != "packages" {
-		deployPackage(ctx, packageName)
-	}
+	deployPackage(ctx, packageName)
 
 	var toInspect []string
 	if typ == "zip" {
@@ -201,19 +197,26 @@ func deployAction(ctx deployCtx, artifact string) error {
 		toInspect = []string{artifact}
 	}
 
-	args := strings.Join(extractArgs(toInspect), " ")
+	args := extractArgs(toInspect)
+
 	action := packageName + "/" + name // the action name, it's not a file path
 	if packageName == "packages" {
 		action = name
 	}
+
+	cmd := []string{"nuv", "action", "update", action, artifact}
+	cmd = append(cmd, args...)
 	if !ctx.dryRun {
-		cmd := []string{"action", "update", action, artifact, args}
-		err := exec.Command("nuv", cmd...).Run()
+
+		execCmd := exec.Command("nuv", cmd[1:]...)
+		execCmd.Stderr = os.Stderr
+		execCmd.Stdout = os.Stdout
+		err := execCmd.Run()
 		if err != nil {
-			log.Println("Error deploying action", name, err)
+			return fmt.Errorf("error deploying action %s: %v", action, err)
 		}
 	} else {
-		log.Println("Would run:", "nuv action update", action, artifact, args)
+		log.Println("Would run:", strings.Join(cmd, " "))
 	}
 
 	return nil
@@ -222,19 +225,26 @@ func deployAction(ctx deployCtx, artifact string) error {
 func deployPackage(ctx deployCtx, pkg string) {
 	// package args
 	ppath := filepath.Join(ctx.path, "packages", pkg+".args")
-	pargs := strings.Join(extractArgs([]string{ppath}), " ")
-	cmd := fmt.Sprintf("%s %s %s", nuvPackageUpdate, pkg, pargs)
-	if _, ok := ctx.packageCmdExecuted[cmd]; !ok {
+	pargs := extractArgs([]string{ppath})
+	cmd := []string{"nuv", "package", "update", pkg}
+
+	cmd = append(cmd, pargs...)
+
+	cmdToSave := strings.Join(cmd, " ")
+	if _, ok := ctx.packageCmdExecuted[cmdToSave]; !ok {
 		if !ctx.dryRun {
-			err := exec.Command(cmd).Run()
+			execCmd := exec.Command("nuv", cmd[1:]...)
+			execCmd.Stderr = os.Stderr
+			execCmd.Stdout = os.Stdout
+			err := execCmd.Run()
 			if err != nil {
 				log.Println("Error deploying package", pkg, err)
 			}
 		} else {
-			log.Println("Would run:", cmd)
+			log.Println("Would run:", strings.Join(cmd, " "))
 		}
 
-		ctx.packageCmdExecuted[cmd] = true
+		ctx.packageCmdExecuted[cmdToSave] = true
 	}
 }
 
@@ -265,12 +275,20 @@ func extractArgs(files []string) []string {
 			}
 		}
 	}
-	return res
+	// for each string, split by space and add to args
+	args := []string{}
+	for _, arg := range res {
+		args = append(args, strings.Split(arg, " ")...)
+	}
+	return args
 }
 
 func buildAction(ctx deployCtx, pkg string, action string) (string, error) {
 	if !ctx.dryRun {
-		err := exec.Command("nuv", "ide", "util", "action", fmt.Sprintf("A=%s/%s", pkg, action)).Run()
+		cmd := exec.Command("nuv", "ide", "util", "action", fmt.Sprintf("A=%s/%s", pkg, action))
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+		err := cmd.Run()
 		if err != nil {
 			return "", fmt.Errorf("error building action %s/%s: %v", pkg, action, err)
 		}
@@ -356,6 +374,11 @@ func scan(ctx deployCtx) error {
 		packages[sp[1]] = true
 	}
 
+	if len(deployments) == 0 && len(packages) == 0 {
+		log.Println("Nothing to do")
+		return nil
+	}
+
 	log.Println(">>> Deploying:")
 
 	for p := range packages {
@@ -367,7 +390,7 @@ func scan(ctx deployCtx) error {
 		log.Println("^", a)
 		err := deployAction(ctx, a)
 		if err != nil {
-			return fmt.Errorf("error deploying action %s: %v", a, err)
+			return err
 		}
 	}
 

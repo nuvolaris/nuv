@@ -104,9 +104,9 @@ other content
 			ctx:  deployCtx{packageCmdExecuted: make(map[string]bool), dryRun: true, path: "."},
 			pkg:  "testpkg",
 			expectedExecuted: map[string]bool{
-				"nuv package update testpkg ": true,
+				"nuv package update testpkg": true,
 			},
-			expectedLog: "Would run: nuv package update testpkg",
+			expectedLog: "Would run: nuv package update testpkg\n",
 		},
 		{
 			name: "Deploy package with args",
@@ -115,7 +115,7 @@ other content
 			expectedExecuted: map[string]bool{
 				fmt.Sprintf("nuv package update %s arg1 arg2 arg3 arg4", "testpkg1"): true,
 			},
-			expectedLog: fmt.Sprintf("Would run: nuv package update %s arg1 arg2 arg3 arg4", "testpkg1"),
+			expectedLog: fmt.Sprintf("Would run: nuv package update %s arg1 arg2 arg3 arg4\n", "testpkg1"),
 		},
 	}
 
