@@ -9,6 +9,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
+
+	"github.com/radovskyb/watcher"
 )
 
 type deployCtx struct {
@@ -25,18 +28,16 @@ func DeployTool() error {
 		fmt.Println(`Command to deploy Nuvolaris projects. Must be run from the root of the project (containing 'packages').
 
 Usage:
-	nuv -deploy [Options]
+	nuv -deploy [-s <string> | --single <string>] [-d | --dry-run]
+	nuv -deploy [-w | --watch] [-d | --dry-run]
 
 Options:
 	-s, --single <string>     Deploy a single action with the given path, either a single file or a directory.
 	-w, --watch     Watch for changes and deploy automatically.
-	-d, --dry-run   Do not deploy, just print the deployment plan.
-	--no-web        Do not upload the web folder to Nuvolaris (if present)`)
+	-d, --dry-run   Do not deploy, just print the deployment plan.`)
 	}
 
-	// var watchFlag bool
-	// var noWebFlag int
-	// var forceFlag bool
+	var watchFlag bool
 	var singleFlag string
 	var helpFlag bool
 	var dryRunFlag bool
@@ -46,6 +47,8 @@ Options:
 	flag.BoolVar(&helpFlag, "help", false, "Show this help message")
 	flag.BoolVar(&dryRunFlag, "d", false, "Do not deploy, just print the deployment plan.")
 	flag.BoolVar(&dryRunFlag, "dry-run", false, "Do not deploy, just print the deployment plan.")
+	flag.BoolVar(&watchFlag, "w", false, "Watch for changes and deploy automatically.")
+	flag.BoolVar(&watchFlag, "watch", false, "Watch for changes and deploy automatically.")
 
 	// Parse command line flags
 	err := flag.Parse(os.Args[2:])
@@ -80,17 +83,20 @@ Options:
 		return deploy(ctx, action)
 	}
 
+	if watchFlag {
+		err = scan(ctx)
+		if err != nil {
+			return err
+		}
+
+		err = watch(ctx)
+		return err
+	}
+
 	err = scan(ctx)
 	if err != nil {
 		return err
 	}
-	// walk and deploy
-	//scan()
-
-	// watch if requested
-	// if  args.watch:
-	//     print(">>> Watching:")
-	//     watch()
 
 	return nil
 }
@@ -344,6 +350,100 @@ func buildZip(ctx deployCtx, pkg string, action string) (string, error) {
 	}
 
 	return fmt.Sprintf("packages/%s/%s.zip", pkg, action), nil
+}
+
+// endregion
+
+// region: watch
+
+var SKIPDIR = []string{"virtualenv", "node_modules", "__pycache__"}
+
+func watch(ctx deployCtx) error {
+	log.Println(">>> Watching:", filepath.Join(ctx.path, "packages"))
+
+	w := watcher.New()
+
+	err := w.AddRecursive(filepath.Join(ctx.path, "packages"))
+	if err != nil {
+		return err
+	}
+
+	w.IgnoreHiddenFiles(true)
+	// SetMaxEvents to 1 to allow at most 1 event's to be received
+	// on the Event channel per watching cycle.
+	//
+	// If SetMaxEvents is not set, the default is to send all events.
+	// w.SetMaxEvents(1)
+
+	watcherEvent := &watcherEvent{
+		lastModified: make(map[string]time.Time),
+	}
+
+	go func() {
+		for {
+			select {
+			case event := <-w.Event:
+				watcherEvent.changeHandler(ctx, event)
+			case err := <-w.Error:
+				log.Println(err)
+			case <-w.Closed:
+				return
+			}
+		}
+	}()
+
+	// Start the watching process - it'll check for changes every 100ms.
+	if err := w.Start(time.Millisecond * 100); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type watcherEvent struct {
+	lastModified map[string]time.Time
+}
+
+func (w *watcherEvent) changeHandler(ctx deployCtx, event watcher.Event) {
+	if event.Op != watcher.Write {
+		return // only handle write events
+	}
+	if event.IsDir() {
+		return // skip directories
+	}
+
+	src := event.Path
+	if !exists(src) {
+		return // no missing files
+	}
+
+	for _, dir := range splitPath(src)[:len(splitPath(src))-1] {
+		for _, skip := range SKIPDIR { // no generated directories
+			if dir == skip {
+				return
+			}
+		}
+	}
+
+	if strings.HasSuffix(src, ".zip") {
+		return // no generated files
+	}
+
+	// cache last modified to do only once (mod time of file)
+	f, _ := os.Stat(src)
+	cur := f.ModTime()
+	lastMod, ok := w.lastModified[src]
+	if ok && lastMod.Equal(cur) {
+		return
+	}
+	w.lastModified[src] = cur
+
+	log.Println("Changed:", src)
+	// remove the ctx.path prefix
+	err := deploy(ctx, strings.TrimPrefix(src, ctx.path+"/"))
+	if err != nil {
+		log.Println("Error deploying action", src, err)
+	}
 }
 
 // endregion

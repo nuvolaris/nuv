@@ -151,7 +151,7 @@ func TestDeployAction(t *testing.T) {
 			name:        "Deploy action from zip file",
 			ctx:         deployCtx{dryRun: true, path: tmpDir, packageCmdExecuted: make(map[string]bool)},
 			artifact:    "packages/packageName/action.zip",
-			expectedLog: "nuv action update packageName/action " + tmpDir + "/packages/packageName/action.zip --kind nodejs:20",
+			expectedLog: "nuv action update packageName/action packages/packageName/action.zip --kind nodejs:20",
 		},
 		{
 			name:        "Deploy action from non-zip file",
