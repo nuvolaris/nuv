@@ -27,21 +27,19 @@ setup() {
 }
 
 @test "-deploy with missing packages folder" {
-    run nuv -deploy
+    run nuv -deploy .
     assert_line --partial "no 'packages' folder found in the current directory"
     assert_failure
 }
 
 @test "-deploy with single flag with root sfa" {
-    export NUV_PWD=$(pwd)/testdata
-    run nuv -deploy -s hello.js -d 
+    run nuv -deploy -s hello.js -d testdata
     assert_line --partial "*** hello.js"
     assert_line --partial "Would run: nuv action update hello packages/hello.js"
     assert_success
 }
 
 @test "-deploy with single flag with packaged sfa" {
-    export NUV_PWD=$(pwd)/testdata
     run nuv -deploy -s subfolder/hello.py -d testdata 
     assert_line --partial "*** hello.py"
     assert_line --partial "Would run: nuv package update subfolder"
@@ -50,16 +48,14 @@ setup() {
 }
 
 @test "-deploy with single flag with unsupported folder" {
-    export NUV_PWD=$(pwd)/testdata
-    run nuv -deploy -s subfolder -d 
+    run nuv -deploy -s subfolder -d testdata
     assert_line --partial "*** subfolder"
     assert_line --partial "action packages/subfolder is a directory but does not contain a supported main file"
     assert_failure
 }
 
 @test "-deploy with single flag with supported folder" {
-    export NUV_PWD=$(pwd)/testdata
-    run nuv -deploy -s okfolder -d 
+    run nuv -deploy -s okfolder -d $(pwd)/testdata
     assert_line --partial "*** okfolder"
     assert_line --partial "Would run: nuv package update okfolder"
     assert_line --partial "Would run: nuv action update okfolder/index packages/okfolder/index.js"
@@ -67,16 +63,14 @@ setup() {
 }
 
 @test "-deploy with single flag with unsupported MFA" {
-    export NUV_PWD=$(pwd)/testdata
-    run nuv -deploy -s okfolder/badmfa -d 
+    run nuv -deploy -s okfolder/badmfa -d $(pwd)/testdata
     assert_line --partial "*** badmfa"
     assert_line --partial "action packages/okfolder/badmfa is a directory but does not contain a supported main file"
     assert_failure
 }
 
 @test "-deploy with single flag with MFA" {
-    export NUV_PWD=$(pwd)/testdata
-    run nuv -deploy -s okfolder/okmfa -d 
+    run nuv -deploy -s okfolder/okmfa -d $(pwd)/testdata
     assert_line --partial "*** okmfa"
     assert_line --partial "Would run: nuv ide util action A=okfolder/okmfa"
     assert_line --partial "Would run: nuv package update okfolder"
@@ -85,8 +79,7 @@ setup() {
 }
 
 @test "-deploy with scan works" {
-    export NUV_PWD=$(pwd)/testdata/example
-    run nuv -deploy -d 
+    run nuv -deploy -d testdata/example
     assert_line --partial ">>> Scan:"
     assert_line --partial "Would run: nuv ide util zip A=zipped/mfa"
     assert_line --partial "Would run: nuv ide util action A=sub/mfa"

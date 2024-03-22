@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mitchellh/go-homedir"
 	"github.com/radovskyb/watcher"
 )
 
@@ -25,16 +26,17 @@ var nuvPackageUpdate = "nuv package update"
 func DeployTool() error {
 	flag := flag.NewFlagSet("deploy", flag.ExitOnError)
 	flag.Usage = func() {
-		fmt.Println(`Command to deploy Nuvolaris projects. Must be run from the root of the project (containing 'packages').
+		fmt.Println(`Command to deploy Nuvolaris projects. Must be given the path of a valid project (containing 'packages').
 
 Usage:
-	nuv -deploy [-s <string> | --single <string>] [-d | --dry-run]
-	nuv -deploy [-w | --watch] [-d | --dry-run]
+	nuv -deploy <path> [-s <string> | --single <string>] [-d | --dry-run]
+	nuv -deploy <path> [-w | --watch] [-d | --dry-run]
 
 Options:
 	-s, --single <string>     Deploy a single action with the given path, either a single file or a directory.
 	-w, --watch     Watch for changes and deploy automatically.
-	-d, --dry-run   Do not deploy, just print the deployment plan.`)
+	-d, --dry-run   Do not deploy, just print the deployment plan.
+	-h, --help      Show this help message.`)
 	}
 
 	var watchFlag bool
@@ -56,10 +58,24 @@ Options:
 		return err
 	}
 
-	if helpFlag {
+	if flag.NArg() != 1 || helpFlag {
 		flag.Usage()
 		return nil
 	}
+
+	path, err := homedir.Expand(flag.Arg(0))
+	if err != nil {
+		return err
+	}
+
+	var absPath string
+	if filepath.IsLocal(path) {
+		absPath = filepath.Join(os.Getenv("NUV_PWD"), path)
+	} else {
+		absPath = path
+	}
+
+	os.Setenv("NUV_PWD", absPath)
 
 	ctx := deployCtx{
 		path:               os.Getenv("NUV_PWD"),
