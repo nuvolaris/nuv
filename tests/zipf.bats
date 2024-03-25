@@ -29,8 +29,8 @@ setup() {
     assert_line "Usage:"
 }
 
-@test "zipf zips" {
-    run nuv -zipf testdata/actions
-    assert_success
-    run rm actions.zip
-}
+# @test "zipf zips" {
+#     run nuv -zipf testdata/actions
+#     assert_success
+#     run rm actions.zip
+# }

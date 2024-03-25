@@ -40,12 +40,12 @@ var tools = []string{
 	"replace", "base64", "validate",
 	"echoif", "echoifempty", "echoifexists",
 	"realpath", "zipf", "needupdate",
-	"gron", "jj",
+	"gron", "jj", "deploy",
 }
 
 // not available in taskfiles
 var extraTools = []string{
-	"update", "help", "info", "version", "task", "plugin",
+	"update", "login", "help", "info", "version", "task", "plugin",
 }
 
 func IsTool(name string) bool {
@@ -188,6 +188,11 @@ func RunTool(name string, args []string) (int, error) {
 	case "jj":
 		os.Args = append([]string{"jj"}, args...)
 		return jj.JJMain()
+
+	case "deploy":
+		if err := DeployTool(); err != nil {
+			return 1, err
+		}
 	}
 
 	return 0, nil
