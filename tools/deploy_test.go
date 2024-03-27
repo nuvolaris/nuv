@@ -54,7 +54,7 @@ other content
 		{
 			name:     "Extract args from existing file",
 			files:    []string{file.Name()},
-			expected: []string{"arg1", "arg2", "arg3", "arg4"},
+			expected: []string{"-arg1", "-arg2", "-arg3", "-arg4"},
 		},
 		{
 			name:     "Extract args from non-existing file",
@@ -113,9 +113,9 @@ other content
 			ctx:  deployCtx{packageCmdExecuted: make(map[string]bool), dryRun: true, path: tmpDir},
 			pkg:  "testpkg1",
 			expectedExecuted: map[string]bool{
-				fmt.Sprintf("nuv package update %s arg1 arg2 arg3 arg4", "testpkg1"): true,
+				fmt.Sprintf("nuv package update %s -arg1 -arg2 -arg3 -arg4", "testpkg1"): true,
 			},
-			expectedLog: fmt.Sprintf("Would run: nuv package update %s arg1 arg2 arg3 arg4\n", "testpkg1"),
+			expectedLog: fmt.Sprintf("Would run: nuv package update %s -arg1 -arg2 -arg3 -arg4\n", "testpkg1"),
 		},
 	}
 
@@ -151,7 +151,7 @@ func TestDeployAction(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	content := `#- --kind nodejs:20`
+	content := `#--kind nodejs:20`
 
 	_, _ = file.WriteString(content)
 
