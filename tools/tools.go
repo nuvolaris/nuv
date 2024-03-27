@@ -45,7 +45,7 @@ var tools = []string{
 
 // not available in taskfiles
 var extraTools = []string{
-	"update", "login", "help", "info", "version", "task", "plugin",
+	"update", "login", "help", "info", "version", "task", "plugin", "serve",
 }
 
 func IsTool(name string) bool {
