@@ -23,6 +23,8 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 
 	"github.com/pkg/browser"
@@ -79,16 +81,44 @@ Options:
 		}
 	}
 
-	fileServer := webFileServerHandler(webDirPath)
-	addr := fmt.Sprintf(":%s", port)
+	localHandler := webFileServerHandler(webDirPath)
 
-	http.Handle("/", fileServer)
+	var proxy *httputil.ReverseProxy = nil
+	if proxyFlag != "" {
+		remoteUrl, err := url.Parse(proxyFlag)
+		if err != nil {
+			return err
+		}
+		proxy = httputil.NewSingleHostReverseProxy(remoteUrl)
+	}
+
+	customHandler := func(w http.ResponseWriter, r *http.Request) {
+		// Check if the file exists locally
+
+		_, err := http.Dir(webDirPath).Open(r.URL.Path)
+		if err == nil {
+			// Serve the file using the file server
+			localHandler.ServeHTTP(w, r)
+			return
+		}
+
+		// File not found locally, proxy the request to the remote server
+		log.Printf("not found locally %s\n", r.URL.Path)
+
+		if proxy != nil {
+			log.Printf("Proxying to %s\n", proxyFlag)
+			proxy.ServeHTTP(w, r)
+		}
+	}
+
+	handler := http.HandlerFunc(customHandler)
 
 	if checkPortAvailable(port) {
 		log.Println("Nuvolaris server started at http://localhost:" + port)
-		return http.ListenAndServe(addr, nil)
+		addr := fmt.Sprintf(":%s", port)
+		return http.ListenAndServe(addr, handler)
 	} else {
-		log.Println("Nuvolaris server failed to start. Port is already in use.")
+		log.Println("Nuvolaris server failed to start. Port already in use?")
 		return nil
 	}
 }
