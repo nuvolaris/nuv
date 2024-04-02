@@ -18,61 +18,62 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
-	"os/exec"
-	"strings"
 
 	"github.com/pkg/browser"
 )
 
-var WebDir = "web"
-
-const usage = `Usage:
-nuv -serve [options]
--h, --help Print help message
---no-browser Do not open browser
-`
-
-// struct modeling this: { "stdout": ["stdout", "of", "nuv"], "stderr":  ["stderr", "of", "nuv"], "status": 0 }
-
-type NuvOutput struct {
-	Stdout string `json:"stdout"`
-	Stderr string `json:"stderr"`
-	Status int    `json:"status"`
-}
-
 func Serve(olarisDir string, args []string) error {
+	flag := flag.NewFlagSet("serve", flag.ExitOnError)
+	flag.Usage = func() {
+		fmt.Println(`Serve a local directory on http://localhost:9768. You can change port with the NUV_PORT environment variable.
+
+Usage:
+  nuv -serve [options] <dir>
+
+Options:
+  -h, --help Print help message
+  --no-open Do not open browser automatically
+  --proxy <proxy> Use proxy server
+		`)
+	}
 	// Define command line flags
-	flag.Usage = func() { fmt.Print(usage) }
 
 	var helpFlag bool
 	var noBrowserFlag bool
+	var proxyFlag string
 
 	flag.BoolVar(&helpFlag, "h", false, "Print help message")
 	flag.BoolVar(&helpFlag, "help", false, "Print help message")
-	flag.BoolVar(&noBrowserFlag, "no-browser", false, "Do not open browser")
+	flag.BoolVar(&noBrowserFlag, "no-open", false, "Do not open browser")
+	flag.StringVar(&proxyFlag, "proxy", "", "Use proxy server")
 
 	// Parse command line flags
 	os.Args = args
-	flag.Parse()
+	err := flag.Parse(os.Args[1:])
+	if err != nil {
+		return err
+	}
 
-	// Print help message if -h flag is provided
-	if helpFlag {
+	// Print help message if requested
+	if flag.NArg() != 1 || helpFlag {
 		flag.Usage()
 		return nil
 	}
 
+	webDir := flag.Arg(0)
+
 	// run nuv server and open browser
 	port := getNuvPort()
-	webDirPath := joinpath(olarisDir, WebDir)
-	log.Println("Found web directory at: " + webDirPath)
+	webDirPath := joinpath(os.Getenv("NUV_PWD"), webDir)
+	log.Println("Serving directory: " + webDirPath)
 
 	if !noBrowserFlag {
 		if err := browser.OpenURL("http://localhost:" + port); err != nil {
@@ -80,17 +81,44 @@ func Serve(olarisDir string, args []string) error {
 		}
 	}
 
-	fileServer := webFileServerHandler(webDirPath)
-	addr := fmt.Sprintf(":%s", port)
+	localHandler := webFileServerHandler(webDirPath)
 
-	http.Handle("/", fileServer)
-	http.HandleFunc("/api/nuv", nuvTaskServer)
+	var proxy *httputil.ReverseProxy = nil
+	if proxyFlag != "" {
+		remoteUrl, err := url.Parse(proxyFlag)
+		if err != nil {
+			return err
+		}
+		proxy = httputil.NewSingleHostReverseProxy(remoteUrl)
+	}
+
+	customHandler := func(w http.ResponseWriter, r *http.Request) {
+		// Check if the file exists locally
+
+		_, err := http.Dir(webDirPath).Open(r.URL.Path)
+		if err == nil {
+			// Serve the file using the file server
+			localHandler.ServeHTTP(w, r)
+			return
+		}
+
+		// File not found locally, proxy the request to the remote server
+		log.Printf("not found locally %s\n", r.URL.Path)
+
+		if proxy != nil {
+			log.Printf("Proxying to %s\n", proxyFlag)
+			proxy.ServeHTTP(w, r)
+		}
+	}
+
+	handler := http.HandlerFunc(customHandler)
 
 	if checkPortAvailable(port) {
 		log.Println("Nuvolaris server started at http://localhost:" + port)
-		return http.ListenAndServe(addr, nil)
+		addr := fmt.Sprintf(":%s", port)
+		return http.ListenAndServe(addr, handler)
 	} else {
-		log.Println("Nuvolaris server failed to start. Port is already in use.")
+		log.Println("Nuvolaris server failed to start. Port already in use?")
 		return nil
 	}
 }
@@ -98,50 +126,6 @@ func Serve(olarisDir string, args []string) error {
 // Handler to serve the olaris/web directory
 func webFileServerHandler(webDir string) http.Handler {
 	return http.FileServer(http.Dir(webDir))
-}
-
-// The handler for the /api/ endpoint that runs nuv tasks
-func nuvTaskServer(w http.ResponseWriter, r *http.Request) {
-	trace("Request received:", r.URL.Path, r.URL.RawQuery)
-
-	query := r.URL.RawQuery
-	reqTasks := strings.Split(query, "+")
-
-	nuvOut := execCommandTasks(reqTasks)
-
-	// write output to response
-	outjson, _ := json.Marshal(nuvOut)
-	if _, err := w.Write(outjson); err != nil {
-		debug("Failed to write response", err)
-	}
-}
-
-func execCommandTasks(tasks []string) NuvOutput {
-	if taskDryRun {
-		return NuvOutput{
-			Stdout: "Dry run: task " + strings.Join(tasks, " "),
-			Stderr: "",
-			Status: 0,
-		}
-	}
-	trace("Running tasks from api:", tasks)
-
-	cmd := exec.Command("nuv", tasks...)
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	// We are using cmd.ProcessState.ExitCode() to get the exit code
-	err := cmd.Run()
-	if err != nil {
-		warn("Failed to run tasks", tasks, stderr.String(), err)
-	}
-	return NuvOutput{
-		Stdout: strings.TrimSpace(stdout.String()),
-		Stderr: strings.TrimSpace(stderr.String()),
-		Status: cmd.ProcessState.ExitCode(),
-	}
-
 }
 
 func checkPortAvailable(port string) bool {

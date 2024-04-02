@@ -263,10 +263,10 @@ func extractArgs(files []string) []string {
 			for scanner.Scan() {
 				line := scanner.Text()
 				if strings.HasPrefix(line, "#-") {
-					res = append(res, strings.TrimSpace(line[2:]))
+					res = append(res, strings.TrimSpace(line[1:]))
 				}
 				if strings.HasPrefix(line, "//-") {
-					res = append(res, strings.TrimSpace(line[3:]))
+					res = append(res, strings.TrimSpace(line[2:]))
 				}
 			}
 
@@ -399,7 +399,10 @@ func scan(ctx deployCtx) error {
 
 func buildZip(ctx deployCtx, pkg string, action string) (string, error) {
 	if !ctx.dryRun {
-		err := exec.Command("nuv", "ide", "util", "zip", fmt.Sprintf("A=%s/%s", pkg, action)).Run()
+		cmd := exec.Command("nuv", "ide", "util", "zip", fmt.Sprintf("A=%s/%s", pkg, action))
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+		err := cmd.Run()
 		if err != nil {
 			return "", fmt.Errorf("error building zip %s/%s: %v", pkg, action, err)
 		}

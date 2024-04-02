@@ -18,19 +18,20 @@
 package main
 
 import (
-	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestIndex(t *testing.T) {
 	_ = os.Chdir(workDir)
-	olaris, _ := filepath.Abs(joinpath("tests", "olaris"))
-	handler := webFileServerHandler(joinpath(olaris, WebDir))
+	webDir, _ := filepath.Abs(filepath.Join("tests", "olaris", "web"))
+	handler := webFileServerHandler(webDir)
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
@@ -53,55 +54,10 @@ func TestIndex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			resp, err := http.DefaultClient.Do(tt.r)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if resp.StatusCode != http.StatusOK {
-				t.Errorf("expected status OK; got %v", resp.Status)
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
+			require.Equal(t, http.StatusOK, resp.StatusCode)
 			resp.Body.Close()
 		})
-	}
-}
-
-func TestGetTask(t *testing.T) {
-	_ = os.Chdir(joinpath(workDir, "tests"))
-
-	t.Run("/api/nuv?test invokes test task", func(t *testing.T) {
-		request := newTaskRequest("test")
-		response := httptest.NewRecorder()
-
-		want := NuvOutput{
-			Stdout: "Dry run: task test",
-			Stderr: "",
-			Status: 0,
-		}
-
-		nuvTaskServer(response, request)
-
-		assertResponseBody(t, response.Body.Bytes(), want)
-	})
-}
-
-func newTaskRequest(task string) *http.Request {
-	req, _ := http.NewRequest(http.MethodGet, "/api/nuv?"+task, nil)
-	return req
-}
-
-func assertResponseBody(t testing.TB, body []byte, want NuvOutput) {
-	got := NuvOutput{}
-	err := json.Unmarshal(body, &got)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Helper()
-	if got.Status != want.Status {
-		t.Errorf("expected status %v; got %v", want.Status, got.Status)
-	}
-	if got.Stdout != want.Stdout {
-		t.Errorf("expected stdout %v; got %v", want.Stdout, got.Stdout)
-	}
-	if got.Stderr != want.Stderr {
-		t.Errorf("expected stderr %v; got %v", want.Stderr, got.Stderr)
 	}
 }
