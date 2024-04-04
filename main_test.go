@@ -24,6 +24,7 @@ import (
 	"testing"
 
 	"github.com/mitchellh/go-homedir"
+	"github.com/stretchr/testify/require"
 )
 
 /// test utils
@@ -77,4 +78,35 @@ func TestSetupNuvRootPlugin(t *testing.T) {
 	if os.Getenv("NUV_ROOT_PLUGIN") != "/path/to/nuv/root" {
 		t.Errorf("NUV_ROOT_PLUGIN not set correctly, expected /path/to/nuv/root but got %s", os.Getenv("NUV_ROOT_PLUGIN"))
 	}
+}
+
+func TestParseInvokeArgs(t *testing.T) {
+	t.Run("Test case 1: No arguments with \"=\"", func(t *testing.T) {
+		input1 := []string{}
+		expected1 := []string{}
+		output1 := parseInvokeArgs(input1)
+		require.Equal(t, expected1, output1)
+	})
+
+	t.Run("Test case 2: Single argument with \"=\"", func(t *testing.T) {
+		input2 := []string{"key=value"}
+		expected2 := []string{"-p", "key", "value"}
+		output2 := parseInvokeArgs(input2)
+		require.Equal(t, expected2, output2)
+	})
+
+	t.Run("Test case 3: Multiple arguments with \"=\"", func(t *testing.T) {
+
+		input3 := []string{"key1=value1", "key2=value2", "key3=value3"}
+		expected3 := []string{"-p", "key1", "value1", "-p", "key2", "value2", "-p", "key3", "value3"}
+		output3 := parseInvokeArgs(input3)
+		require.Equal(t, expected3, output3)
+	})
+
+	t.Run("Test case 4: Mixed arguments with \"=\" and without \"=\"", func(t *testing.T) {
+		input4 := []string{"key1=value1", "-p", "key2", "value2", "key3=value3"}
+		expected4 := []string{"-p", "key1", "value1", "-p", "key2", "value2", "-p", "key3", "value3"}
+		output4 := parseInvokeArgs(input4)
+		require.Equal(t, expected4, output4)
+	})
 }

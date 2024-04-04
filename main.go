@@ -23,6 +23,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/mitchellh/go-homedir"
@@ -265,6 +267,13 @@ func main() {
 			trace("wsk wrapper command")
 			debug("extracted cmd", cmd)
 			rest := args[2:]
+			debug("extracted args", rest)
+
+			// if "invoke" is in the command, parse all a=b into -p a b
+			if (len(cmd) > 2 && cmd[2] == "invoke") || slices.Contains(rest, "invoke") {
+				rest = parseInvokeArgs(rest)
+			}
+
 			if err := tools.Wsk(cmd, rest...); err != nil {
 				log.Fatalf("error: %s", err.Error())
 			}
@@ -281,6 +290,25 @@ func main() {
 	if err := runNuv(nuvRootDir, args); err != nil {
 		log.Fatalf("error: %s", err.Error())
 	}
+}
+
+// parse all a=b into -p a b
+func parseInvokeArgs(rest []string) []string {
+	trace("parsing invoke args")
+	args := []string{}
+
+	for _, arg := range rest {
+		if strings.Contains(arg, "=") {
+			kv := strings.Split(arg, "=")
+			p := []string{"-p", kv[0], kv[1]}
+			args = append(args, p...)
+		} else {
+			args = append(args, arg)
+		}
+	}
+
+	debug("parsed invoke args", args)
+	return args
 }
 
 // getRootDirOrExit returns the olaris dir or exits (Fatal) if not found
