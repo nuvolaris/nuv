@@ -151,6 +151,13 @@ func main() {
 		warn("unable to set NUV_OLARIS...", err.Error())
 	}
 
+	nuvRootDir := getRootDirOrExit()
+	debug("nuvRootDir", nuvRootDir)
+	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
+	if err != nil {
+		log.Fatalf("cannot apply env vars from configs: %s", err.Error())
+	}
+
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
 	trace("OS args:", os.Args)
@@ -248,13 +255,6 @@ func main() {
 			warn("unknown tool", "-"+cmd)
 		}
 		os.Exit(0)
-	}
-
-	nuvRootDir := getRootDirOrExit()
-	debug("nuvRootDir", nuvRootDir)
-	err = setAllConfigEnvVars(nuvRootDir, nuvHome)
-	if err != nil {
-		log.Fatalf("cannot apply env vars from configs: %s", err.Error())
 	}
 
 	// check if olaris was recently updated
