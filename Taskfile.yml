@@ -42,7 +42,7 @@ tasks:
       curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json 
       | jq '{"runtimes": .runtimes}' >runtimes.json
     - |
-      if ! git diff runtimes.json --exit-code
+      if ! git diff --exit-code runtimes.json 
       then git add runtimes.json
            git commit -m "update runtimes"
       fi
