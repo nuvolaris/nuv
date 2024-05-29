@@ -41,8 +41,11 @@ tasks:
     - >
       curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json 
       | jq '{"runtimes": .runtimes}' >runtimes.json
-    - git add runtimes.json
-    - git commit -m "update runtimes"
+    - |
+      if ! git diff runtimes.json --exit-code
+      then git add runtimes.json
+           git commit -m "update runtimes"
+      fi
 
   build:
     desc: build nuv locally
