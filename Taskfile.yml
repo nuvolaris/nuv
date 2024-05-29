@@ -30,18 +30,24 @@ tasks:
     - task: build
 
   cli-ver:
+    - task: update-runtimes
     - git tag -d $(git tag)
     - git tag -f {{.BASEVER}}.$(date +%y%m%d%H%M){{.S}}
     - git tag
 
   setup: { silent:true }
 
+  update-runtimes:
+    - >
+      curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json 
+      | jq '{"runtimes": .runtimes}' >runtimes.json
+    - git add runtimes.json
+    - git commit -m "update runtimes"
+
   build:
     desc: build nuv locally
     cmds:
-      - >
-        curl -sL https://raw.githubusercontent.com/nuvolaris/olaris/{{.BRANCH}}/runtimes.json 
-        | jq '{"runtimes": .runtimes}' >runtimes.json
+      - task: update-runtimes
       - go build {{.DEBUG}} -ldflags "-X main.NuvVersion={{.VERSION}} -X main.NuvBranch={{.BRANCH}}"  -o bin/nuv
     sources:
       - "*.go"
