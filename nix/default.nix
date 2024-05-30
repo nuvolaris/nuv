@@ -1,4 +1,9 @@
 { pkgs ? import <nixpkgs> {} }:
-{
-  nuv = pkgs.callPackage ./nuv.nix { };
+let
+  nuv = pkgs.callPackage ./nuv.nix { }; 
+in
+pkgs.mkShell {
+  buildInputs = [
+    nuv
+  ];
 }
