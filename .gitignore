@@ -39,3 +39,4 @@ bin/*/LICENSE
 cookie.txt
 actions.zip
 nuv.spec
+nix/result

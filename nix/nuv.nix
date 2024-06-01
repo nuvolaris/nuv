@@ -57,7 +57,7 @@ in buildGoModule rec {
 
   doCheck = false; 
 
-  ldFlags =  [
+  ldflags =  [
     "-X main.NuvVersion=${version}"
      "-X main.NuvBranch=${branch}"
   ];
