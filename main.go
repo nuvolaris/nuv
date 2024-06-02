@@ -124,6 +124,32 @@ func main() {
 		setupBinPath(tools.NuvCmd)
 	}
 
+	// check if first argument is help, info version: report output and exit
+	trace("OS args:", os.Args)
+	args := os.Args
+
+	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
+		cmd := args[1][1:]
+		switch cmd {
+		case "info":
+			info()
+			os.Exit(0)
+
+		case "help":
+			tools.Help()
+			os.Exit(0)
+
+		case "version":
+			fmt.Println(NuvVersion)
+			os.Exit(0)
+
+		case "v":
+			fmt.Println(NuvVersion)
+			os.Exit(0)
+
+		}
+	}
+
 	nuvHome, err := homedir.Expand("~/.nuv")
 	if err != nil {
 		log.Fatalf("error: %s", err.Error())
@@ -160,9 +186,6 @@ func main() {
 
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
-	trace("OS args:", os.Args)
-	args := os.Args
-
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
@@ -174,16 +197,6 @@ func main() {
 		}
 
 		switch cmd {
-		case "version":
-			fmt.Println(NuvVersion)
-		case "v":
-			fmt.Println(NuvVersion)
-
-		case "info":
-			info()
-
-		case "help":
-			tools.Help()
 
 		case "serve":
 			nuvRootDir := getRootDirOrExit()
