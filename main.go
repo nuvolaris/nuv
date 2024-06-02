@@ -124,6 +124,15 @@ func main() {
 		setupBinPath(tools.NuvCmd)
 	}
 
+	nuvHome, err := homedir.Expand("~/.nuv")
+	if err != nil {
+		log.Fatalf("error: %s", err.Error())
+	}
+
+	setupTmp()
+	setNuvPwdEnv()
+	setNuvRootPluginEnv()
+
 	// check if first argument is help, info or version: report output and exit
 	trace("OS args:", os.Args)
 	args := os.Args
@@ -149,11 +158,6 @@ func main() {
 		}
 	}
 
-	nuvHome, err := homedir.Expand("~/.nuv")
-	if err != nil {
-		log.Fatalf("error: %s", err.Error())
-	}
-
 	// Check if olaris exists. If not, run `-update` to auto setup
 	olarisDir := joinpath(joinpath(nuvHome, getNuvBranch()), "olaris")
 	if !isDir(olarisDir) {
@@ -169,9 +173,6 @@ func main() {
 		}
 	}
 
-	setupTmp()
-	setNuvPwdEnv()
-	setNuvRootPluginEnv()
 	if err := setNuvOlarisHash(olarisDir); err != nil {
 		warn("unable to set NUV_OLARIS...", err.Error())
 	}
