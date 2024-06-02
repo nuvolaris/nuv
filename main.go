@@ -124,7 +124,7 @@ func main() {
 		setupBinPath(tools.NuvCmd)
 	}
 
-	// check if first argument is help, info version: report output and exit
+	// check if first argument is help, info or version: report output and exit
 	trace("OS args:", os.Args)
 	args := os.Args
 
@@ -146,7 +146,6 @@ func main() {
 		case "v":
 			fmt.Println(NuvVersion)
 			os.Exit(0)
-
 		}
 	}
 
