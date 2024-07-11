@@ -129,6 +129,35 @@ func main() {
 		log.Fatalf("error: %s", err.Error())
 	}
 
+	setupTmp()
+	setNuvPwdEnv()
+	setNuvRootPluginEnv()
+
+	// check if first argument is help, info or version: report output and exit
+	trace("OS args:", os.Args)
+	args := os.Args
+
+	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
+		cmd := args[1][1:]
+		switch cmd {
+		case "info":
+			info()
+			os.Exit(0)
+
+		case "help":
+			tools.Help()
+			os.Exit(0)
+
+		case "version":
+			fmt.Println(NuvVersion)
+			os.Exit(0)
+
+		case "v":
+			fmt.Println(NuvVersion)
+			os.Exit(0)
+		}
+	}
+
 	// Check if olaris exists. If not, run `-update` to auto setup
 	olarisDir := joinpath(joinpath(nuvHome, getNuvBranch()), "olaris")
 	if !isDir(olarisDir) {
@@ -144,9 +173,6 @@ func main() {
 		}
 	}
 
-	setupTmp()
-	setNuvPwdEnv()
-	setNuvRootPluginEnv()
 	if err := setNuvOlarisHash(olarisDir); err != nil {
 		warn("unable to set NUV_OLARIS...", err.Error())
 	}
@@ -160,9 +186,6 @@ func main() {
 
 	// first argument with prefix "-" is an embedded tool
 	// using "-" or "--" or "-task" invokes embedded task
-	trace("OS args:", os.Args)
-	args := os.Args
-
 	if len(args) > 1 && len(args[1]) > 0 && args[1][0] == '-' {
 		cmd := args[1][1:]
 		if cmd == "" || cmd == "-" || cmd == "task" {
@@ -174,16 +197,6 @@ func main() {
 		}
 
 		switch cmd {
-		case "version":
-			fmt.Println(NuvVersion)
-		case "v":
-			fmt.Println(NuvVersion)
-
-		case "info":
-			info()
-
-		case "help":
-			tools.Help()
 
 		case "serve":
 			nuvRootDir := getRootDirOrExit()
